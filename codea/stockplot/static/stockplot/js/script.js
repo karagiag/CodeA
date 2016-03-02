@@ -1,3 +1,5 @@
+var names = [];
+
 $(document).ready(function(){
 	setNavbar();
     plotStock();
@@ -65,12 +67,14 @@ $(document).ready(function(){
                    stockData[i].date = new Date(stockData[i].date);
                }
                plotData.push(stockData);
+               names.push(stocksymbol); 
                plotStock();
                },  
         });
     });
 
     $('#clear').on('click touchstart', function () {
+        names = [];
         plotData = [];
         plotStock();
 	});
@@ -120,8 +124,6 @@ function plotStock(){
     
     $("#visualisation").height(height);
     $("#visualisation").width(width);
-    
-    console.log(plotData);
 
     var color = d3.scale.category20();
      
@@ -202,6 +204,41 @@ function plotStock(){
               .attr('stroke', color(i));
         }
     }
+    
+    // append legend:
+    var legendRectSize = 18;
+    var legendSpacing = 4;
+    var legend = vis.selectAll('.legend')
+      .data(names)
+      .enter()
+      .append('g')
+      .attr('class', 'legend')
+      .attr('transform', function(d, i) {
+        var height = legendRectSize + legendSpacing;
+        var offset =  height * i;
+        console.log(height);
+        console.log(offset);
+        var horz = MARGINS.left + 10;
+        var vert = MARGINS.top + offset;
+        return 'translate(' + horz + ',' + vert + ')';
+      });
+      
+    legend.append('rect')
+      .attr('width', legendRectSize)
+      .attr('height', legendRectSize)
+      .style('fill', function(d, i){
+          return color(i);
+          })
+      .style('stroke', function(d, i){
+          return color(i);
+          })
+      
+    legend.append('text')
+      .attr('x', legendRectSize + legendSpacing)
+      .attr('y', legendRectSize - legendSpacing)
+      .text(function(d,i){
+            return names[i];
+          });
 }
 
 //For getting CSRF token
