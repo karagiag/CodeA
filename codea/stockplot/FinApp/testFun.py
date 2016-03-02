@@ -7,10 +7,10 @@ import datetime as dt
 import matplotlib.dates as mdates
 
 money = 1000
-test = stock.Stock('PAH3.DE')
+test = stock.Stock('TSLA')
 boughtTesla = stock.BoughtStock('TSLA', 10)
 
-print boughtTesla
+print (boughtTesla)
 
 test.plotHistory('2005-01-01', '2016-02-23')
 plt.hold(True)

@@ -66,16 +66,54 @@
 	</div>
 	<div class = "div-about" id ="about">
 		<div class = "container">
-			<h1 class = "text-center">Header 1</h1>
-			{% if stocks %}
-				<ul>
-				{% for stock in stocks %}
-					<li><a href="/stockplot/{{ stock.id }}/">{{ stock.name }}</a></li>
-				{% endfor %}
-				</ul>
-			{% else %}
-				<p>No stocks are available.</p>
-			{% endif %}			
+			<h1 class = "text-center">Plot Stocks</h1>
+            <form class="form-inline" action = "" method="post" id ="stockform">
+                {% csrf_token %}
+                <div class ="form-group">
+                    <label for="stocksymbolName">Stock symbol:</label>
+                    <input type="text" class ="form-control" id="stocksymbol" placeholder ="TSLA">
+                </div>
+                <button type="submit" class ="btn btn-default">Plot</button>
+            </form>	
+            
+            <!-- Div for displaying available data -->
+            <div class = "databox" id="box-top">
+                <div class ="stockbox">
+                    <div class = "stockbox-name">
+                        TSLA
+                    </div>
+                    <button class = "btn btn-plus">
+                            +
+                    </button>
+                </div>
+                <div class ="stockbox">
+                    <div class = "stockbox-name">
+                        AIR.DE
+                    </div>
+                    <button class = "btn btn-plus">
+                            +
+                    </button>
+                </div>
+                <div class ="stockbox">
+                    <div class = "stockbox-name">
+                        GOOG
+                    </div>
+                    <button class = "btn btn-plus">
+                            +
+                    </button>
+                </div>
+            </div>
+            
+            <button class="btn btn-default" id="clear">Clear All</button>            
+            
+            <div class = "plotbox">
+                <svg id="visualisation"></svg>
+            </div>
+            
+            <!-- Div for displaying plotted data -->
+            <div class = "databox" id="box-bottom">
+                
+            </div>
 		</div>
 			
 	</div>
@@ -89,8 +127,18 @@
 	
 	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
 	
+
+    <script>
+        {% autoescape off %}
+        var stockData = {{stockData}};
+        var plotData = [];
+        {% endautoescape %}
+    </script>
+
 	{% load staticfiles %}
 	<script src="{% static 'stockplot/js/jquery-2.1.4.min.js' %}"></script>
 	<script src="{% static 'stockplot/js/script.js' %}"></script>
+    <script src="{% static 'stockplot/js/d3.min.js' %}"></script>
+    <script src="{% static 'stockplot/js/date.js' %}"></script>
   </body>
 </html>

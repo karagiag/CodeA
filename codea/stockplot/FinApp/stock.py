@@ -1,4 +1,5 @@
 # class for stocks
+#from stockplot.ystockquote import *
 import ystockquote
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -12,8 +13,8 @@ class Stock(object):
 
     # get current stock price
     def getStockPrice(self):
-        allInfo = ystockquote.get_all(self.name)
-        return float(allInfo["price"])
+        price = ystockquote.get_price(self.name)
+        return float(price)
 
     # get historical stock prices. Date format for start and end: "YYYY-MM-DD"
     def getStockHistory(self, start, end):
@@ -22,6 +23,7 @@ class Stock(object):
         data = []
         for i in sorted(history):
             dates.append(dt.datetime.strptime(i, '%Y-%m-%d').date())
+            #dates.append(i)
             data.append(float(history[i]['Close'])) # returns price at close of day
         return dates, data
 
@@ -46,7 +48,7 @@ class Stock(object):
         dates, data = self.getStockHistory(start, end)
         average = [0] * len(dates)
         if (days > len(dates)):
-            print "Error. Too many days!"
+            print ("Error. Too many days!")
         else:
             for i in range(days,len(dates)-1):
                 average[i] = sum(data[i-days:i])/days
@@ -63,12 +65,11 @@ class Stock(object):
         dates, data = self.getStockHistory(start, end)
         average = [0] * len(dates)
         if (days > len(dates)):
-            print "Error. Too many days!"
+            print ("Error. Too many days!")
         else:
             # first average is regular average:
             average[days] = sum(data[0:days])/days
             alpha = 2.0/(1+days) # smoothing factor
-            print alpha
             for i in range(days + 1, len(dates)-1):
                 average[i] = data[i] * alpha + average[i-1] * (1-alpha)
         return dates, average
@@ -89,4 +90,4 @@ class BoughtStock(Stock):
         self.amount = amount
 
     def __str__(self):
-		return "Name: %s, Price bought: %s, Amount: %s" % (self.name, self.buyPrice, self.amount)
+        return "Name: %s, Price bought: %s, Amount: %s" % (self.name, self.buyPrice, self.amount)
