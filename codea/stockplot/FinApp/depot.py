@@ -19,8 +19,8 @@ class Depot(object):
 
     # method for calculating worth of depot:
     def depotWorth(self):
-	tot = 0
-	for i in self.stocks:
-	    price = i.getStockPrice()
-	    tot += price * i.amount
-	return tot
+        tot = 0
+        for i in self.stocks:
+            price = i.getStockPrice()
+            tot += price * i.amount
+        return tot
