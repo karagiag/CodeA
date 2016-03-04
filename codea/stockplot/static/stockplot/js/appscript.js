@@ -69,21 +69,31 @@ $(document).ready(function(){
                plotData.push(stockData);
                names.push(stocksymbol); 
                plotStock();
-               
                },  
         });
     });
-
+ 
+    // clear plots:
     $('#clear').on('click touchstart', function () {
         names = [];
         plotData = [];
         $('#box-top').html("");
         plotStock();
 	});
+    
+    
+    // button group with .btn-timeframe's sets timeframe for plot:
+    $('.btn-timeframe').on('click touchstart', function(e){
+        var timeframe = e.target.id;
+        $('.btn-timeframe').removeClass('active');
+        $('#'+timeframe).addClass('active');        
+        plotStock();
+    });
 
 });
 
 
+// functionf or plotting stocks in d3.js:
 function plotStock(){
     $("#visualisation").empty();
     
@@ -95,6 +105,16 @@ function plotStock(){
     $("#visualisation").width(width);
 
     var color = d3.scale.category20();
+    
+    var fromtime = gettimeframe();
+    
+    if (fromtime === 'max'){
+        fromtime = d3.min(plotData, function(d) {
+                                      return d3.min(d, function(e){
+                                            return e.date;
+                                      });
+                        });
+    }
      
     var vis = d3.select('#visualisation'),
         WIDTH = width,
@@ -105,11 +125,7 @@ function plotStock(){
           bottom: 20,
           left: 50
         },
-        xRange = d3.time.scale().range([MARGINS.left, WIDTH - MARGINS.right]).domain([d3.min(plotData, function(d) {
-          return d3.min(d, function(e){
-                return e.date;
-          });
-        }), d3.max(plotData, function(d) {
+        xRange = d3.time.scale().range([MARGINS.left, WIDTH - MARGINS.right]).domain([fromtime, d3.max(plotData, function(d) {
           return d3.max(d, function(e){
               return e.date;
           });
@@ -154,7 +170,7 @@ function plotStock(){
         .attr("class", "grid")
         .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
         .call(make_x_axis()
-            .tickSize(-height + MARGINS.top + MARGINS.bottom, 0, 0)
+            .tickSize(-HEIGHT + MARGINS.top + MARGINS.bottom, 0, 0)
             .tickFormat("")
         )
 
@@ -162,7 +178,7 @@ function plotStock(){
         .attr("class", "grid")
         .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
         .call(make_y_axis()
-            .tickSize(-width + MARGINS.right + MARGINS.left, 0, 0)
+            .tickSize(-WIDTH + MARGINS.right + MARGINS.left, 0, 0)
             .tickFormat("")
         )
     
@@ -185,7 +201,7 @@ function plotStock(){
     vis.append("text")
       .attr("text-anchor", "end")
       .attr("y", 6)
-      .attr("x", -(height-MARGINS.left)/2)
+      .attr("x", -(HEIGHT-MARGINS.left)/2)
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .style("text-anchor", "middle")
@@ -193,13 +209,24 @@ function plotStock(){
       .text("Stock price ($)");
 
 
+    // append clip to cut off anything outside of xRange:
+    
+    var clip = vis.append("defs").append("svg:clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("id", "clip-rect")
+        .attr("x", MARGINS.left)
+        .attr("y", MARGINS.top)
+        .attr("width", WIDTH)
+        .attr("height", HEIGHT);
+
     // Plot data here:
     var lineFunc = d3.svg.line()
       .x(function(d) {
-        return xRange(d.date);
+            return xRange(d.date);
       })
       .y(function(d) {
-        return yRange(d.price);
+            return yRange(d.price);
       })
       .interpolate('linear');
     
@@ -208,9 +235,11 @@ function plotStock(){
         for(var i = 0; i < plotData.length; i++){
             vis.append('svg:path')
               .attr('d', lineFunc(plotData[i]))
-              .attr('stroke', color(i));
+              .attr('stroke', color(i))
+              .attr("clip-path", "url(#clip)");
         }
     }
+
     
     // append legend:
     var legendRectSize = 18;
@@ -221,8 +250,8 @@ function plotStock(){
       .append('g')
       .attr('class', 'legend')
       .attr('transform', function(d, i) {
-        var height = legendRectSize + legendSpacing;
-        var offset =  height * i;
+        var legendheight = legendRectSize + legendSpacing;
+        var offset =  legendheight * i;
         var horz = MARGINS.left + 10;
         var vert = MARGINS.top + offset;
         return 'translate(' + horz + ',' + vert + ')';
@@ -338,4 +367,42 @@ function createStockMethods(stocksymbol){
         $(".div-"+stockclass).remove();
         plotStock();
     });
-};
+}
+
+// get timeframe for plot. Depends on button group btn-timeframe:
+function gettimeframe(){
+    var fromtime;
+    $(".btn-timeframe").each(function(){
+        if($(this).hasClass('active')){
+            timeid = this.id;
+            curtime = new Date();
+            //curtime = d3.time.format("%Y-%m-%d").parse;
+            switch(timeid){
+                case '1d':
+                    fromtime = d3.time.day.offset(curtime, -1);
+                    break;
+                case '1w':
+                    fromtime = d3.time.day.offset(curtime, -7);
+                    break;
+                case '1m':
+                    fromtime = d3.time.month.offset(curtime, -1);
+                    break;
+                case '1y':
+                    fromtime = d3.time.year.offset(curtime, -1);
+                    break;
+                case '2y':
+                    fromtime = d3.time.year.offset(curtime, -2);
+                    break;
+                case '5y':
+                    fromtime = d3.time.year.offset(curtime, -5);
+                    break;
+                case 'max':
+                    fromtime = 'max';
+                    break;
+                default:  
+                    fromtime = 'max';
+            }
+        }
+    })
+    return fromtime;
+}
