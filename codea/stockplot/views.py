@@ -1,7 +1,7 @@
 from django.shortcuts import *
 from django.template import RequestContext
 from django.http import JsonResponse
-from datetime import *
+import datetime
 
 from .models import Stock
 import stockplot.FinApp.stock as stock
@@ -20,18 +20,20 @@ def stockapp(request):
             method = request.POST.get('method')
             stocksymbol = request.POST.get('stocksymbol')
             stock1 = stock.Stock(stocksymbol)
+            today = datetime.datetime.now().strftime("%Y-%m-%d")
+            print(today)
             if method == 'plot':
-                dates, data = stock1.getStockHistory('2005-01-01', '2016-02-28')
+                dates, data = stock1.getStockHistory('1900-01-01', today)
                 #dates = []
                 #data = []
             elif method == 'mvgAvg':
                 days = int(request.POST.get('days'))
-                dates, data = stock1.movingAverage('2005-01-01', '2016-02-28', days)
+                dates, data = stock1.movingAverage('1900-01-01', today, days)
                 #dates = []
                 #data = []
             elif method == 'expmvgAvg':
                 days = int(request.POST.get('days'))
-                dates, data = stock1.ExpAverage('2005-01-01', '2016-02-28', days)
+                dates, data = stock1.ExpAverage('1900-01-01', today, days)
                 #dates = []
                 #data = []
     else:

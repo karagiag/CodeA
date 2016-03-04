@@ -162,12 +162,16 @@ body{
     margin-left: 7px;
 }
 
+.timeframe-group{
+    float: right;
+}
+
 
 /*Plot window---------------------------------------------------------*/
 
 .plotbox{
     margin-top: 1%;
-    margin-bottom: 1%;
+    margin-bottom: 40px;
     width: 100%;
     height: 100%;
 }
