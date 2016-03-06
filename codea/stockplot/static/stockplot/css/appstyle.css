@@ -194,3 +194,16 @@ path {
     stroke-width: 0;
     opacity: 0.5;*/
 }
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 60px;
+    height: 14px;
+    line-height: 14px;
+    font: 12px sans-serif;
+    background: rgba(200, 200, 200, 0.8);
+    border: 1px solid rgba(1, 1, 1, 1);
+    border-radius: 5px;
+    pointer-events: none;
+}
