@@ -73,15 +73,16 @@
               <button type="button" class="btn btn-default btn-sm btn-timeframe" id ="1y">1y</button>
               <button type="button" class="btn btn-default btn-sm btn-timeframe" id ="2y">2y</button>
               <button type="button" class="btn btn-default btn-sm btn-timeframe" id ="5y">5y</button>
+              <button type="button" class="btn btn-default btn-sm btn-timeframe" id ="10y">10y</button>
               <button type="button" class="btn btn-default btn-sm btn-timeframe active" id ="max">max</button>
             </div>
             
             <!-- Div for displaying plotted data -->
-            <div class = "plotbox">
+            <div class = "plotbox" id="plot-div">
                 <svg id="visualisation"></svg>
             </div>
             
-            <button class="btn btn-default" id="clear">Clear All</button>  
+            <button class="btn btn-default btn-sm" id="clear">Clear All</button>  
             <!--<div class = "databox" id="box-bottom">
                 
             </div>-->
@@ -97,6 +98,7 @@
     </script>
 
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+
 	{% load staticfiles %}
 	<!--<script src="{% static 'stockplot/js/jquery-2.1.4.min.js' %}"></script>-->
     <script src="{% static 'stockplot/js/jquery-1.11.3.min.js' %}"></script>
