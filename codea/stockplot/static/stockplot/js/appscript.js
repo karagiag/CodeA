@@ -33,24 +33,23 @@ $(document).ready(function(){
 	
 	// animation for smooth scroll:
 	$('a[href*=#]').click(function() {
-    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
-    && location.hostname == this.hostname) {
-      var $target = $(this.hash);
-      $target = $target.length && $target
-      || $('[name=' + this.hash.slice(1) +']');
-      if ($target.length) {
-        var targetOffset = $target.offset().top - 50;
-        $('html,body')
-        .animate({scrollTop: targetOffset}, 1000);
-       return false;
-		  }
-		}
-	  });
+        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
+        && location.hostname == this.hostname) {
+            var $target = $(this.hash);
+            $target = $target.length && $target || $('[name=' + this.hash.slice(1) +']');
+            if ($target.length) {
+                var targetOffset = $target.offset().top - 50;
+                $('html,body').animate({scrollTop: targetOffset}, 1000);
+                return false;
+            }
+        }
+    });
 
     
     // form that gets stock data:
     $('#stockform').submit(function(e){
         e.preventDefault();
+        $('.div-plot').css('animation', 'plotlights 0.5s linear forwards');
         var csrftoken = getCookie('csrftoken'); //Prepare csrf token
         var stocksymbol = $('#stocksymbol').val();
         var method = 'plot';
@@ -326,24 +325,27 @@ function plotStock(){
 
     //------------------------------------------------------------------    
     // append legend----------------------------------------------------
-    var legendRectSize = 18;
+    var legendRectSize = 16;
     var legendSpacing = 4;
     var legend = svg.selectAll('.legend')
       .data(names)
       .enter()
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', function(d, i) {
+      .attr('transform', function(d, i) { // set vertical and horizontal
+        // offset of legen here
         var legendheight = legendRectSize + legendSpacing;
         var offset =  legendheight * i;
-        var horz = 10;
-        var vert = 10 + offset;
+        var horz = 5;
+        var vert = 2 + offset;
         return 'translate(' + horz + ',' + vert + ')';
       });
       
-    legend.append('rect')
-      .attr('width', legendRectSize)
-      .attr('height', legendRectSize)
+    legend.append('circle')
+      .attr('r', legendRectSize/2)
+      //.attr('height', legendRectSize)
+      .attr('cx', legendRectSize/2)
+      .attr('cy', (legendRectSize+legendSpacing)/2)
       .style('fill', function(d, i){
           return color(i);
           })
@@ -353,7 +355,7 @@ function plotStock(){
       
     legend.append('text')
       .attr('x', legendRectSize + legendSpacing)
-      .attr('y', legendRectSize - legendSpacing)
+      .attr('dy', legendRectSize)
       .style("fill", "#F3EFE0")
       .text(function(d,i){
             return names[i];
@@ -452,7 +454,7 @@ function createStockMethods(stocksymbol){
     //stockclass because . can lead to errors in JQuery!
     var stockclass = stocksymbol.replace('.', '-');
     var html = '<div class = "btn-group div-' + stockclass + '">';
-    html += '<button type ="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle ="dropdown" aria-haspopup ="true" aria-expanded="false">';
+    html += '<button type ="button" class="btn btn-default dropdown-toggle btn-sm btn-stock" data-toggle ="dropdown" aria-haspopup ="true" aria-expanded="false">';
     html += stocksymbol + '<span> + </span>';
     html += '</button>';
     html += '<ul class = "dropdown-menu">';

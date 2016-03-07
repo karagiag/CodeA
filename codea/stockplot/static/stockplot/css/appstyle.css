@@ -47,9 +47,9 @@ body{
     border-left: 0;
     border-top: 0;
     border-right: 0;
-	border-bottom: 1px solid;
+	border-bottom: 1px solid rgba(200, 200, 200, 0.4);
 	display: inline-block;
-	background-color: #111;
+	background: rgba(1, 1, 1, 0.95);
     color: #F3EFE0;
 	border-radius: 0;
 }
@@ -135,16 +135,18 @@ body{
 	z-index: 20;
 	width: 100%;
     position: relative;
-    background: rgba(1, 1, 1, 0.95);
+    background: rgba(1, 1, 1, 0.3);
 	color: #F3EFE0;
+}
+
+@keyframes plotlights {
+  0%   { background: rgba(1, 1, 1, 0.3);}
+ 100% { background: rgba(1, 1, 1, 0.95);}
 }
 
 #stockform{
     margin-top: 2%;
     margin-left: 7px;
-}
-
-#clear{
 }
 
 .databox{
@@ -166,11 +168,39 @@ body{
     float: right;
 }
 
+.btn-timeframe{
+    background: rgba(50, 50, 50, 0);
+    color: #F3EFE0;
+    border: 1px solid rgba(200, 200, 200, 0);
+}
+
+.form-plot{
+    
+}
+
+.btn-plot{
+    background: rgba(50, 50, 50, 0);
+    color: #F3EFE0;
+    border: 1px solid rgba(200, 200, 200, 0.4);
+}
+
+.btn-stock{
+    background: rgba(50, 50, 50, 0);
+    color: #F3EFE0;
+    border: 1px solid rgba(200, 200, 200, 0.4);
+}
+
+#clear{
+    background: rgba(50, 50, 50, 0);
+    color: #F3EFE0;
+    border: 1px solid rgba(200, 200, 200, 0.4);
+}
+
 
 /*Plot window---------------------------------------------------------*/
 
 .plotbox{
-    margin-top: 1%;
+    margin-top: 0%;
     margin-bottom: 40px;
     width: 100%;
     height: 100%;
@@ -190,20 +220,17 @@ path {
 }
 
 .grid .tick {
-    stroke: rgba(50, 50, 50, 0.2);/*#F3EFE0;
-    stroke-width: 0;
-    opacity: 0.5;*/
+    stroke: rgba(50, 50, 50, 0.2);/*#F3EFE0;*/
 }
 
 div.tooltip {
     position: absolute;
     text-align: center;
     width: 60px;
-    height: 14px;
-    line-height: 14px;
-    font: 12px sans-serif;
-    background: rgba(200, 200, 200, 0.8);
+    height: 16px;
+    line-height: 16px;
+    background: rgba(50, 50, 50, 0.8);
     border: 1px solid rgba(1, 1, 1, 1);
     border-radius: 5px;
-    pointer-events: none;
+    font-weight: 600;
 }
