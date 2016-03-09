@@ -49,7 +49,6 @@ $(document).ready(function(){
     // form that gets stock data:
     $('#stockform').submit(function(e){
         e.preventDefault();
-        $('.div-plot').css('animation', 'plotlights 0.5s linear forwards');
         var csrftoken = getCookie('csrftoken'); //Prepare csrf token
         var stocksymbol = $('#stocksymbol').val();
         var method = 'plot';
@@ -172,12 +171,22 @@ function plotStock(){
     yRange = d3.scale.linear().range([height, 0]).domain([ymin, ymax]);
     
     //------------------------------------------------------------------
-    // variable for zoom------------------------------------------------
+    // variables for zoom-----------------------------------------------
     var zoom = d3.behavior.zoom()
         .x(xRange)
         .y(yRange)
         .scaleExtent([0.1, Infinity])
-        .on("zoom", zoomfun);
+        .on("zoom", xyzoom);
+    
+    // x-axis separate zoom
+    var xzoom = d3.behavior.zoom()
+        .x(xRange)
+        .on("zoom", zoomx);
+        
+    // y-axis separate zoom
+    var yzoom = d3.behavior.zoom()
+        .y(yRange)
+        .on("zoom", zoomy);
 
     //------------------------------------------------------------------
     // create svg and append stuff--------------------------------------
@@ -187,7 +196,7 @@ function plotStock(){
         .attr('height', height + margin.top + margin.bottom)
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .call(zoom);
+        //.call(zoom);
     svg.append("svg:rect")
         .attr("width", width)
         .attr("height", height)
@@ -238,6 +247,35 @@ function plotStock(){
         .attr("class", "y axis")
         .style("fill", "#F3EFE0")
         .call(yAxis);
+        
+    //------------------------------------------------------------------
+    // Append rectangles for x, y separate zoom-------------------------
+    svg.append("svg:rect")
+      .attr("class", "zoom xy box")
+      .attr("width", width)
+      .attr("height", height)
+      .style("visibility", "hidden")
+      .attr("pointer-events", "all")
+      .call(zoom);
+    
+    
+    svg.append("svg:rect")
+      .attr("class", "zoom x box")
+      .attr("width", width)
+      .attr("height", margin.bottom)
+      .attr("transform", "translate(" + 0 + "," + (height) + ")")
+      .style("visibility", "hidden")
+      .attr("pointer-events", "all")
+      .call(xzoom);
+  
+    svg.append("svg:rect")
+      .attr("class", "zoom y box")
+      .attr("width", margin.left)
+      .attr("height", height)
+      .attr("transform", "translate(" + -margin.left + "," + 0 + ")")
+      .style("visibility", "hidden")
+      .attr("pointer-events", "all")
+      .call(yzoom);
 
     //------------------------------------------------------------------
     // Add x and y grid-------------------------------------------------
@@ -359,47 +397,13 @@ function plotStock(){
       .style("fill", "#F3EFE0")
       .text(function(d,i){
             return names[i];
-          });
+          })
 
     //------------------------------------------------------------------
     // function for zoom------------------------------------------------
-    function zoomfun() {
-        // reset scales when zoom out of bounds:
-        var resetScale = 0;
-          if ((xRange.domain()[1] - xRange.domain()[0]) >= (xmax - xmin)) {
-            zoom.x(xRange.domain([xmin, xmax]));
-            resetScale = 1;
-          }
-          if ((yRange.domain()[1] - yRange.domain()[0]) >= (ymax - ymin)) {
-            zoom.y(yRange.domain([ymin, ymax]));
-            resetScale += 1;
-          }
-          if (resetScale == 2) { // Both axes are out of bounds. Reset.
-            zoom.scale(1); // zoom to 1
-          }
-          else {
-            // different cases if out of bounds in one direction:
-            if (xRange.domain()[1] > xmax){
-                // important!!! date substraction here:
-                var xminnew = new Date(xRange.domain()[0].getTime() - 
-                    xRange.domain()[1].getTime() + xmax.getTime());
-                xRange.domain([xminnew, xmax]);
-            }
-            if (xRange.domain()[0] < xmin){
-                var xmaxnew = new Date(xRange.domain()[1].getTime() - 
-                    xRange.domain()[0].getTime() + xmin.getTime());
-                xRange.domain([xmin, xmaxnew]);
-            }
-            if (yRange.domain()[1] > ymax){
-                var yminnew = yRange.domain()[0] - yRange.domain()[1] + ymax;
-                yRange.domain([yminnew, ymax]);
-            }
-            if (yRange.domain()[0] < ymin){
-                var ymaxnew = yRange.domain()[1] - yRange.domain()[0] + ymin;
-                yRange.domain([ymin, ymaxnew]);
-            }
-          }
-        
+    function xyzoom() {
+        xbounds();
+        ybounds();
         //change toolTipScale to new domain:
         toolTipScale = d3.scale.linear().domain([height + margin.top, 
             margin.top]).range([yRange.domain()[0], yRange.domain()[1]]);
@@ -413,8 +417,106 @@ function plotStock(){
             .call(make_y_axis()
             .tickSize(-width, 0, 0)
             .tickFormat(""));
+        //svg.selectAll('path.line').attr('d', line);
+        update();
+    }
+    
+    function zoomy() {
+        ybounds();
+        toolTipScale = d3.scale.linear().domain([height + margin.top, 
+            margin.top]).range([yRange.domain()[0], yRange.domain()[1]]);
+        svg.select(".y.axis").call(yAxis);
+        svg.select(".y.grid")
+            .call(make_y_axis()
+            .tickSize(-width, 0, 0)
+            .tickFormat(""));
+        //svg.selectAll('path.line').attr('d', line);
+        update();
+    }
+    
+    function zoomx() {
+        xbounds();
+        svg.select(".x.axis").call(xAxis);
+        svg.select(".x.grid")
+            .call(make_x_axis()
+            .tickSize(-height, 0, 0)
+            .tickFormat(""));
+        //svg.selectAll('path.line').attr('d', line);
+        update();
+    }
+    
+    function xbounds(){
+        if ((xRange.domain()[1] - xRange.domain()[0]) >= (xmax - xmin)) {
+            zoom.x(xRange.domain([xmin, xmax]));
+        }
+        if (xRange.domain()[1] > xmax){
+            // important!!! date substraction here:
+            var xminnew = new Date(xRange.domain()[0].getTime() - 
+                xRange.domain()[1].getTime() + xmax.getTime());
+            xRange.domain([xminnew, xmax]);
+        }
+        if (xRange.domain()[0] < xmin){
+            var xmaxnew = new Date(xRange.domain()[1].getTime() - 
+                xRange.domain()[0].getTime() + xmin.getTime());
+            xRange.domain([xmin, xmaxnew]);
+        }
+    }
+    
+    function ybounds(){
+        if ((yRange.domain()[1] - yRange.domain()[0]) >= (ymax - ymin)) {
+            zoom.y(yRange.domain([ymin, ymax]));
+            resetScale += 1;
+        }
+        if (yRange.domain()[1] > ymax){
+            var yminnew = yRange.domain()[0] - yRange.domain()[1] + ymax;
+            yRange.domain([yminnew, ymax]);
+        }
+        if (yRange.domain()[0] < ymin){
+            var ymaxnew = yRange.domain()[1] - yRange.domain()[0] + ymin;
+            yRange.domain([ymin, ymaxnew]);
+        }
+    }
+     
+    /*function generalzoom() {
+        // reset scales when zoom out of bounds:
+        var resetScale = 0;
+      if ((xRange.domain()[1] - xRange.domain()[0]) >= (xmax - xmin)) {
+        zoom.x(xRange.domain([xmin, xmax]));
+        resetScale = 1;
+      }
+      if ((yRange.domain()[1] - yRange.domain()[0]) >= (ymax - ymin)) {
+        zoom.y(yRange.domain([ymin, ymax]));
+        resetScale += 1;
+      }
+      if (resetScale == 2) { // Both axes are out of bounds. Reset.
+        //zoom.scale(1); // zoom to 1
+      }
+      else {
+        // different cases if out of bounds in one direction:
+        if (xRange.domain()[1] > xmax){
+            // important!!! date substraction here:
+            var xminnew = new Date(xRange.domain()[0].getTime() - 
+                xRange.domain()[1].getTime() + xmax.getTime());
+            xRange.domain([xminnew, xmax]);
+        }
+        if (xRange.domain()[0] < xmin){
+            var xmaxnew = new Date(xRange.domain()[1].getTime() - 
+                xRange.domain()[0].getTime() + xmin.getTime());
+            xRange.domain([xmin, xmaxnew]);
+        }
+        if (yRange.domain()[1] > ymax){
+            var yminnew = yRange.domain()[0] - yRange.domain()[1] + ymax;
+            yRange.domain([yminnew, ymax]);
+        }
+        if (yRange.domain()[0] < ymin){
+            var ymaxnew = yRange.domain()[1] - yRange.domain()[0] + ymin;
+            yRange.domain([ymin, ymaxnew]);
+        }
+      }
+    }*/
+    
+    function update(){
         svg.selectAll('path.line').attr('d', line);
-
     }
 }
 

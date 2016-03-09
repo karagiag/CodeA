@@ -40,6 +40,18 @@ body.noscroll
 }
 
 
+.btn.active.focus, .btn.active:focus, .btn.focus, btn:active.focus, 
+.btn:active:focus, .btn:focus{
+    outline: none;
+}
+
+.btn-default.active.focus, .btn-default.active:focus,
+.btn-default.focus, btn-default:active.focus, 
+.btn-default:active:focus, .btn-default:focus{
+    outline: none;
+}
+
+
 /*Home page-----------------------------------------------------------*/
 .div-home-buffer{
 	position: relative;
@@ -197,6 +209,15 @@ body.noscroll
 .navbar .nav > li > a{
 	color: #F3EFE0;
 }
+
+.navbar .nav > li > a:active, 
+.navbar .nav > li > a:focus,
+.navbar .nav > li > a:hover {
+    background: rgba(5, 5, 5, 0.2);
+	color: #F3EFE0;
+    outline: none;
+}
+
 /*End colors for navbar*/
 
 
@@ -218,6 +239,6 @@ body.noscroll
 /*Concact div---------------------------------------------------------*/
 
 .div-contact{
-	background-color: #EEE;
+	background-color: rgb(250, 250, 250);
 	color: #333;
 }
