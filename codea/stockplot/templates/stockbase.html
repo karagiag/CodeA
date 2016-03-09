@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>CodeA</title>
+    
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'stockplot/css/bootstrap.min.css' %}"/>
+	<link rel="stylesheet" href="{% static 'stockplot/css/appstyle.css' %}"/>
+	<link rel="stylesheet" href="{% static 'stockplot/css/font-awesome.min.css' %}"/>
+	
+	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">-->
+	<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,600,700">
+	
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    
+    <div class ="navbar navbar-default navbar-pos" role="navigation">
+        <div class="container-fluid">
+            <div class = "navbar-header">
+              <button type = "button" class = "navbar-toggle" 
+                      data-toggle = "collapse" data-target = "#navbar-main" aria-expanded="false" id="nav-button">
+                <span class = "sr-only">Toggle navigation</span>
+                <span class = "icon-bar" id="span-top"></span>
+                <span class = "icon-bar" id="span-bottom"></span>
+              </button>
+              <a class = "navbar-brand" href = "../">CodeA</a>
+            </div>
+
+
+            <div class="navbar-collapse collapse" id="navbar-main">
+                <ul class="nav navbar-nav">
+                    <li id = "homelink"><a href="../">home</a></li>
+                    <li id = "plotlink"><a href="#plot">Plot stocks here</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            {% if user.is_authenticated %}
+                                <span>{{ user.username }}</span>
+                            {% else %}
+                                <span>User</span>
+                            {% endif %}
+                            <i class="fa fa-user"></i>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class ="dropdown-menu dropdown-login">
+                            <div class = "form-group">
+                                <div class="input-group input-group-login">
+                                  <span class="input-group-addon form-green text-bold" id="basic-addon1">@</span>
+                                  <input type="text" class="form-control" placeholder="username" aria-describedby="basic-addon1">
+                                </div>
+                            </div>
+                            <div class = "form-group">
+                                <div class="input-group input-group-login">
+                                  <span class="input-group-addon form-green" id="basic-addon2"><i class="fa fa-key"></i></span>
+                                  <input type="text" class="form-control" placeholder="password" aria-describedby="basic-addon2">
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">Login</button>
+                                  </span>
+                                </div>
+                            </div>
+                            <li role="separator" class="divider"></li>
+                            <div class = "form-group">
+                                <div class="input-group input-group-login">
+                                    <span id ="span-register">or</span>
+                                    <button href="/register" class="btn btn-default">Register</button>
+                                </div>
+                            </div>
+                        </ul>
+                    </li> <!-- Dropdown -->
+                </ul> <!-- Navbar on the right for user login -->
+            </div> <!-- Navbar div -->
+        </div> <!-- Container-fluid for navbar -->
+    </div> <!-- Main div for navbar -->
+
+    {% block content %}
+
+    {% endblock %}
+	
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+	{% load staticfiles %}
+	<!--<script src="{% static 'stockplot/js/jquery-2.1.4.min.js' %}"></script>-->
+    <script src="{% static 'stockplot/js/jquery-1.11.3.min.js' %}"></script>
+    <script src="{% static 'stockplot/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'stockplot/js/appscript.js' %}"></script>
+    <script src="{% static 'stockplot/js/d3.min.js' %}"></script>
+  </body>
+</html>
