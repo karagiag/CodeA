@@ -5,16 +5,17 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <title>CodeA</title>
+    <title>{% block title %}{% endblock %}</title>
     
-    {% load staticfiles %}
-    <link rel="stylesheet" href="{% static 'stockplot/css/bootstrap.min.css' %}"/>
-	<link rel="stylesheet" href="{% static 'stockplot/css/appstyle.css' %}"/>
-	<link rel="stylesheet" href="{% static 'stockplot/css/font-awesome.min.css' %}"/>
-	
-	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">-->
-	<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,600,700">
-	
+    {% block loadcss %}
+        {% load staticfiles %}
+        <link rel="stylesheet" href="{% static 'stockplot/css/bootstrap.min.css' %}"/>
+        <link rel="stylesheet" href="{% static 'stockplot/css/font-awesome.min.css' %}"/>
+        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">-->
+        <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,600,700">
+        <link rel="stylesheet" href="{% static 'stockplot/css/generalstyle.css' %}"/>
+    {% endblock %}
+    
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -41,7 +42,7 @@
             <div class="navbar-collapse collapse" id="navbar-main">
                 <ul class="nav navbar-nav">
                     <li id = "homelink"><a href="../">home</a></li>
-                    <li id = "plotlink"><a href="#plot">Plot stocks here</a></li>
+                    <li id = "plotlink"><a href="/stockplot/stockapp/">Plot stocks here</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
@@ -74,7 +75,7 @@
                             <div class = "form-group">
                                 <div class="input-group input-group-login">
                                     <span id ="span-register">or</span>
-                                    <button href="/register" class="btn btn-default">Register</button>
+                                    <a href="/stockplot/stockapp/registration/" class="btn btn-default">Register</a>
                                 </div>
                             </div>
                         </ul>
@@ -83,18 +84,20 @@
             </div> <!-- Navbar div -->
         </div> <!-- Container-fluid for navbar -->
     </div> <!-- Main div for navbar -->
-
+    
     {% block content %}
 
     {% endblock %}
-	
-
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
-	{% load staticfiles %}
-	<!--<script src="{% static 'stockplot/js/jquery-2.1.4.min.js' %}"></script>-->
-    <script src="{% static 'stockplot/js/jquery-1.11.3.min.js' %}"></script>
-    <script src="{% static 'stockplot/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'stockplot/js/appscript.js' %}"></script>
-    <script src="{% static 'stockplot/js/d3.min.js' %}"></script>
+    
+    {% block loadjs %}
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+        {% load staticfiles %}
+        <!--<script src="{% static 'stockplot/js/jquery-2.1.4.min.js' %}"></script>-->
+        <script src="{% static 'stockplot/js/jquery-1.11.3.min.js' %}"></script>
+        <script src="{% static 'stockplot/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'stockplot/js/basescript.js' %}"></script>
+    {% endblock %}
+    
+    
   </body>
 </html>

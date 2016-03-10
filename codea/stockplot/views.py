@@ -8,8 +8,6 @@ import stockplot.FinApp.stock as stock
 import json
 
 def index(request):
- 
-  
     context = {}
     return render(request, 'stockplot/index.html', context)
 
@@ -53,3 +51,8 @@ def stockapp(request):
             }
         return render(request, 'stockplot/stockplot.html', context)
 
+
+
+def registration(request):
+    context = {}
+    return render(request, 'stockplot/registration.html', context)

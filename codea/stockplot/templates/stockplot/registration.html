@@ -1,0 +1,21 @@
+{% extends "stockbase.html" %}
+
+{% block title %} CodeA - Registration {% endblock %}
+
+{% block loadcss %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'stockplot/css/registrationstyle.css' %}"/>
+{% endblock %}
+
+{% block content %}
+
+    <div class = "div-registration container">
+        <h1 class = "text-center"> Registration page </h1>
+    </div>
+
+{% endblock %}
+
+{% block loadjs %}
+    {{ block.super }} {# includes previous imports #}
+{% endblock %}
