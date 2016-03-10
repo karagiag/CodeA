@@ -1,5 +1,13 @@
 {% extends "stockbase.html" %}
 
+{% block title %} CodeA - Stockplot App {% endblock %}
+
+{% block loadcss %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'stockplot/css/appstyle.css' %}"/>
+{% endblock %}
+
 {% block content %}
 	
     <div class = "div-background bg-image">
@@ -37,10 +45,7 @@
                 <svg id="visualisation"></svg>
             </div>
             
-            <button class="btn btn-default btn-sm btn-clear" id="clear">Clear All</button>  
-            <!--<div class = "databox" id="box-bottom">
-                
-            </div>-->
+            <button class="btn btn-default btn-sm btn-clear" id="clear">Clear All</button>                  
 		</div>
 			
 	</div>
@@ -51,5 +56,12 @@
         var plotData = [];
         {% endautoescape %}
     </script>
+{% endblock %}
 
- {% endblock %}
+{% block loadjs %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+    <script src="{% static 'stockplot/js/d3.min.js' %}"></script>
+    <script src="{% static 'stockplot/js/appscript.js' %}"></script>
+{% endblock %}
+
