@@ -42,7 +42,7 @@
             <div class="navbar-collapse collapse" id="navbar-main">
                 <ul class="nav navbar-nav">
                     <li id = "homelink"><a href="../">home</a></li>
-                    <li id = "plotlink"><a href="/stockplot/stockapp/">Plot stocks here</a></li>
+                    <li id = "plotlink"><a href="/stockapp/">Plot stocks here</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
@@ -56,6 +56,17 @@
                             <span class="caret"></span>
                         </a>
                         <ul class ="dropdown-menu dropdown-login">
+                            {% if user.is_authenticated %}
+                            <form method="post" action="." id ="logout">
+                                {% csrf_token %}
+                                <div class = "form-group">
+                                    <div class="input-group input-group-login">
+                                        <input type="hidden" name="method" value="{{ 'logout' }}" />
+                                        <button type="submit" class="btn btn-danger">Logout</button>
+                                    </div>
+                                </div>
+                            </form>
+                            {% else %}
                             <div class = "form-group">
                                 <div class="input-group input-group-login">
                                   <span class="input-group-addon form-green text-bold" id="basic-addon1">@</span>
@@ -75,9 +86,10 @@
                             <div class = "form-group">
                                 <div class="input-group input-group-login">
                                     <span id ="span-register">or</span>
-                                    <a href="/stockplot/stockapp/registration/" class="btn btn-default">Register</a>
+                                    <a href="/stockapp/registration/" class="btn btn-default">Register</a>
                                 </div>
                             </div>
+                            {% endif %}
                         </ul>
                     </li> <!-- Dropdown -->
                 </ul> <!-- Navbar on the right for user login -->

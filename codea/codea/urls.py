@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import include,url
 from django.contrib import admin
+import django.contrib.auth.urls
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    url(r'^stockplot/', include('stockplot.urls')),
+    url(r'^', include('django.contrib.auth.urls')),
+    url(r'^', include('stockplot.urls')),
     url(r'^admin/', admin.site.urls),
 ]

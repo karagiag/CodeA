@@ -10,8 +10,51 @@
 
 {% block content %}
 
-    <div class = "div-registration container">
-        <h1 class = "text-center"> Registration page </h1>
+    <div class = "container">
+        <div class = "div-registration container">
+            <h1 class = "text-center"> Registration page </h1>
+        </div>
+        <div class = "col-md-6 col-md-offset-3 col-xs-12">
+            <div class = "form-group">
+                <div class="input-group input-group-login">
+                  <span class="input-group-addon form-green text-bold" id="basic-addon1">F</span>
+                  <input type="text" class="form-control" placeholder="first name" aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class = "form-group">
+                <div class="input-group input-group-login">
+                  <span class="input-group-addon form-green text-bold" id="basic-addon2">L</span>
+                  <input type="text" class="form-control" placeholder="last name" aria-describedby="basic-addon2">
+                </div>
+            </div>
+            <div class = "form-group">
+                <div class="input-group input-group-login">
+                  <span class="input-group-addon form-green text-bold" id="basic-addon3">@</span>
+                  <input type="text" class="form-control" placeholder="e-mail" aria-describedby="basic-addon3">
+                </div>
+            </div>
+            <div class = "form-group">
+                <div class="input-group input-group-login">
+                  <span class="input-group-addon form-green text-bold" id="basic-addon4"><i class="fa fa-user"></i></span>
+                  <input type="text" class="form-control" placeholder="username" aria-describedby="basic-addon4">
+                </div>
+            </div>
+            <div class = "form-group">
+                <div class="input-group input-group-login">
+                  <span class="input-group-addon form-green" id="basic-addon5"><i class="fa fa-key"></i></span>
+                  <input type="text" class="form-control" placeholder="password" aria-describedby="basic-addon5">
+                </div>
+            </div>
+            <div class = "form-group">
+                <div class="input-group input-group-login">
+                  <span class="input-group-addon form-green" id="basic-addon6"><i class="fa fa-key"></i></span>
+                  <input type="text" class="form-control" placeholder="repeat password" aria-describedby="basic-addon6">
+                </div>
+            </div>
+            <div class = "form-group text-center">
+                <button class="btn btn-default" type="submit">Submit</button>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
