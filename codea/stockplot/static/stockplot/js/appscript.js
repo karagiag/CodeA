@@ -2,16 +2,15 @@
 //-----------Javascript for stockplot app-------------------------------
 //----------------------------------------------------------------------
 
-
 var names = [];
 
 // main document ready function ----------------------------------------
 $(document).ready(function(){
     plotStock(); // when doc ready, plot
-	
+
     // collapsed navbar
 	$('#nav-button').on('click touchstart', function () {
-		
+
 		if($('.navbar-collapse').hasClass('in')){
 			$('#span-top').css('animation', 'rotate2 0.2s ease-in forwards');
 			$('#span-bottom').css('animation', 'rotateBack2 0.2s ease-in forwards');
@@ -24,14 +23,14 @@ $(document).ready(function(){
 			$('#span-bottom').css('animation', 'rotateBack 0.2s ease-in forwards');
 		}
 	});
-	
+
     // on window resize replot:
 	$(window).resize(function(){
         $("#visualisation").empty();
         plotStock();
 	});
 
-    
+
     // form that gets stock data:
     $('#stockform').submit(function(e){
         e.preventDefault();
@@ -40,9 +39,9 @@ $(document).ready(function(){
         var method = 'plot';
         $.ajax({
                url : './',
-               type : "POST", 
+               type : "POST",
                // send data to django view:
-               data : { csrfmiddlewaretoken : csrftoken, 
+               data : { csrfmiddlewaretoken : csrftoken,
                         stocksymbol : stocksymbol,
                         method : method,
                },
@@ -57,12 +56,12 @@ $(document).ready(function(){
                createStockMethods(stocksymbol);
                // add to plotData and names and then plot:
                plotData.push(stockData);
-               names.push(stocksymbol); 
+               names.push(stocksymbol);
                plotStock();
-               },  
+               },
         });
     });
- 
+
     // clear plots:
     $('#clear').on('click touchstart', function () {
         names = [];
@@ -70,13 +69,13 @@ $(document).ready(function(){
         $('#box-top').html("");
         plotStock();
 	});
-    
-    
+
+
     // button group with .btn-timeframe's sets timeframe for plot:
     $('.btn-timeframe').on('click touchstart', function(e){
         var timeframe = e.target.id;
         $('.btn-timeframe').removeClass('active');
-        $('#'+timeframe).addClass('active');        
+        $('#'+timeframe).addClass('active');
         plotStock();
     });
 
@@ -93,7 +92,7 @@ $(document).ready(function(){
 function plotStock(){
     $("#visualisation").empty();
     //lines = [];
-    
+
     // calculate and set height for d3 plot. in #visualisation div:
     height = $(window).height() * 0.6;
     $(".plotbox").height(height);
@@ -103,7 +102,7 @@ function plotStock(){
 
     // variable for different colors:
     var color = d3.scale.category20();
-    
+
     //------------------------------------------------------------------
     // get min max dates for x - axis-----------------------------------
     var xmin = gettimeframe();
@@ -119,13 +118,13 @@ function plotStock(){
           return e.date;
       });
     });
-    
+
     //------------------------------------------------------------------
     // get min and max for y axis (beginning with lowest date on xaxis):
     ymin = d3.min(plotData, function(d) {
       return d3.min(d, function(e){
             if (e.date > xmin){
-                return e.price;  
+                return e.price;
             } else {
                 return Number.MAX_SAFE_INTEGER;
             }
@@ -140,7 +139,7 @@ function plotStock(){
             }
       });
     })
-    
+
     //------------------------------------------------------------------
     // set variables for d3 plot----------------------------------------
     var margin = {
@@ -155,7 +154,7 @@ function plotStock(){
     // set variables for x and y ranges:
     var xRange = d3.time.scale().range([0, width]).domain([xmin, xmax]),
     yRange = d3.scale.linear().range([height, 0]).domain([ymin, ymax]);
-    
+
     //------------------------------------------------------------------
     // variables for zoom-----------------------------------------------
     var zoom = d3.behavior.zoom()
@@ -163,12 +162,12 @@ function plotStock(){
         .y(yRange)
         .scaleExtent([0.1, Infinity])
         .on("zoom", xyzoom);
-    
+
     // x-axis separate zoom
     var xzoom = d3.behavior.zoom()
         .x(xRange)
         .on("zoom", zoomx);
-        
+
     // y-axis separate zoom
     var yzoom = d3.behavior.zoom()
         .y(yRange)
@@ -233,7 +232,7 @@ function plotStock(){
         .attr("class", "y axis")
         .style("fill", "#F3EFE0")
         .call(yAxis);
-        
+
     //------------------------------------------------------------------
     // Append rectangles for x, y separate zoom-------------------------
     svg.append("svg:rect")
@@ -243,8 +242,8 @@ function plotStock(){
       .style("visibility", "hidden")
       .attr("pointer-events", "all")
       .call(zoom);
-    
-    
+
+
     svg.append("svg:rect")
       .attr("class", "zoom x box")
       .attr("width", width)
@@ -253,7 +252,7 @@ function plotStock(){
       .style("visibility", "hidden")
       .attr("pointer-events", "all")
       .call(xzoom);
-  
+
     svg.append("svg:rect")
       .attr("class", "zoom y box")
       .attr("width", margin.left)
@@ -277,7 +276,7 @@ function plotStock(){
         .call(make_y_axis()
         .tickSize(-width, 0, 0)
         .tickFormat(""));
-    
+
     //------------------------------------------------------------------
     // append y-axis label----------------------------------------------
     svg.append("text")
@@ -289,13 +288,13 @@ function plotStock(){
       .style("text-anchor", "middle")
       .style("fill", "#F3EFE0")
       .text("Stock price ($)");
-    
-    //------------------------------------------------------------------  
-    // create tooltips-------------------------------------------------- 
+
+    //------------------------------------------------------------------
+    // create tooltips--------------------------------------------------
     var tooldiv = d3.select("#plot-div").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
-     var toolTipScale = d3.scale.linear().domain([height + 
+     var toolTipScale = d3.scale.linear().domain([height +
         margin.top, margin.top]).range([ymin, ymax]);
 
     //------------------------------------------------------------------
@@ -305,7 +304,7 @@ function plotStock(){
         .append("rect")
         .attr("width", width)
         .attr("height", height);
-    
+
     //------------------------------------------------------------------
     // create line------------------------------------------------------
     var line = d3.svg.line()
@@ -325,7 +324,7 @@ function plotStock(){
         .attr("id", "myPath")
         .attr("class", "line")
         .attr("clip-path", "url(#clip)")
-        .attr('stroke', function(d,i){ 			
+        .attr('stroke', function(d,i){
             return color(i);
         })
         .attr("d", line)
@@ -343,11 +342,11 @@ function plotStock(){
             tooldiv.transition()
                 .duration(1000)
                 .style("opacity", 0);
-            
+
         });
 
 
-    //------------------------------------------------------------------    
+    //------------------------------------------------------------------
     // append legend----------------------------------------------------
     var legendRectSize = 16;
     var legendSpacing = 4;
@@ -364,7 +363,7 @@ function plotStock(){
         var vert = 2 + offset;
         return 'translate(' + horz + ',' + vert + ')';
       });
-      
+
     legend.append('circle')
       .attr('r', legendRectSize/2)
       //.attr('height', legendRectSize)
@@ -376,7 +375,7 @@ function plotStock(){
       .style('stroke', function(d, i){
           return color(i);
           })
-      
+
     legend.append('text')
       .attr('x', legendRectSize + legendSpacing)
       .attr('dy', legendRectSize)
@@ -391,7 +390,7 @@ function plotStock(){
         xbounds();
         ybounds();
         //change toolTipScale to new domain:
-        toolTipScale = d3.scale.linear().domain([height + margin.top, 
+        toolTipScale = d3.scale.linear().domain([height + margin.top,
             margin.top]).range([yRange.domain()[0], yRange.domain()[1]]);
         svg.select(".x.axis").call(xAxis);
         svg.select(".y.axis").call(yAxis);
@@ -406,10 +405,10 @@ function plotStock(){
         //svg.selectAll('path.line').attr('d', line);
         update();
     }
-    
+
     function zoomy() {
         ybounds();
-        toolTipScale = d3.scale.linear().domain([height + margin.top, 
+        toolTipScale = d3.scale.linear().domain([height + margin.top,
             margin.top]).range([yRange.domain()[0], yRange.domain()[1]]);
         svg.select(".y.axis").call(yAxis);
         svg.select(".y.grid")
@@ -419,7 +418,7 @@ function plotStock(){
         //svg.selectAll('path.line').attr('d', line);
         update();
     }
-    
+
     function zoomx() {
         xbounds();
         svg.select(".x.axis").call(xAxis);
@@ -430,24 +429,24 @@ function plotStock(){
         //svg.selectAll('path.line').attr('d', line);
         update();
     }
-    
+
     function xbounds(){
         if ((xRange.domain()[1] - xRange.domain()[0]) >= (xmax - xmin)) {
             zoom.x(xRange.domain([xmin, xmax]));
         }
         if (xRange.domain()[1] > xmax){
             // important!!! date substraction here:
-            var xminnew = new Date(xRange.domain()[0].getTime() - 
+            var xminnew = new Date(xRange.domain()[0].getTime() -
                 xRange.domain()[1].getTime() + xmax.getTime());
             xRange.domain([xminnew, xmax]);
         }
         if (xRange.domain()[0] < xmin){
-            var xmaxnew = new Date(xRange.domain()[1].getTime() - 
+            var xmaxnew = new Date(xRange.domain()[1].getTime() -
                 xRange.domain()[0].getTime() + xmin.getTime());
             xRange.domain([xmin, xmaxnew]);
         }
     }
-    
+
     function ybounds(){
         if ((yRange.domain()[1] - yRange.domain()[0]) >= (ymax - ymin)) {
             zoom.y(yRange.domain([ymin, ymax]));
@@ -462,7 +461,7 @@ function plotStock(){
             yRange.domain([ymin, ymaxnew]);
         }
     }
-     
+
     /*function generalzoom() {
         // reset scales when zoom out of bounds:
         var resetScale = 0;
@@ -481,12 +480,12 @@ function plotStock(){
         // different cases if out of bounds in one direction:
         if (xRange.domain()[1] > xmax){
             // important!!! date substraction here:
-            var xminnew = new Date(xRange.domain()[0].getTime() - 
+            var xminnew = new Date(xRange.domain()[0].getTime() -
                 xRange.domain()[1].getTime() + xmax.getTime());
             xRange.domain([xminnew, xmax]);
         }
         if (xRange.domain()[0] < xmin){
-            var xmaxnew = new Date(xRange.domain()[1].getTime() - 
+            var xmaxnew = new Date(xRange.domain()[1].getTime() -
                 xRange.domain()[0].getTime() + xmin.getTime());
             xRange.domain([xmin, xmaxnew]);
         }
@@ -500,7 +499,7 @@ function plotStock(){
         }
       }
     }*/
-    
+
     function update(){
         svg.selectAll('path.line').attr('d', line);
     }
@@ -538,7 +537,7 @@ function getCookie(name) {
 // Generates button with different methods for stocks.
 // For now: only moving average!
 function createStockMethods(stocksymbol){
-    
+
     //stockclass because . can lead to errors in JQuery!
     var stockclass = stocksymbol.replace('.', '-');
     var html = '<div class = "btn-group div-' + stockclass + '">';
@@ -553,23 +552,22 @@ function createStockMethods(stocksymbol){
     html += '<li><a href class = "delete" id ="' + stockclass + '_delete">Delete</a></li>';
     html += '</ul></div>';
     $('#box-top').append(html);
-    
+
     // add event listener for moving average:
     $('.'+stockclass+'_methods').on('click touchstart', function(e){
         e.preventDefault();
-        
         var csrftoken = getCookie('csrftoken'); //Prepare csrf token
-        
+
         var stockstring = e.target.id.split('_');
         var stockclass = stockstring[0]; //get stockclass without .
         var stocksymbol = stockclass.replace('-', '.'); //replace to get actual stocksymbol
         var method = stockstring[1];
         var days = $('#'+stockclass+'Days').val();
         $.ajax({
-               url : '/stockplot/stockapp/',
-               type : "POST", 
+               url : './',
+               type : "POST",
                // data to send to django view
-               data : { csrfmiddlewaretoken : csrftoken, 
+               data : { csrfmiddlewaretoken : csrftoken,
                         stocksymbol : stocksymbol,
                         method: method,
                         days: days,
@@ -582,12 +580,12 @@ function createStockMethods(stocksymbol){
                    stockData[i].date = new Date(stockData[i].date);
                }
                plotData.push(stockData);
-               names.push(stocksymbol + ' ' + days + ' days '+  method); 
+               names.push(stocksymbol + ' ' + days + ' days '+  method);
                plotStock();
-               },  
+               },
         });
     });
-    
+
     // delete method for stock: deletes all plots with the selected
     // stocksymbol
     $('.delete').on('click touchstart', function(e){
@@ -650,11 +648,10 @@ function gettimeframe(){
                 case 'max':
                     fromtime = 'max';
                     break;
-                default:  
+                default:
                     fromtime = 'max';
             }
         }
     })
     return fromtime;
 }
-

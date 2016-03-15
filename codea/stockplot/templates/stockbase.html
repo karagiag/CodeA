@@ -57,11 +57,10 @@
                         </a>
                         <ul class ="dropdown-menu dropdown-login">
                             {% if user.is_authenticated %}
-                            <form method="post" action="." id ="logout">
+                            <form method="post" action="{% url 'logout' %}?next={{ request.path }}" id ="logout">
                                 {% csrf_token %}
                                 <div class = "form-group">
-                                    <div class="input-group input-group-login">
-                                        <input type="hidden" name="method" value="{{ 'logout' }}" />
+                                    <div class="input-group input-group-logout">
                                         <button type="submit" class="btn btn-danger">Logout</button>
                                     </div>
                                 </div>
@@ -69,33 +68,33 @@
                             {% else %}
                                 <form method="post" action="{% url 'login' %}?next={{ request.path }}" id ="login">
                                     {% csrf_token %}
-                                <div class = "form-group">
-                                    <div class="input-group input-group-login">
-                                      <span class="input-group-addon form-green text-bold"
-                                        id="basic-addon1">@</span>
-                                      <input type="text" class="form-control" name="username"
-                                        placeholder="username" aria-describedby="basic-addon1">
+                                    <div class = "form-group">
+                                        <div class="input-group input-group-login">
+                                          <span class="input-group-addon form-green text-bold"
+                                            id="basic-addon1">@</span>
+                                          <input type="text" class="form-control" name="username"
+                                            placeholder="username" aria-describedby="basic-addon1">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class = "form-group">
-                                    <div class="input-group input-group-login">
-                                      <span class="input-group-addon form-green"
-                                        id="basic-addon2"><i class="fa fa-key"></i></span>
-                                      <input type="password" class="form-control" name="password"
-                                        placeholder="password" aria-describedby="basic-addon2">
-                                      <span class="input-group-btn">
-                                        <button class="btn btn-default" type="submit">Login</button>
-                                      </span>
+                                    <div class = "form-group">
+                                        <div class="input-group input-group-login">
+                                          <span class="input-group-addon form-green"
+                                            id="basic-addon2"><i class="fa fa-key"></i></span>
+                                          <input type="password" class="form-control" name="password"
+                                            placeholder="password" aria-describedby="basic-addon2">
+                                          <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit">Login</button>
+                                          </span>
+                                        </div>
                                     </div>
-                                </div>
-                                <li role="separator" class="divider"></li>
-                                <div class = "form-group">
-                                    <div class="input-group input-group-login">
-                                        <span id ="span-register">or</span>
-                                        <a href="/stockapp/registration/" class="btn btn-default">Register</a>
+                                    <li role="separator" class="divider"></li>
+                                    <div class = "form-group">
+                                        <div class="input-group input-group-login">
+                                            <span id ="span-register">or</span>
+                                            <a href="/stockapp/registration/" class="btn btn-default">Register</a>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
                             {% endif %}
                         </ul>
                     </li> <!-- Dropdown -->

@@ -2,3 +2,15 @@
     padding-top: 50px;
     height: 100%;
 }
+
+#message{
+    text-align: center;
+}
+
+.errortext{
+    color: red;
+}
+
+.messagetext{
+    color: green;
+}

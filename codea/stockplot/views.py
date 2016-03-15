@@ -2,6 +2,7 @@ from django.shortcuts import *
 from django.template import RequestContext
 from django.http import JsonResponse
 from django.contrib.auth import logout
+from django.contrib.auth.models import User
 
 import datetime
 from .models import Stock
@@ -55,5 +56,27 @@ def stockapp(request):
 
 
 def registration(request):
-    context = {}
-    return render(request, 'stockplot/registration.html', context)
+    if request.method == "POST":
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('e-mail')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        repeat_password = request.POST.get('repeat_password')
+        if password == repeat_password:
+            #add further conditions here
+            message = 'Registration successful!'
+            error_message = ''
+            user = User.objects.create_user(username, email, password)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+        else:
+            message = ''
+            error_message = 'Passwords don\'t match'
+
+        return JsonResponse({ 'message' : message,
+                        'error_message' : error_message})
+    else:
+        context = { 'message' : '',}
+        return render(request, 'stockplot/registration.html', context)

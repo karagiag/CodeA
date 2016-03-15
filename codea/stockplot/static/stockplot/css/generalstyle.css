@@ -25,13 +25,13 @@ body{
     font-weight: 600;
 }
 
-.btn.active.focus, .btn.active:focus, .btn.focus, btn:active.focus, 
+.btn.active.focus, .btn.active:focus, .btn.focus, btn:active.focus,
 .btn:active:focus, .btn:focus{
     outline: none;
 }
 
 .btn-default.active.focus, .btn-default.active:focus,
-.btn-default.focus, btn-default:active.focus, 
+.btn-default.focus, btn-default:active.focus,
 .btn-default:active:focus, .btn-default:focus{
     outline: none;
 }
@@ -59,7 +59,7 @@ body{
 .navbar.navbar-default .navbar-collapse {
   border: none;
   box-shadow: none;
-  
+
 }
 
 .navbar-default .navbar-collapse{
@@ -121,7 +121,7 @@ body{
 	color: #F3EFE0;
 }
 
-.navbar .nav > li > a:active, 
+.navbar .nav > li > a:active,
 .navbar .nav > li > a:focus,
 .navbar .nav > li > a:hover {
     background: #222;
@@ -145,13 +145,17 @@ body{
 
 .dropdown-login{
     padding-top: 15px;
-    min-width: 300px;
     background: rgba(1, 1, 1, 0.95);
 }
 
 .input-group-login{
+    min-width: 300px;
     margin-left: 10px;
     margin-right: 10px;
+}
+
+.input-group-logout{
+    margin: 0 auto;
 }
 
 #span-register{

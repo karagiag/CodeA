@@ -11,54 +11,66 @@
 {% block content %}
 
     <div class = "container">
-        <div class = "div-registration container">
+        <div class = "div-registration">
             <h1 class = "text-center"> Registration page </h1>
         </div>
         <div class = "col-md-6 col-md-offset-3 col-xs-12">
-            <div class = "form-group">
-                <div class="input-group input-group-login">
-                  <span class="input-group-addon form-green text-bold" id="basic-addon1">F</span>
-                  <input type="text" class="form-control" placeholder="first name" aria-describedby="basic-addon1">
+            <form method="post" action="" id ="formregister">
+                {% csrf_token %}
+                <div class = "form-group">
+                    <div class="input-group input-group-login">
+                      <span class="input-group-addon form-green text-bold" id="basic-addon1">F</span>
+                      <input type="text" class="form-control" name="first_name"
+                        placeholder="first name" aria-describedby="basic-addon1">
+                    </div>
                 </div>
-            </div>
-            <div class = "form-group">
-                <div class="input-group input-group-login">
-                  <span class="input-group-addon form-green text-bold" id="basic-addon2">L</span>
-                  <input type="text" class="form-control" placeholder="last name" aria-describedby="basic-addon2">
+                <div class = "form-group">
+                    <div class="input-group input-group-login">
+                      <span class="input-group-addon form-green text-bold" id="basic-addon2">L</span>
+                      <input type="text" class="form-control" name="last_name"
+                        placeholder="last name" aria-describedby="basic-addon2">
+                    </div>
                 </div>
-            </div>
-            <div class = "form-group">
-                <div class="input-group input-group-login">
-                  <span class="input-group-addon form-green text-bold" id="basic-addon3">@</span>
-                  <input type="text" class="form-control" placeholder="e-mail" aria-describedby="basic-addon3">
+                <div class = "form-group">
+                    <div class="input-group input-group-login">
+                      <span class="input-group-addon form-green text-bold" id="basic-addon3">@</span>
+                      <input type="text" class="form-control" name="e-mail"
+                        placeholder="e-mail" aria-describedby="basic-addon3">
+                    </div>
                 </div>
-            </div>
-            <div class = "form-group">
-                <div class="input-group input-group-login">
-                  <span class="input-group-addon form-green text-bold" id="basic-addon4"><i class="fa fa-user"></i></span>
-                  <input type="text" class="form-control" placeholder="username" aria-describedby="basic-addon4">
+                <div class = "form-group">
+                    <div class="input-group input-group-login">
+                      <span class="input-group-addon form-green text-bold" id="basic-addon4"><i class="fa fa-user"></i></span>
+                      <input type="text" class="form-control" name="username"
+                        placeholder="username" aria-describedby="basic-addon4">
+                    </div>
                 </div>
-            </div>
-            <div class = "form-group">
-                <div class="input-group input-group-login">
-                  <span class="input-group-addon form-green" id="basic-addon5"><i class="fa fa-key"></i></span>
-                  <input type="text" class="form-control" placeholder="password" aria-describedby="basic-addon5">
+                <div class = "form-group">
+                    <div class="input-group input-group-login">
+                      <span class="input-group-addon form-green" id="basic-addon5"><i class="fa fa-key"></i></span>
+                      <input type="text" class="form-control" name="password"
+                        placeholder="password" aria-describedby="basic-addon5">
+                    </div>
                 </div>
-            </div>
-            <div class = "form-group">
-                <div class="input-group input-group-login">
-                  <span class="input-group-addon form-green" id="basic-addon6"><i class="fa fa-key"></i></span>
-                  <input type="text" class="form-control" placeholder="repeat password" aria-describedby="basic-addon6">
+                <div class = "form-group">
+                    <div class="input-group input-group-login">
+                      <span class="input-group-addon form-green" id="basic-addon6"><i class="fa fa-key"></i></span>
+                      <input type="text" class="form-control" name="repeat_password" placeholder="repeat password" aria-describedby="basic-addon6">
+                    </div>
                 </div>
-            </div>
-            <div class = "form-group text-center">
-                <button class="btn btn-default" type="submit">Submit</button>
-            </div>
+                <div class = "form-group text-center">
+                    <button class="btn btn-default" type="submit">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
+
+    <div class = "container col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1" id ="message">
+    <div>
 
 {% endblock %}
 
 {% block loadjs %}
     {{ block.super }} {# includes previous imports #}
+    <script src="{% static 'stockplot/js/registrationscript.js' %}"></script>
 {% endblock %}
