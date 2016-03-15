@@ -3,3 +3,6 @@
 
 # file with tilde #
 *~
+
+# secret settings in django #
+settings_secret.py
