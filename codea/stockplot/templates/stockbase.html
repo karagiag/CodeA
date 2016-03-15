@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <title>{% block title %}{% endblock %}</title>
-    
+
     {% block loadcss %}
         {% load staticfiles %}
         <link rel="stylesheet" href="{% static 'stockplot/css/bootstrap.min.css' %}"/>
@@ -15,7 +15,7 @@
         <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,600,700">
         <link rel="stylesheet" href="{% static 'stockplot/css/generalstyle.css' %}"/>
     {% endblock %}
-    
+
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -25,11 +25,11 @@
   </head>
 
   <body>
-    
+
     <div class ="navbar navbar-default navbar-pos" role="navigation">
         <div class="container-fluid">
             <div class = "navbar-header">
-              <button type = "button" class = "navbar-toggle" 
+              <button type = "button" class = "navbar-toggle"
                       data-toggle = "collapse" data-target = "#navbar-main" aria-expanded="false" id="nav-button">
                 <span class = "sr-only">Toggle navigation</span>
                 <span class = "icon-bar" id="span-top"></span>
@@ -67,28 +67,35 @@
                                 </div>
                             </form>
                             {% else %}
-                            <div class = "form-group">
-                                <div class="input-group input-group-login">
-                                  <span class="input-group-addon form-green text-bold" id="basic-addon1">@</span>
-                                  <input type="text" class="form-control" placeholder="username" aria-describedby="basic-addon1">
+                                <form method="post" action="{% url 'login' %}?next={{ request.path }}" id ="login">
+                                    {% csrf_token %}
+                                <div class = "form-group">
+                                    <div class="input-group input-group-login">
+                                      <span class="input-group-addon form-green text-bold"
+                                        id="basic-addon1">@</span>
+                                      <input type="text" class="form-control" name="username"
+                                        placeholder="username" aria-describedby="basic-addon1">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class = "form-group">
-                                <div class="input-group input-group-login">
-                                  <span class="input-group-addon form-green" id="basic-addon2"><i class="fa fa-key"></i></span>
-                                  <input type="text" class="form-control" placeholder="password" aria-describedby="basic-addon2">
-                                  <span class="input-group-btn">
-                                    <button class="btn btn-default" type="submit">Login</button>
-                                  </span>
+                                <div class = "form-group">
+                                    <div class="input-group input-group-login">
+                                      <span class="input-group-addon form-green"
+                                        id="basic-addon2"><i class="fa fa-key"></i></span>
+                                      <input type="password" class="form-control" name="password"
+                                        placeholder="password" aria-describedby="basic-addon2">
+                                      <span class="input-group-btn">
+                                        <button class="btn btn-default" type="submit">Login</button>
+                                      </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <li role="separator" class="divider"></li>
-                            <div class = "form-group">
-                                <div class="input-group input-group-login">
-                                    <span id ="span-register">or</span>
-                                    <a href="/stockapp/registration/" class="btn btn-default">Register</a>
+                                <li role="separator" class="divider"></li>
+                                <div class = "form-group">
+                                    <div class="input-group input-group-login">
+                                        <span id ="span-register">or</span>
+                                        <a href="/stockapp/registration/" class="btn btn-default">Register</a>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                             {% endif %}
                         </ul>
                     </li> <!-- Dropdown -->
@@ -96,11 +103,11 @@
             </div> <!-- Navbar div -->
         </div> <!-- Container-fluid for navbar -->
     </div> <!-- Main div for navbar -->
-    
+
     {% block content %}
 
     {% endblock %}
-    
+
     {% block loadjs %}
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
         {% load staticfiles %}
@@ -109,7 +116,7 @@
         <script src="{% static 'stockplot/js/bootstrap.min.js' %}"></script>
         <script src="{% static 'stockplot/js/basescript.js' %}"></script>
     {% endblock %}
-    
-    
+
+
   </body>
 </html>

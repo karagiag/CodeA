@@ -19,8 +19,6 @@ def stockapp(request):
         dates = ['2016-01-01', '2016-01-02','2016-01-03','2016-01-04','2016-01-05',
                 '2016-01-06','2016-01-07','2016-01-08','2016-01-09','2016-01-10',]
         data = [3, 4, 5, 4, 5, 6, 4, 3, 2, 6]
-        if(request.POST.get('method') == 'logout'):
-            logout(request)
         if request.is_ajax():
             method = request.POST.get('method')
             stocksymbol = request.POST.get('stocksymbol')
@@ -39,17 +37,17 @@ def stockapp(request):
                 buff = 1
     else:
         dates = []
-        data = []  
-  
-    stockData = []; 
+        data = []
+
+    stockData = [];
     for i in range(0, len(dates)-1):
         stockData.append({'date': dates[i], 'price': data[i]})
-    
+
     if request.method == "POST":
         return JsonResponse({'stockData': stockData})
     else:
         stockData = json.dumps(stockData)
-        context = { 
+        context = {
             'stockData': stockData,
             }
         return render(request, 'stockplot/stockplot.html', context)

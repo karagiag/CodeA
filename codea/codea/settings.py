@@ -1,3 +1,5 @@
+from .settings_secret import *
+
 """
 Django settings for codea project.
 
@@ -18,9 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#8fjj4pg2&vo)ka)_b9eh7v2jtn-jsi%fh7*2w6fi-072xuo%q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -70,21 +69,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'codea.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'codea',
-        'USER': 'oliver',
-        'PASSWORD': '07guitar07',
-        'HOST': 'localhost',
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
