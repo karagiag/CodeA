@@ -1,0 +1,11 @@
+cycler==0.10.0
+Django==1.9.4
+matplotlib==1.5.1
+numpy==1.10.4
+pandas==0.18.0
+psycopg2==2.6.1
+pyparsing==2.1.0
+python-dateutil==2.5.0
+pytz==2016.1
+six==1.10.0
+ystockquote==0.2.4

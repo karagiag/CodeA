@@ -30,20 +30,6 @@ $(document).ready(function(){
         $("#visualisation").empty();
         plotStock();
 	});
-	
-	// animation for smooth scroll:
-	$('a[href*=#]').click(function() {
-        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
-        && location.hostname == this.hostname) {
-            var $target = $(this.hash);
-            $target = $target.length && $target || $('[name=' + this.hash.slice(1) +']');
-            if ($target.length) {
-                var targetOffset = $target.offset().top - 50;
-                $('html,body').animate({scrollTop: targetOffset}, 1000);
-                return false;
-            }
-        }
-    });
 
     
     // form that gets stock data:
@@ -53,7 +39,7 @@ $(document).ready(function(){
         var stocksymbol = $('#stocksymbol').val();
         var method = 'plot';
         $.ajax({
-               url : '/stockplot/stockapp/',
+               url : './',
                type : "POST", 
                // send data to django view:
                data : { csrfmiddlewaretoken : csrftoken, 
