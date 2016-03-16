@@ -55,7 +55,7 @@ def stockapp(request):
 
 
 
-def registration(request):
+'''def registration(request):
     if request.method == "POST":
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -79,4 +79,4 @@ def registration(request):
                         'error_message' : error_message})
     else:
         context = { 'message' : '',}
-        return render(request, 'stockplot/registration.html', context)
+        return render(request, 'stockplot/registration.html', context)'''

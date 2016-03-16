@@ -19,7 +19,8 @@ import django.contrib.auth.urls
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    url(r'^', include('django.contrib.auth.urls')),
+    #url(r'^', include('django.contrib.auth.urls')),
+    #url(r'^accounts/', include('registration.backends.hmac.urls')),
     url(r'^', include('stockplot.urls')),
     url(r'^admin/', admin.site.urls),
 ]
