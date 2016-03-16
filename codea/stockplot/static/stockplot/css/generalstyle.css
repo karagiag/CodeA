@@ -3,6 +3,7 @@
 /*14C18D*/
 
 html, body{
+  padding-top: 50px;
   height: 100%;
   margin: 0;
   font-family: "Open Sans",sans-serif !important;
@@ -130,12 +131,6 @@ body{
 }
 
 /*End colors for navbar*/
-
-
-.navbar-pos{
-	z-index: 100;
-    position: fixed;
-}
 
 
 /*Login form----------------------------------------------------------*/

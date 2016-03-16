@@ -1,53 +1,29 @@
 {% extends "stockbase.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block title %} CodeA - Login {% endblock %}
 
-{% block loadcss %}
-    {{ block.super }} {# includes previous imports #}
-    {% load staticfiles %}
-    <link rel="stylesheet" href="{% static 'stockplot/css/loginstyle.css' %}"/>
-{% endblock %}
 
 {% block content %}
-
-<div class ="div-login container">
-    {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-    {% endif %}
-
-    {% if next %}
-        {% if user.is_authenticated %}
-        <p>Your account doesn't have access to this page. To proceed,
-        please login with an account that has access.</p>
-        {% else %}
-        <p>Please login to see this page.</p>
-        {% endif %}
-    {% endif %}
-
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <table>
-        <tr>
-            <td>{{ form.username.label_tag }}</td>
-            <td>{{ form.username }}</td>
-            </tr>
-        <tr>
-            <td>{{ form.password.label_tag }}</td>
-            <td>{{ form.password }}</td>
-        </tr>
-        </table>
-
-        <input type="submit" value="login" />
-        <input type="hidden" name="next" value="{{ next }}"/>
-    </form>
-
-    {# Assumes you setup the password_reset view in your URLconf #}
-    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+<div class="container">
+    <div class='row'>
+        <div class='col-sm-6 col-sm-offset-3'>
+            <h1>Login</h1>
+            <form method="post" action=".">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <input class='btn btn-block btn-primary' type="submit" value="{% trans 'Submit' %}" />
+              <input type="hidden" name="next" value="{{ next }}" />
+            </form>
+        </div>
+    </div>
+    <hr/>
+    <div class='row'>
+        <div class='col-sm-6 col-sm-offset-3 text-align-center'>
+            <p>{% trans "Forgot password" %}? <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>!</p>
+            <p>{% trans "Not member" %}? <a href="{% url 'registration_register' %}">{% trans "Register" %}</a>!</p>
+        </div>
+    </div>
 </div>
-
-{% endblock %}
-
-
-{% block loadjs %}
-    {{ block.super }} {# includes previous imports #}
 {% endblock %}

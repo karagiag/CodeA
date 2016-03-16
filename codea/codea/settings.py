@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -112,3 +113,8 @@ STATIC_URL = '/static/'
 # settings for django-registration
 
 ACCOUNT_ACTIVATION_DAYS = 7 # users are sent mail and have one week to activate account
+LOGIN_URL = '/accounts/login/' # page the user is redirected to if login fails
+REGISTRATION_AUTO_LOGIN = True # automatic login after registration
+
+# settings for django-crispy-forms
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
