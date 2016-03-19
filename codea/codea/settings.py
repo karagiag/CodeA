@@ -116,5 +116,7 @@ ACCOUNT_ACTIVATION_DAYS = 7 # users are sent mail and have one week to activate 
 LOGIN_URL = '/accounts/login/' # page the user is redirected to if login fails
 REGISTRATION_AUTO_LOGIN = True # automatic login after registration
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # settings for django-crispy-forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
