@@ -9,5 +9,7 @@ psycopg2==2.6.1
 pyparsing==2.1.0
 python-dateutil==2.5.0
 pytz==2016.1
+Quandl==2.8.9
+requests==2.9.1
 six==1.10.0
 ystockquote==0.2.4
