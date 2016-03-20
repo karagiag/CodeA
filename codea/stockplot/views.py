@@ -26,18 +26,21 @@ def stockapp(request):
                 '2016-01-06','2016-01-07','2016-01-08','2016-01-09','2016-01-10',]
         data = [3, 4, 5, 4, 5, 6, 4, 3, 2, 6]
         data = pd.DataFrame(data, index=dates)
-        if request.is_ajax():
-            method = request.POST.get('method')
+        method = request.POST.get('method')
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        if method == 'plot':
             stockid = request.POST.get('stock') # stockid from html form
             stocks = Stock.objects.all() # get all stocks from database
             stocksymbol = stocks.filter(id=stockid) # filter for stockid
             stocksymbol = stocksymbol[0].QuandlSymbol # get symbol for Quandl
             stock1 = StockQuandl(stocksymbol) # create stock object
-            today = datetime.datetime.now().strftime("%Y-%m-%d")
-            if method == 'plot':
-                data = stock1.getStockHistory('1900-01-01', today)
-                buff = 1
-            elif method == 'mvgAvg':
+            # get data:
+            data = stock1.getStockHistory('1900-01-01', today)
+            buff = 1
+        else:
+            stocksymbol = request.POST.get('stocksymbol')
+            stock1 = StockQuandl(stocksymbol) # create stock object
+            if method == 'mvgAvg':
                 days = int(request.POST.get('days'))
                 data = stock1.movingAverage('1900-01-01', today, days)
                 buff = 1
@@ -45,13 +48,13 @@ def stockapp(request):
                 days = int(request.POST.get('days'))
                 data = stock1.ExpAverage('1900-01-01', today, days)
                 buff = 1
-            stockData = data.reset_index().to_json(orient='records')
+        stockData = data.reset_index().to_json(orient='records')
     else:
         stockData = []
         stockData.append({'Date': [], 'Close': []})
 
     if request.method == "POST":
-        return JsonResponse({'stockData': stockData})
+        return JsonResponse({'stockData': stockData, 'stockSymbol': stocksymbol})
     else:
         stockData = json.dumps(stockData)
         context = {
