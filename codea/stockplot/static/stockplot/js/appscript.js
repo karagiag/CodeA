@@ -37,6 +37,7 @@ $(document).ready(function(){
         //var csrftoken = getCookie('csrftoken'); //Prepare csrf token
         //var stocksymbol = $('#stocksymbol').val();
         //var method = 'plot';
+        var stocksymbol = 'stock'
         $.ajax({
                url : './',
                type : "POST",
@@ -50,9 +51,10 @@ $(document).ready(function(){
         success : function(json) {
                // append plotData here
                stockData = json['stockData'];
-               for(var i = 0; i < stockData.length; i++){
+               /*for(var i = 0; i < stockData.length; i++){
                    stockData[i].date = new Date(stockData[i].date);
-               }
+               }*/
+               console.log(stockData);
                // create button with methods:
                createStockMethods(stocksymbol);
                // add to plotData and names and then plot:
@@ -310,10 +312,10 @@ function plotStock(){
     // create line------------------------------------------------------
     var line = d3.svg.line()
         .x(function (d) {
-            return xRange(d.date);
+            return xRange(d.Date);
         })
         .y(function (d) {
-            return yRange(d.price);
+            return yRange(d.Close);
         })
         .interpolate('linear');
 
