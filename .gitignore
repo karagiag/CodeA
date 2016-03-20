@@ -6,3 +6,7 @@
 
 # secret settings in django #
 settings_secret.py
+
+# test file for Quandl data import
+stockQuandl_Test.py
+

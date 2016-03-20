@@ -1,5 +1,5 @@
 # class for stocks
-from .stock import Stock
+from stock import Stock
 import Quandl
 import datetime as datetime
 import pandas as pd
