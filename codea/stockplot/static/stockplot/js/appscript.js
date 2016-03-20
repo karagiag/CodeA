@@ -34,17 +34,18 @@ $(document).ready(function(){
     // form that gets stock data:
     $('#stockform').submit(function(e){
         e.preventDefault();
-        var csrftoken = getCookie('csrftoken'); //Prepare csrf token
-        var stocksymbol = $('#stocksymbol').val();
-        var method = 'plot';
+        //var csrftoken = getCookie('csrftoken'); //Prepare csrf token
+        //var stocksymbol = $('#stocksymbol').val();
+        //var method = 'plot';
         $.ajax({
                url : './',
                type : "POST",
-               // send data to django view:
-               data : { csrfmiddlewaretoken : csrftoken,
+               // send data to django view:'
+               data: $(this).serialize() + "&method=" + 'plot',
+               /*data : { csrfmiddlewaretoken : csrftoken,
                         stocksymbol : stocksymbol,
                         method : method,
-               },
+               },*/
         // successfull return of json data from django view:
         success : function(json) {
                // append plotData here

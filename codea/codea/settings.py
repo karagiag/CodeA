@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'stockplot.apps.StockplotConfig',
+    'dal',
+    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth', # used for authentification and registration
     'django.contrib.contenttypes',

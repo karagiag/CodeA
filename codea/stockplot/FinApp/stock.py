@@ -4,21 +4,22 @@ import ystockquote
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import datetime as dt
-
+import Quandl
+from django.conf import settings
 
 class Stock(object):
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, symbol):
+        self.symbol = symbol
 
     # get current stock price
     def getStockPrice(self):
-        price = ystockquote.get_price(self.name)
+        price = ystockquote.get_price(self.symbol)
         return float(price)
 
-    # get historical stock prices. Date format for start and end: "YYYY-MM-DD"
+    # get historical stock prices from yahoo. Date format for start and end: "YYYY-MM-DD"
     def getStockHistory(self, start, end):
-        history = ystockquote.get_historical_prices(self.name, start, end)
+        history = ystockquote.get_historical_prices(self.symbol, start, end)
         dates = []
         data = []
         for i in sorted(history):
@@ -26,6 +27,11 @@ class Stock(object):
             #dates.append(i)
             data.append(float(history[i]['Close'])) # returns price at close of day
         return dates, data
+
+    # get historical stock prices from Quandl
+    def getStockHistoryQuandl(self, start, end):
+        token = getattr(settings, "QUANDL_TOKEN", 'NO')
+        print(token)
 
     # plot function for historical prices:
     def plotHistory(self, start, end):
@@ -36,14 +42,14 @@ class Stock(object):
     # actual plot function
     def plotStock(self, dates, data, plotname):
         plt.plot(dates, data, label = plotname)
-        plt.ylabel(self.name + ' price ($)')
+        plt.ylabel(self.symbol + ' price ($)')
         plt.gcf().autofmt_xdate()
         plt.grid()
         plt.legend(loc = 'lower right')
         #plt.show()
         plt.draw()
-        
-    # calculates "days"-moving average for stock from start to end    
+
+    # calculates "days"-moving average for stock from start to end
     def movingAverage(self, start, end, days):
         dates, data = self.getStockHistory(start, end)
         average = [0] * len(dates)
@@ -79,15 +85,3 @@ class Stock(object):
         dates, average = self.ExpAverage(start, end, days)
         plotname = 'Exponential Moving Average ' + str(days) + ' days'
         self.plotStock(dates, average, plotname)
-
-
-# class for bought stocks (for depot)
-class BoughtStock(Stock):
-
-    def __init__(self, name, amount):
-        self.name = name
-        self.buyPrice = self.getStockPrice()
-        self.amount = amount
-
-    def __str__(self):
-        return "Name: %s, Price bought: %s, Amount: %s" % (self.name, self.buyPrice, self.amount)
