@@ -7,6 +7,7 @@ import pandas as pd
 from django.shortcuts import *
 from django.template import RequestContext
 from django.http import JsonResponse
+from django.db.models import Q
 
 # own django imports
 from .models import Stock
@@ -30,13 +31,15 @@ def stockapp(request):
         if method == 'plot':
             stockid = request.POST.get('select_stock') # stockid from html form
             stocks = Stock.objects.all() # get all stocks from database
-            stocksymbol = stocks.filter(id=stockid) # filter for stockid
-            stocksymbol = stocksymbol[0].QuandlSymbol # get symbol for Quandl
+            stockDatabase = stocks.filter(id=stockid) # filter for stockid
+            stocksymbol = stockDatabase[0].QuandlSymbol # get symbol for Quandl
+            stockname = stockDatabase[0].name
             stock1 = StockQuandl(stocksymbol) # create stock object
             # get data:
             data = stock1.getStockHistory('1900-01-01', today)
         else:
             stocksymbol = request.POST.get('stocksymbol')
+            stockname = '';
             stock1 = StockQuandl(stocksymbol) # create stock object
             if method == 'mvgAvg':
                 days = int(request.POST.get('days'))
@@ -50,7 +53,9 @@ def stockapp(request):
         stockData.append({'Date': [], 'Close': []})
 
     if request.method == "POST":
-        return JsonResponse({'stockData': stockData, 'stockSymbol': stocksymbol})
+        return JsonResponse({'stockData': stockData,
+                             'stockSymbol': stocksymbol,
+                             'stockName': stockname,})
     else:
         stockData = json.dumps(stockData)
         context = {
@@ -65,5 +70,6 @@ class StockAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         stock = Stock.objects.all()
         if self.q:
-            stock = stock.filter(symbol__istartswith=self.q)
+            stock = stock.filter(Q(name__icontains=self.q)
+                                 |Q(symbol__icontains=self.q))
         return stock

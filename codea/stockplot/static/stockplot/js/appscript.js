@@ -43,13 +43,14 @@ $(document).ready(function(){
         success : function(json) {
                // append plotData here
                var stocksymbol = json['stockSymbol'];
+               var stockname = json['stockName'];
                stockData = json['stockData'];
                stockData = jQuery.parseJSON(stockData);
                // create button with methods:
-               createStockMethods(stocksymbol);
+               createStockMethods(stocksymbol, stockname);
                // add to plotData and names and then plot:
                plotData.push(stockData);
-               names.push(stocksymbol);
+               names.push(stockname);
                plotStock();
                },
         });
@@ -327,7 +328,7 @@ function plotStock(){
             tooldiv.transition()
                 .duration(100)
                 .style("opacity", 0.9);
-           tooldiv.html(Math.ceil(toolTipScale( d3.event.pageY-distanceDiv )) )
+           tooldiv.html(toolTipScale( d3.event.pageY-distanceDiv ).toFixed(2))
             .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY - 28) + "px");
 		})
@@ -528,13 +529,13 @@ function getCookie(name) {
 
 // Generates button with different methods for stocks.
 // For now: only moving average!
-function createStockMethods(stocksymbol){
+function createStockMethods(stocksymbol, stockname){
 
     //stockclass because . can lead to errors in JQuery!
     var stockclass = stocksymbol.replace('/', '-');
     var html = '<div class = "btn-group div-' + stockclass + '">';
     html += '<button type ="button" class="btn btn-default dropdown-toggle btn-sm btn-stock" data-toggle ="dropdown" aria-haspopup ="true" aria-expanded="false">';
-    html += stocksymbol + '<span> + </span>';
+    html += stockname + '<span> + </span>';
     html += '</button>';
     html += '<ul class = "dropdown-menu">';
     html += '<li> <input type ="text" class ="form-control" placeholder = "Days" id = "' + stockclass + 'Days">';
@@ -602,7 +603,6 @@ function createStockMethods(stocksymbol){
                /*for(var i = 0; i < stockData.length; i++){
                    stockData[i].Date = new Date(stockData[i].Date);
                }*/
-               console.log(stockData);
                plotData.push(stockData);
                names.push(stocksymbol + ' ' + days + ' days '+  method);
                plotStock();
