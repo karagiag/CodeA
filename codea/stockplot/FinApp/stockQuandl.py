@@ -1,5 +1,5 @@
-# class for stocks
-from stock import Stock
+# class for stock data from Quandl
+from .stock import Stock
 import Quandl
 import datetime as datetime
 import pandas as pd
@@ -15,8 +15,4 @@ class StockQuandl(Stock):
     def getStockHistory(self, start, end):
         token = getattr(settings, "QUANDL_TOKEN", 'NO')
         data = Quandl.get(self.symbol, trim_start=start, trim_end=end, authtoken= token)
-        #dates = data.index.values
-        #dates = dates.astype(object)
-        #data = data['Close'].tolist()
-        #print(dates)
-        return data['Close']
+        return data['Close'] # return close price for each day 

@@ -22,5 +22,5 @@ urlpatterns = [
     #url(r'^', include('django.contrib.auth.urls')),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
     url(r'^', include('stockplot.urls')),
-    url(r'^admin/', admin.site.urls),
+    url(r'^codea-admin/', admin.site.urls),
 ]

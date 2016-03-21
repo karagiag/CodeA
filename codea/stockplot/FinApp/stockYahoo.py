@@ -1,10 +1,10 @@
-# class for stocks
-#from stockplot.ystockquote import *
+# class for stock data from yahoo
 import ystockquote
 from stock import Stock
 import datetime as dt
 import pandas as pd
 
+### YAHOO YSTOCKQUOTE NOT WORKING---###
 class StockYahoo(Stock):
 
     # get current stock price
@@ -12,7 +12,8 @@ class StockYahoo(Stock):
         price = ystockquote.get_price(self.symbol)
         return float(price)
 
-    # get historical stock prices from yahoo. Date format for start and end: "YYYY-MM-DD"
+    # get historical stock prices from yahoo.
+    # Date format for start and end: "YYYY-MM-DD"
     def getStockHistory(self, start, end):
         history = ystockquote.get_historical_prices(self.symbol, start, end)
         dates = []
@@ -22,3 +23,4 @@ class StockYahoo(Stock):
             #dates.append(i)
             data.append(float(history[i]['Close'])) # returns price at close of day
         return dates, data
+###########################FIXFIXFIX############################################
