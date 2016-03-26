@@ -15,4 +15,4 @@ class StockQuandl(Stock):
     def getStockHistory(self, start, end):
         token = getattr(settings, "QUANDL_TOKEN", 'NO')
         data = Quandl.get(self.symbol, trim_start=start, trim_end=end, authtoken= token)
-        return data['Close'] # return close price for each day
+        return data#['Close'] # return close price for each day

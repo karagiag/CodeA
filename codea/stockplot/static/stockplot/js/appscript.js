@@ -46,6 +46,12 @@ $(document).ready(function(){
                var stockname = json['stockName'];
                stockData = json['stockData'];
                stockData = jQuery.parseJSON(stockData);
+               stockTemp = [];
+               for(var i = 0; i < stockData.length; i++){
+                   stockTemp.push(stockData[i].fields);
+                   stockTemp[i].date = new Date(stockTemp[i].date);
+               }
+               stockData = stockTemp;
                // create button with methods:
                createStockMethods(stocksymbol, stockname);
                // add to plotData and names and then plot:
@@ -103,13 +109,13 @@ function plotStock(){
     if (xmin === 'max'){
     xmin = d3.min(plotData, function(d) {
           return d3.min(d, function(e){
-                return e.Date;
+                return e.date;
                 });
         });
     }
     var xmax = d3.max(plotData, function(d) {
       return d3.max(d, function(e){
-          return e.Date;
+          return e.date;
       });
     });
 
@@ -117,8 +123,8 @@ function plotStock(){
     // get min and max for y axis (beginning with lowest date on xaxis):
     ymin = d3.min(plotData, function(d) {
       return d3.min(d, function(e){
-            if (e.Date > xmin){
-                return e.Close;
+            if (e.date > xmin){
+                return e.close;
             } else {
                 return Number.MAX_SAFE_INTEGER;
             }
@@ -126,8 +132,8 @@ function plotStock(){
     })
     ymax = d3.max(plotData, function(d, i) {
       return d3.max(d, function(e){
-            if (e.Date > xmin){
-                return e.Close;
+            if (e.date > xmin){
+                return e.close;
             } else {
                 return 0;
             }
@@ -303,10 +309,10 @@ function plotStock(){
     // create line------------------------------------------------------
     var line = d3.svg.line()
         .x(function (d) {
-            return xRange(d.Date);
+            return xRange(d.date);
         })
         .y(function (d) {
-            return yRange(d.Close);
+            return yRange(d.close);
         })
         .interpolate('linear');
 
