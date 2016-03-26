@@ -1,5 +1,4 @@
 # Python script for filling database from csv file
-
 import datetime, sys, os, Quandl
 
 # Full path to django project directory
@@ -21,15 +20,17 @@ today = datetime.datetime.now().strftime("%Y-%m-%d")
 # get Quandl token from settings
 token = getattr(settings, "QUANDL_TOKEN", 'NO')
 
+# last n-days of stockdata:
+n = 30;
+
 # Get available stocks from database:
 stocks = Stock.objects.all()
 for stock in Stock.objects.all():
     print(stock.name)
-    stockobj = StockQuandl(stock.QuandlSymbol)
-    history = Quandl.get(stock.Quandlsymbol, trim_start='1900-01-01', trim_end=todayy, authtoken= token)
+    history = Quandl.get(stock.QuandlSymbol, rows = n, authtoken= token)
     for index, row in history.iterrows():
         index = timezone.make_aware(index, timezone.get_current_timezone())
-        data = stock.stockdata_set.get_or_create(date = index,
+        data = stock.stockdata_set.update_or_create(date = index,
             open_price = float(row['Open']), high = float(row['High']),
             low = float(row['Low']), close = float(row['Close']),
             change = float(row['Change']), traded_volume = float(row['Traded Volume']),

@@ -1,11 +1,12 @@
-# base class for stocks
+# class for stocks
+
+#general imports
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
 
-# Stock class implements base class for stocks. Sub-classes depend on
-# different data sources. All data sources deliver pandas dataframes.
-class Stock(object):
+# base class for a stock object
+class StockObj(object):
 
     def __init__(self, symbol):
         self.symbol = symbol
@@ -14,19 +15,22 @@ class Stock(object):
     def getStockPrice(self):
         pass
 
-    # get historical stock prices from yahoo. Date format for start and end: "YYYY-MM-DD"
-    def getStockHistory(self, start, end):
-        pass # depends on data source
+    # get historical stock prices with all info. Date format for start and end: "YYYY-MM-DD"
+    def getStockHistoryAll(self, start, end):
+        pass
+
+    # get historical stock prices only with type info, e.g. 'Open', 'Close'
+    def getStockHistory(self, datatype, start, end):
+        pass
 
     # plot function for historical prices:
-    def plotHistory(self, start, end):
-        data = self.getStockHistory(start, end)
+    def plotHistory(self, dates, data):
         plotname = 'History'
-        self.plotStock(data, plotname)
+        self.plotStock(dates, data, plotname)
 
     # actual plot function
-    def plotStock(self, data, plotname):
-        plt.plot(data, label = plotname)
+    def plotStock(self, dates, data, plotname):
+        plt.plot(dates, data, label = plotname)
         plt.ylabel(self.symbol + ' price ($)')
         plt.gcf().autofmt_xdate()
         plt.grid()
@@ -34,38 +38,36 @@ class Stock(object):
         plt.draw()
 
     # calculates "days"-moving average for stock from start to end
-    def movingAverage(self, start, end, days):
-        data = self.getStockHistory(start, end)
-        average = pd.DataFrame(data, index=data.index.copy())
+    def movingAverage(self, dates, data, days):
+        average = [0] * len(data)
         if (days > len(data)):
             print ("Error. Too many days!")
         else:
             for i in range(days,len(data)-1):
-                average.ix[i] = sum(data.ix[i-days:i])/days
+                average[i] = sum(data[i-days:i])/days
         return average
 
     # plot moving average
-    def plotMovingAverage(self, start, end, days):
-        average = self.movingAverage(start, end, days)
+    def plotMovingAverage(self, dates, data, days):
+        average = self.movingAverage(dates, data, days)
         plotname = 'Moving Average ' + str(days) + ' days'
-        self.plotStock(average, plotname)
+        self.plotStock(dates, average, plotname)
 
     # calculates "days"-exponential moving average for stock from star to end
-    def ExpAverage(self, start, end, days):
-        data = self.getStockHistory(start, end)
-        average = pd.DataFrame(data, index=data.index.copy())
+    def ExpAverage(self, dates, data, days):
+        average = [0] * len(data)
         if (days > len(data)):
             print ("Error. Too many days!")
         else:
             # first average is regular average:
-            average.ix[days] = sum(data.ix[0:days])/days
+            average[days] = sum(data[0:days])/days
             alpha = 2.0/(1+days) # smoothing factor
             for i in range(days + 1, len(data)-1):
-                average.ix[i] = data.ix[i] * alpha + average.ix[i-1] * (1-alpha)
+                average[i] = data[i] * alpha + average[i-1] * (1-alpha)
         return average
 
     # plot exponential moving average
-    def plotExpAverage(self, start, end, days):
-        average = self.ExpAverage(start, end, days)
+    def plotExpAverage(self, dates, data, days):
+        average = self.ExpAverage(dates, data, days)
         plotname = 'Exponential Moving Average ' + str(days) + ' days'
-        self.plotStock(average, plotname)
+        self.plotStock(dates, average, plotname)

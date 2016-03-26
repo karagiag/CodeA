@@ -1,17 +1,23 @@
 # test function for depot and stocks
 import depot
-from stockQuandl_Test import StockQuandl
-from stockYahoo import StockYahoo
+#from stockDatabase import StockDatabase
+from stockQuandl import StockQuandl
+#from stockYahoo import StockYahoo
 import stockMath
 import matplotlib.pyplot as plt
-import datetime as dt
-import matplotlib.dates as mdates
+import datetime
+#import matplotlib.dates as mdates
 
-money = 1000
-test = StockQuandl('FSE/AIR_X')
+#money = 1000
+teststock = StockQuandl('FSE/AIR_X')
+#teststock = StockDatabase('AIR.F')
+today = datetime.datetime.now().strftime("%Y-%m-%d")
 
-test.plotHistory('2005-01-01', '2016-02-23')
-#plt.hold(True)
-#test.plotMovingAverage('2005-01-01', '2016-02-23', 50)
-#test.plotExpAverage('2005-01-01', '2016-02-23', 15)
+# getStockHistory with type, start, end
+# datatype 'Open', 'Close', 'Low', 'High'
+dates, data = teststock.getStockHistory('Close', '2005-01-01', today)
+teststock.plotHistory(dates, data)
+plt.hold(True)
+teststock.plotMovingAverage(dates, data, 50)
+teststock.plotExpAverage(dates, data, 15)
 plt.show()

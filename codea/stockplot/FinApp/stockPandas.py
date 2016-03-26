@@ -1,8 +1,10 @@
-# class for stocks
+# base class for stocks
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
 
+# Stock class implements base class for stocks. Sub-classes depend on
+# different data sources. All data sources deliver pandas dataframes.
 class Stock(object):
 
     def __init__(self, symbol):
@@ -14,7 +16,7 @@ class Stock(object):
 
     # get historical stock prices from yahoo. Date format for start and end: "YYYY-MM-DD"
     def getStockHistory(self, start, end):
-        pass
+        pass # depends on data source
 
     # plot function for historical prices:
     def plotHistory(self, start, end):

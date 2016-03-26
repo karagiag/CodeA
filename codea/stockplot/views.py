@@ -12,9 +12,13 @@ from django.core import serializers
 from django.utils import timezone
 
 # own django imports
-from .models import Stock, StockData
+from .models import Stock
 from .forms import StockForm
-from .FinApp.stockQuandl import StockQuandl
+
+# own modules
+from stockplot.FinApp.stockDatabase import StockDatabase
+from stockplot.FinApp.stockQuandl import StockQuandl
+#from stockplot.FinApp.stockYahoo import StockYahoo
 
 # home page
 def index(request):
@@ -23,50 +27,43 @@ def index(request):
 
 # main view for stockapp:
 def stockapp(request):
+    stockData = []; # initialize stockdata
     if request.method == "POST":
         method = request.POST.get('method')
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        if method == 'plot':
-            stocksymbol= request.POST.get('select_stock') # stockid from html form
-            stockDatabase = Stock.objects.get(symbol=stocksymbol) # get all stocks from database
-            stockname = stockDatabase.name
-            # get data from different sources here. Must be json serialized!
-            stockData = serializers.serialize("json", stockDatabase.stockdata_set.all(), fields=('date', 'close'))
-            #date = stockDatabase.stockdata_set.values_list('date')
-            #close = stockDatabase.stockdata_set.values_list('close')
-            #print(date)
-            #date = date.astimezone(timezone.get_current_timezone()).replace(tzinfo=None)
-            #print(date)
-            #print(timezone.is_aware(data['date']))
-            #data = pd.DataFrame.from_records(close, index=date)
-            #print(data)
-            # Quandl:
-            #stocksymbol = stockDatabase.QuandlSymbol # get symbol for Quandl
-            #stock1 = StockQuandl(stocksymbol) # create stock object
-            #data = stock1.getStockHistory('1900-01-01', today)
-            #print(timezone.is_aware(data.index.values[0]))
-        else:
-            stocksymbol = request.POST.get('stocksymbol')
-            stockname = '';
-            stock1 = StockQuandl(stocksymbol) # create stock object
+        stockSymbol= request.POST.get('select_stock') # stockid from html form
+
+        ##### stock datatype can be selected here.##############################
+        stockQuery = Stock.objects.get(symbol=stockSymbol)
+        stockName = stockQuery.name
+        #symbolQuandl = stockQuery.QuandlSymbol
+        #stock1 = StockQuandl(symbolQuandl)
+        #datatype = 'Close'
+        stock1 = StockDatabase(stockSymbol)
+        datatype = 'close'
+        ########################################################################
+
+        # get historical close prices here:
+        dates, data = stock1.getStockHistory(datatype, '1900-01-01', today)
+
+        if method != 'plot':
+            days = int(request.POST.get('days'))
             if method == 'mvgAvg':
-                days = int(request.POST.get('days'))
-                data = stock1.movingAverage('1900-01-01', today, days)
+                data = stock1.movingAverage(dates, data, days)
             elif method == 'expmvgAvg':
-                days = int(request.POST.get('days'))
-                data = stock1.ExpAverage('1900-01-01', today, days)
-        #stockData = data.reset_index().to_json(orient='records')
-        #print(stockData)
-        #stockData = serializers.serialize("json", stockData)
-        #json.dumps(stockData, cls=DjangoJSONEncoder)
+                data = stock1.ExpAverage(dates, data, days)
+
+        # put data into stockdata dict:
+        for i in range(0, len(dates)-1):
+            stockData.append({'dates': dates[i], 'data': data[i]})
     else:
-        stockData = []
-        stockData.append({'Date': [], 'Close': []})
+        stockData.append({'dates': [], 'data': []})
+
 
     if request.method == "POST":
         return JsonResponse({'stockData': stockData,
-                             'stockSymbol': stocksymbol,
-                             'stockName': stockname,})
+                             'stockSymbol': stockSymbol,
+                             'stockName': stockName,})
     else:
         stockData = json.dumps(stockData)
         context = {

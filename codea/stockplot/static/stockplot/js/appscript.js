@@ -41,17 +41,14 @@ $(document).ready(function(){
                data: $(this).serialize() + "&method=" + 'plot',
         // successfull return of json data from django view:
         success : function(json) {
-               // append plotData here
+               // get data from jsoN:
                var stocksymbol = json['stockSymbol'];
                var stockname = json['stockName'];
                stockData = json['stockData'];
-               stockData = jQuery.parseJSON(stockData);
-               stockTemp = [];
+               // adjust dates for d3.js:
                for(var i = 0; i < stockData.length; i++){
-                   stockTemp.push(stockData[i].fields);
-                   stockTemp[i].date = new Date(stockTemp[i].date);
+                   stockData[i].dates = new Date(stockData[i].dates);
                }
-               stockData = stockTemp;
                // create button with methods:
                createStockMethods(stocksymbol, stockname);
                // add to plotData and names and then plot:
@@ -109,13 +106,13 @@ function plotStock(){
     if (xmin === 'max'){
     xmin = d3.min(plotData, function(d) {
           return d3.min(d, function(e){
-                return e.date;
+                return e.dates;
                 });
         });
     }
     var xmax = d3.max(plotData, function(d) {
       return d3.max(d, function(e){
-          return e.date;
+          return e.dates;
       });
     });
 
@@ -123,8 +120,8 @@ function plotStock(){
     // get min and max for y axis (beginning with lowest date on xaxis):
     ymin = d3.min(plotData, function(d) {
       return d3.min(d, function(e){
-            if (e.date > xmin){
-                return e.close;
+            if (e.dates > xmin){
+                return e.data;
             } else {
                 return Number.MAX_SAFE_INTEGER;
             }
@@ -132,8 +129,8 @@ function plotStock(){
     })
     ymax = d3.max(plotData, function(d, i) {
       return d3.max(d, function(e){
-            if (e.date > xmin){
-                return e.close;
+            if (e.dates > xmin){
+                return e.data;
             } else {
                 return 0;
             }
@@ -309,10 +306,10 @@ function plotStock(){
     // create line------------------------------------------------------
     var line = d3.svg.line()
         .x(function (d) {
-            return xRange(d.date);
+            return xRange(d.dates);
         })
         .y(function (d) {
-            return yRange(d.close);
+            return yRange(d.data);
         })
         .interpolate('linear');
 
@@ -538,7 +535,7 @@ function getCookie(name) {
 function createStockMethods(stocksymbol, stockname){
 
     //stockclass because . can lead to errors in JQuery!
-    var stockclass = stocksymbol.replace('/', '-');
+    var stockclass = stocksymbol.replace('.', '-');
     var html = '<div class = "btn-group div-' + stockclass + '">';
     html += '<button type ="button" class="btn btn-default dropdown-toggle btn-sm btn-stock" data-toggle ="dropdown" aria-haspopup ="true" aria-expanded="false">';
     html += stockname + '<span> + </span>';
@@ -557,7 +554,7 @@ function createStockMethods(stocksymbol, stockname){
         e.preventDefault();
         var csrftoken = getCookie('csrftoken'); //Prepare csrf token
         var stockclass = e.target.id;
-        var stocksymbol = stockclass.replace('-', '/'); //replace to get actual stocksymbol
+        var stocksymbol = stockclass.replace('-', '.'); //replace to get actual stocksymbol
         var method = 'mvgAvg';
         var days = $('#'+stockclass+'Days').val();
         $.ajax({
@@ -565,20 +562,20 @@ function createStockMethods(stocksymbol, stockname){
                type : "POST",
                // data to send to django view
                data : { csrfmiddlewaretoken : csrftoken,
-                        stocksymbol : stocksymbol,
+                        select_stock: stocksymbol,
                         method: method,
                         days: days,
                },
         // in case of success do following with return json data:
         success : function(json) {
                // append plotData here
+               var stockname = json['stockName'];
                stockData = json['stockData'];
-               stockData = jQuery.parseJSON(stockData);
-               /*for(var i = 0; i < stockData.length; i++){
-                   stockData[i].Date = new Date(stockData[i].Date);
-               }*/
+               for(var i = 0; i < stockData.length; i++){
+                   stockData[i].dates = new Date(stockData[i].dates);
+               }
                plotData.push(stockData);
-               names.push(stocksymbol + ' ' + days + ' days '+  method);
+               names.push(stockname + ' ' + days + ' days '+  method);
                plotStock();
                },
        });
@@ -589,7 +586,7 @@ function createStockMethods(stocksymbol, stockname){
         e.preventDefault();
         var csrftoken = getCookie('csrftoken'); //Prepare csrf token
         var stockclass = e.target.id;
-        var stocksymbol = stockclass.replace('-', '/'); //replace to get actual stocksymbol
+        var stocksymbol = stockclass.replace('-', '.'); //replace to get actual stocksymbol
         var method = 'expmvgAvg';
         var days = $('#'+stockclass+'Days').val();
         $.ajax({
@@ -597,20 +594,20 @@ function createStockMethods(stocksymbol, stockname){
                type : "POST",
                // data to send to django view
                data : { csrfmiddlewaretoken : csrftoken,
-                        stocksymbol : stocksymbol,
+                        select_stock: stocksymbol,
                         method: method,
                         days: days,
                },
         // in case of success do following with return json data:
         success : function(json) {
                // append plotData here
+               var stockname = json['stockName'];
                stockData = json['stockData'];
-               stockData = jQuery.parseJSON(stockData);
-               /*for(var i = 0; i < stockData.length; i++){
-                   stockData[i].Date = new Date(stockData[i].Date);
-               }*/
+               for(var i = 0; i < stockData.length; i++){
+                   stockData[i].dates = new Date(stockData[i].dates);
+               }
                plotData.push(stockData);
-               names.push(stocksymbol + ' ' + days + ' days '+  method);
+               names.push(stockname + ' ' + days + ' days '+  method);
                plotStock();
                },
         });
@@ -621,7 +618,7 @@ function createStockMethods(stocksymbol, stockname){
     $('.delete').on('click touchstart', function(e){
         e.preventDefault();
         var stockclass = e.target.id;
-        var stocksymbol = stockclass.replace('-', '/');
+        var stocksymbol = stockclass.replace('-', '.');
         // delete all names and plotData with stocksymbol:
         for (var i = names.length - 1; i >= 0; i--){
             if(names[i].indexOf(stocksymbol) > -1){
