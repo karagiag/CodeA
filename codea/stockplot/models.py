@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # model for saving basic information about a stock:
 class Stock(models.Model):
@@ -32,3 +33,13 @@ class StockData(models.Model):
 
     def __str__(self):
         return str(self.symbol) + ', Date: ' + str(self.date)
+
+# model for a depot entry:
+class Depot(models.Model):
+    user = models.ForeignKey(User)
+    stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
+    amount = models.IntegerField()
+    bought_at = models.FloatField()
+
+    class Meta:
+        unique_together = ('user', 'stock',)

@@ -90,3 +90,9 @@ class StockAutocomplete(autocomplete.Select2QuerySetView):
                                  |Q(symbol__icontains=self.q))
         # then return stock object:
         return stock
+
+
+# main view for depot
+def depot(request):
+        context = {}
+        return render(request, 'stockplot/depot.html', context)
