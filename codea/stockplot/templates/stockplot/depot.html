@@ -11,8 +11,17 @@
 
 {% block content %}
 
-<div class = "container">
-    <h1> Depot </h1>
+<div class = "div-depot">
+    <div class = "container">
+    <form class = "form-inline" action = "" method="post" id ="depot-stockform">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="text" class="form-control input-sm input-amount" name="amount"
+              placeholder="amount">
+            <button type="submit"
+                class ="btn btn-default btn-sm btn-buy">Buy</button>
+        </form>
+    </div>
 </div>
 
 {% endblock %}

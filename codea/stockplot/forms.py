@@ -12,7 +12,7 @@ class StockForm(forms.ModelForm):
     # form for selecting stock with autocomplete from database
     select_stock = forms.ModelChoiceField(
         queryset=Stock.objects.all(),
-        widget=autocomplete.ModelSelect2(url='./stock-autocomplete')
+        widget=autocomplete.ModelSelect2(url='/stockapp/stock-autocomplete')
     )
 
     class Meta:

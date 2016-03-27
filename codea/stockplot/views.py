@@ -94,5 +94,7 @@ class StockAutocomplete(autocomplete.Select2QuerySetView):
 
 # main view for depot
 def depot(request):
-        context = {}
+        context = {
+            'form': StockForm(),
+        }
         return render(request, 'stockplot/depot.html', context)
