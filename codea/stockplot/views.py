@@ -16,8 +16,8 @@ from .models import Stock
 from .forms import StockForm
 
 # own modules
-from stockplot.FinApp.stockDatabase import StockDatabase
-from stockplot.FinApp.stockQuandl import StockQuandl
+from modules.FinApp.stockDatabase import StockDatabase
+from modules.FinApp.stockQuandl import StockQuandl
 #from stockplot.FinApp.stockYahoo import StockYahoo
 
 # home page
