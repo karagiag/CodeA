@@ -3,7 +3,6 @@
 #general imports
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import pandas as pd
 
 # base class for a stock object
 class StockObj(object):
@@ -15,7 +14,7 @@ class StockObj(object):
     def getStockPrice(self):
         pass
 
-    # get historical stock prices with all info. Date format for start and end: "YYYY-MM-DD"
+    # get historical stock prices with all info.
     def getStockHistoryAll(self, start, end):
         pass
 

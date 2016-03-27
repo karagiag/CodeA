@@ -16,6 +16,7 @@ from django.core import serializers
 
 ##################################### Settings import ##########################
 # Full path to django project directory
+# MAKE THIS RELATIVE!!! ###############  UPDATE  ##############################
 djangoproject_home="/home/oliver/Repositories/CodeA/codea/"
 sys.path.append(djangoproject_home)
 # get settings

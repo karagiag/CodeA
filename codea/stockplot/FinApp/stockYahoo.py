@@ -8,6 +8,9 @@ import pandas as pd
 # own modules
 from .stock import StockObj
 
+
+
+############################  UPDATE  ##########################################
 ### YAHOO YSTOCKQUOTE NOT WORKING---###
 class StockYahoo(StockObj):
 
@@ -24,8 +27,8 @@ class StockYahoo(StockObj):
         data = []
         for i in sorted(history):
             dates.append(dt.datetime.strptime(i, '%Y-%m-%d').date())
-            #dates.append(i)
-            data.append(float(history[i]['Close'])) # returns price at close of day
+            data.append(float(history[i]['Close']))
+            # returns price at close of day
         return dates, data
 
 

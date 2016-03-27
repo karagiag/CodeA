@@ -7,6 +7,7 @@ from crispy_forms.bootstrap import FormActions
 from django import forms
 from stockplot.models import Stock
 
+# form for selecting stock in stockplot.
 class StockForm(forms.ModelForm):
     # form for selecting stock with autocomplete from database
     select_stock = forms.ModelChoiceField(
@@ -18,10 +19,4 @@ class StockForm(forms.ModelForm):
         model = Stock
         fields = ()
 
-    '''helper = FormHelper()
-    helper.form_class = 'form-horizontal'
-    helper.layout = Layout(
-        FormActions(
-            Submit('cancel', 'Cancel'),
-        )
-    )'''
+##### UPDATE ###### Introduce helper? ##########################################

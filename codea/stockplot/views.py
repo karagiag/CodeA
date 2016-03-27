@@ -28,12 +28,16 @@ def index(request):
 # main view for stockapp:
 def stockapp(request):
     stockData = []; # initialize stockdata
+
+    # in case of post data for stockplot has been requested:
+    ##################### POST##################################################
     if request.method == "POST":
         method = request.POST.get('method')
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         stockSymbol= request.POST.get('select_stock') # stockid from html form
 
         ##### stock datatype can be selected here.##############################
+        ###  UPDATE  ###  IMPROVE THIS ############
         stockQuery = Stock.objects.get(symbol=stockSymbol)
         stockName = stockQuery.name
         #symbolQuandl = stockQuery.QuandlSymbol
@@ -46,25 +50,27 @@ def stockapp(request):
         # get historical close prices here:
         dates, data = stock1.getStockHistory(datatype, '1900-01-01', today)
 
-        if method != 'plot':
+        # for method plot just return dates, data. Else:
+        if method == 'mvgAvg': # moving average
+            days = int(request.POST.get('days')) # get days for moving average
+            data = stock1.movingAverage(dates, data, days)
+        elif method == 'expmvgAvg': # exponential moving average
             days = int(request.POST.get('days'))
-            if method == 'mvgAvg':
-                data = stock1.movingAverage(dates, data, days)
-            elif method == 'expmvgAvg':
-                data = stock1.ExpAverage(dates, data, days)
+            data = stock1.ExpAverage(dates, data, days)
 
         # put data into stockdata dict:
         for i in range(0, len(dates)-1):
             stockData.append({'dates': dates[i], 'data': data[i]})
-    else:
-        stockData.append({'dates': [], 'data': []})
 
-
-    if request.method == "POST":
         return JsonResponse({'stockData': stockData,
                              'stockSymbol': stockSymbol,
                              'stockName': stockName,})
+
+    ######### NOT POST #########################################################
+    # if method is not "plot", return an empty dict and render the
+    # stockplot.html template
     else:
+        stockData.append({'dates': [], 'data': []})
         stockData = json.dumps(stockData)
         context = {
             'stockData': stockData,
@@ -75,9 +81,12 @@ def stockapp(request):
 
 # autocomplete for stock selection:
 class StockAutocomplete(autocomplete.Select2QuerySetView):
+    # uses dal for autocomplete!
     def get_queryset(self):
         stock = Stock.objects.all()
         if self.q:
+            # query all stocks where name or symbol contain query "q":
             stock = stock.filter(Q(name__icontains=self.q)
                                  |Q(symbol__icontains=self.q))
+        # then return stock object:
         return stock

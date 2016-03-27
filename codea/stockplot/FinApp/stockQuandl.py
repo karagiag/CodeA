@@ -14,6 +14,7 @@ from django.core.wsgi import get_wsgi_application
 
 ##################################### Settings import ##########################
 # Full path to django project directory
+# MAKE THIS RELATIVE!!! ###############  UPDATE  ###############################
 djangoproject_home="/home/oliver/Repositories/CodeA/codea/"
 sys.path.append(djangoproject_home)
 # get settings
