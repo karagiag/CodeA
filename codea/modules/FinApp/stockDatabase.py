@@ -47,4 +47,11 @@ class StockDatabase(StockObj):
         # get data from Database:
         dates = list(stockDatabase.stockdata_set.values_list('date', flat=True))
         data = list(stockDatabase.stockdata_set.values_list(datatype, flat=True))
-        return dates, data # return datatype price for each day
+
+        ############# UPDATE ############ Imporve database query + sorting #####
+        # sort data with respect to dates:
+        datasorted = [y for (x, y) in sorted(zip(dates, data))]
+        datessorted = sorted(dates)
+
+            # returns price at close of day
+        return datessorted, datasorted

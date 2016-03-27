@@ -1,0 +1,30 @@
+/*General, main and body----------------------------------------------*/
+
+/*14C18D*/
+
+.div-background{
+    position: fixed;
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.bg-image{
+	background: url(../img/NewYork2.jpg) no-repeat center center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+/*Depot div--------------------------------------------------------*/
+.div-plot{
+    min-height: 100%;
+	z-index: 20;
+	width: 100%;
+    position: relative;
+    background: rgba(1, 1, 1, 0.9);
+	color: #F3EFE0;
+}
+
+/*Plot window---------------------------------------------------------*/

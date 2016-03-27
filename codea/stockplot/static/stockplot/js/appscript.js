@@ -8,7 +8,7 @@ var names = [];
 $(document).ready(function(){
     plotStock(); // when doc ready, plot
 
-    // collapsed navbar
+    /*// collapsed navbar
 	$('#nav-button').on('click touchstart', function () {
 
 		if($('.navbar-collapse').hasClass('in')){
@@ -22,7 +22,7 @@ $(document).ready(function(){
 			$('#span-top').css('animation', 'rotate 0.2s ease-in forwards');
 			$('#span-bottom').css('animation', 'rotateBack 0.2s ease-in forwards');
 		}
-	});
+	});*/
 
     // on window resize replot:
 	$(window).resize(function(){

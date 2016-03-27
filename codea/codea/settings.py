@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'stockplot.apps.StockplotConfig',
+    'depot.apps.DepotConfig',
     'dal',
     'dal_select2',
     'django.contrib.admin',
