@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.core import serializers
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 # own django imports
 from .models import Stock
@@ -17,7 +18,7 @@ from .forms import StockForm
 
 # own modules
 from modules.FinApp.stockDatabase import StockDatabase
-from modules.FinApp.stockQuandl import StockQuandl
+#from modules.FinApp.stockQuandl import StockQuandl
 #from stockplot.FinApp.stockYahoo import StockYahoo
 
 # home page
@@ -34,21 +35,22 @@ def stockapp(request):
     if request.method == "POST":
         method = request.POST.get('method')
         today = datetime.datetime.now().strftime("%Y-%m-%d")
-        stockSymbol= request.POST.get('select_stock') # stockid from html form
-
+        stockid= request.POST.get('select_stock') # stockid from html form
         ##### stock datatype can be selected here.##############################
         ###  UPDATE  ###  IMPROVE THIS ############
-        stockQuery = Stock.objects.get(symbol=stockSymbol)
+        stockQuery = Stock.objects.get(id=stockid)
+        stockSymbol = stockQuery.sourceSymbol
         stockName = stockQuery.name
-        #symbolQuandl = stockQuery.QuandlSymbol
+        #symbolQuandl = stockQuery.sourceSymbol
         #stock1 = StockQuandl(symbolQuandl)
         #datatype = 'Close'
         stock1 = StockDatabase(stockSymbol)
         datatype = 'close'
         ########################################################################
 
-        # get historical close prices here:
-        dates, data = stock1.getStockHistory(datatype, '1900-01-01', today)
+        # get historical new Date close prices here:
+        step = 1 # every step'th value is returned only
+        dates, data = stock1.getStockHistory(datatype, '1900-01-01', today, step)
 
         # for method plot just return dates, data. Else:
         if method == 'mvgAvg': # moving average
@@ -93,8 +95,13 @@ class StockAutocomplete(autocomplete.Select2QuerySetView):
 
 
 # main view for depot
+#@login_required
 def depot(request):
-        context = {
-            'form': StockForm(),
-        }
-        return render(request, 'stockplot/depot.html', context)
+    if request.user.is_authenticated():
+        i = 2
+    else:
+        i = 3
+    context = {
+        'form': StockForm(),
+    }
+    return render(request, 'stockplot/depot.html', context)

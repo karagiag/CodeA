@@ -1,45 +1,72 @@
+import architect # for partitioning
+
 from django.db import models
 from django.contrib.auth.models import User
 
 # model for saving basic information about a stock:
 class Stock(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length = 100)
-    symbol = models.CharField(max_length = 20, primary_key = True)
+    symbol = models.CharField(max_length = 20)
     stockExchange = models.CharField(max_length = 100)
-    QuandlName = models.CharField(max_length=100)
-    QuandlSymbol = models.CharField(max_length=20)
+    source = models.CharField(max_length=100)
+    sourceName = models.CharField(max_length=100)
+    sourceSymbol = models.CharField(max_length=20)
 
     def __str__(self):
         return self.name + ', ' + self.symbol + ', ' + self.stockExchange
 
 # model for saving data about stock, linked to Stock:
+@architect.install('partition', type='range', subtype='integer', constraint='1', column='stockid')
+# export DJANGO_SETTINGS_MODULE='codea.settings'
+# architect partition --module stockplot.models
 class StockData(models.Model):
-    symbol = models.ForeignKey(Stock, on_delete=models.CASCADE)
-    date = models.DateTimeField()
-    open_price = models.FloatField()
-    high = models.FloatField()
-    low = models.FloatField()
-    close  = models.FloatField()
-    change = models.FloatField()
-    traded_volume = models.FloatField()
-    turnover = models.FloatField()
-    last_price_of_the_day = models.FloatField()
-    daily_traded_units = models.FloatField()
-    daily_turnover = models.FloatField()
+    stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
+    stockid = models.IntegerField(db_index = True)
+    date = models.FloatField(db_index = True)
+    open_price = models.FloatField(null=True, blank=True, default=None)
+    adj_open = models.FloatField(null=True, blank=True, default=None)
+    high = models.FloatField(null=True, blank=True, default=None)
+    adj_high = models.FloatField(null=True, blank=True, default=None)
+    low = models.FloatField(null=True, blank=True, default=None)
+    adj_low = models.FloatField(null=True, blank=True, default=None)
+    close  = models.FloatField(null=True, blank=True, default=None)
+    adj_close = models.FloatField(null=True, blank=True, default=None)
+    change = models.FloatField(null=True, blank=True, default=None)
+    traded_volume = models.FloatField(null=True, blank=True, default=None)
+    adj_volume = models.FloatField(null=True, blank=True, default=None)
+    turnover = models.FloatField(null=True, blank=True, default=None)
+    last_price_of_the_day = models.FloatField(null=True, blank=True, default=None)
+    daily_traded_units = models.FloatField(null=True, blank=True, default=None)
+    daily_turnover = models.FloatField(null=True, blank=True, default=None)
+    ex_dividend = models.FloatField(null=True, blank=True, default=None)
+    split_ratio = models.FloatField(null=True, blank=True, default=None)
 
     class Meta:
-        unique_together = ('symbol', 'date',) # only one entry per symbol per
+        unique_together = ('stockid', 'date',) # only one entry per symbol per
+        '''index_together = [
+            ['symbol', 'date'],
+        ]'''
         # specific Date
 
     def __str__(self):
-        return str(self.symbol) + ', Date: ' + str(self.date)
+        return str(self.stockid) + ', Date: ' + str(self.date)
 
-# model for a depot entry:
+# model for a depot:
 class Depot(models.Model):
     user = models.ForeignKey(User)
+    depotname = models.CharField(max_length = 100)
+
+    class Meta:
+        unique_together = ('user', 'depotname',)
+
+# model for a depot entry:
+class DepotContent(models.Model):
+    depotname = models.ForeignKey(Depot, on_delete = models.CASCADE)
     stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
     amount = models.IntegerField()
     bought_at = models.FloatField()
+    date = models.DateTimeField()
 
     class Meta:
-        unique_together = ('user', 'stock',)
+        unique_together = ('depotname', 'stock',)

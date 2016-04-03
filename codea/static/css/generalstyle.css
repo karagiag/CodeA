@@ -26,6 +26,8 @@ body{
     font-weight: 600;
 }
 
+/* Turn of blue bootstrap glow around buttons and inputs */
+
 .btn.active.focus, .btn.active:focus, .btn.focus, btn:active.focus,
 .btn:active:focus, .btn:focus{
     outline: none;
@@ -35,6 +37,12 @@ body{
 .btn-default.focus, btn-default:active.focus,
 .btn-default:active:focus, .btn-default:focus{
     outline: none;
+}
+
+.form-control:focus{
+    border-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 1px rgba(0, 0, 0, 0.3);
+    outline: 0 none;
 }
 
 /*Navbar--------------------------------------------------------------*/

@@ -39,13 +39,13 @@ class StockQuandl(StockObj):
 
     # get historical stock prices from Quandl for type.
     # type can be 'Open', 'High', 'Low', 'Close'
-    def getStockHistory(self, datatype, start, end):
+    def getStockHistory(self, datatype, start, end, step):
         token = getattr(settings, "QUANDL_TOKEN", 'NO')
         data = Quandl.get(self.symbol, trim_start=start, trim_end=end, authtoken= token)
         # convert to date and 'type' list
-        dates = data.index.values
+        dates = [index.timestamp() for index, row in data.iterrows()]
         # convert dates to python datetime from numpy.datetime64 in LIST COMPREHENSION:!!!
-        dates = [datetime.datetime.utcfromtimestamp(date.astype('O')/1e9) for date in dates]
+        #dates = [datetime.datetime.utcfromtimestamp(date.astype('O')/1e9) for date in dates]
         # convert data to list:
         data = data[datatype].tolist()
         return dates, data # return close price for each day

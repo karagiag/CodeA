@@ -3,6 +3,7 @@
 #general imports
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import datetime as datetime
 
 # base class for a stock object
 class StockObj(object):
@@ -28,7 +29,8 @@ class StockObj(object):
         self.plotStock(dates, data, plotname)
 
     # actual plot function
-    def plotStock(self, dates, data, plotname):
+    def plotStock(self, datestamps, data, plotname):
+        dates = [datetime.datetime.fromtimestamp(date) for date in datestamps]
         plt.plot(dates, data, label = plotname)
         plt.ylabel(self.symbol + ' price ($)')
         plt.gcf().autofmt_xdate()

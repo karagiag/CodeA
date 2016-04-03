@@ -8,22 +8,6 @@ var names = [];
 $(document).ready(function(){
     plotStock(); // when doc ready, plot
 
-    /*// collapsed navbar
-	$('#nav-button').on('click touchstart', function () {
-
-		if($('.navbar-collapse').hasClass('in')){
-			$('#span-top').css('animation', 'rotate2 0.2s ease-in forwards');
-			$('#span-bottom').css('animation', 'rotateBack2 0.2s ease-in forwards');
-			$('#span-top').removeClass('span-top-rotated');
-			$('#span-bottom').removeClass('span-bottom-rotated');
-		} else {
-			$('#span-top').addClass('span-top-rotated');
-			$('#span-bottom').addClass('span-bottom-rotated');
-			$('#span-top').css('animation', 'rotate 0.2s ease-in forwards');
-			$('#span-bottom').css('animation', 'rotateBack 0.2s ease-in forwards');
-		}
-	});*/
-
     // on window resize replot:
 	$(window).resize(function(){
         $("#visualisation").empty();
@@ -47,7 +31,7 @@ $(document).ready(function(){
                stockData = json['stockData'];
                // adjust dates for d3.js:
                for(var i = 0; i < stockData.length; i++){
-                   stockData[i].dates = new Date(stockData[i].dates);
+                   stockData[i].dates = stockData[i].dates*1000; //python timestamp in s, Javascript in ms
                }
                // create button with methods:
                createStockMethods(stocksymbol, stockname);
@@ -572,7 +556,7 @@ function createStockMethods(stocksymbol, stockname){
                var stockname = json['stockName'];
                stockData = json['stockData'];
                for(var i = 0; i < stockData.length; i++){
-                   stockData[i].dates = new Date(stockData[i].dates);
+                   stockData[i].dates = stockData[i].dates*1000; // python timestamp in s, Javascript in ms
                }
                plotData.push(stockData);
                names.push(stockname + ' ' + days + ' days '+  method);
@@ -604,7 +588,7 @@ function createStockMethods(stocksymbol, stockname){
                var stockname = json['stockName'];
                stockData = json['stockData'];
                for(var i = 0; i < stockData.length; i++){
-                   stockData[i].dates = new Date(stockData[i].dates);
+                   stockData[i].dates = stockData[i].dates*1000; // python timestamp in s, Javascript in ms
                }
                plotData.push(stockData);
                names.push(stockname + ' ' + days + ' days '+  method);
