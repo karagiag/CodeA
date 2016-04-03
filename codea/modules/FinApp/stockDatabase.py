@@ -6,7 +6,7 @@ import datetime as datetime
 import pandas as pd
 
 # own modules
-from stock import StockObj
+from .stock import StockObj
 
 # Django imports
 from django.core.wsgi import get_wsgi_application
@@ -76,7 +76,7 @@ class StockDatabase(StockObj):
         return dates, data
 
     # get historical stock prices from Database
-    def getStockHistoryFile(self, datatype, start, end, step):
+    '''def getStockHistoryFile(self, datatype, start, end, step):
         stockDatabase = Stock.objects.get(symbol=self.symbol) # get stock from database
         stockname = stockDatabase.name
         stocksymbol = stockDatabase.symbol
@@ -100,3 +100,4 @@ class StockDatabase(StockObj):
 
         # returns price at close of day
         return datessorted, datasorted
+    '''
