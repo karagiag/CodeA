@@ -13,3 +13,6 @@ stockQuandl_Test.py
 #database dump
 out.json
 db.json
+
+# directories
+codea/media/
