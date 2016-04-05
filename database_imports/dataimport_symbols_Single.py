@@ -20,12 +20,12 @@ stockplot = get_wsgi_application()
 from stockplot.models import Stock
 
 stock = Stock()
-stock.name = 'Fandom'
-stock.symbol = 'FAN.DOM'
+stock.name = 'Random'
+stock.symbol = 'RAN.DOM'
 stock.stockExchange = 'Frankfurt'
-stock.source = 'Fandom'
-stock.sourceName = 'Fandom'
-stock.sourceSymbol = 'FAN.DOM'
+stock.source = 'Random'
+stock.sourceName = 'Random'
+stock.sourceSymbol = 'RAN.DOM'
 print("Saving " + stock.name)
 stock.save()
 

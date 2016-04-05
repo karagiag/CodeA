@@ -36,9 +36,13 @@ def stockapp(request):
         method = request.POST.get('method')
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         stockid= request.POST.get('select_stock') # stockid from html form
+        print(stockid)
+        if method == 'plot':
+            stockQuery = Stock.objects.get(id=stockid)
+        else:
+            stockQuery = Stock.objects.get(sourceSymbol = stockid)
         ##### stock datatype can be selected here.##############################
         ###  UPDATE  ###  IMPROVE THIS ############
-        stockQuery = Stock.objects.get(id=stockid)
         stockSymbol = stockQuery.sourceSymbol
         stockName = stockQuery.name
         #symbolQuandl = stockQuery.sourceSymbol

@@ -1,9 +1,10 @@
 # class for stock data from Database
 
 # general imports
-import Quandl, os, sys, time
+import os, sys, time, h5py
 import datetime as datetime
 import pandas as pd
+import numpy as np
 
 # own modules
 from .stock import StockObj
@@ -27,7 +28,7 @@ stockplot = get_wsgi_application() # load application
 
 
 # import stock model from database
-from stockplot.models import Stock, StockData
+from stockplot.models import Stock, StockData, StockDataFile
 
 class StockDatabase(StockObj):
     # get current stock price
@@ -55,7 +56,6 @@ class StockDatabase(StockObj):
             dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i AND MOD(id,%i) = 0;" % (datatype, stockid, step)
         dates, data = self.access_database(dataquery)
 
-
         # alternative:
         #dates = stockDatabase.stockdata_set.values_list('date', flat = True)
         #data = stockDatabase.stockdata_set.values_list(datatype, flat = True)
@@ -76,28 +76,25 @@ class StockDatabase(StockObj):
         return dates, data
 
     # get historical stock prices from Database
-    '''def getStockHistoryFile(self, datatype, start, end, step):
-        stockDatabase = Stock.objects.get(symbol=self.symbol) # get stock from database
-        stockname = stockDatabase.name
-        stocksymbol = stockDatabase.symbol
+    def getStockHistoryFile(self, datatype, start, end, step):
+        stockDatabase = Stock.objects.get(sourceSymbol=self.symbol) # get stock from database
         # get data from Database:
+        stockfiles = stockDatabase.stockdatafile_set.filter(stockid = stockDatabase.id)
+
         time1 = time.time()
-        if (step == 1):
-            dataquery = 'SELECT date, %s FROM stockplot_stockdata' % (datatype)
-        else:
-            dataquery = 'SELECT date, %s FROM stockplot_stockdata WHERE MOD(id,%i) = 0' % (datatype, step)
+        #### UPDATE #### append files to each other...
+        for stock in stockfiles:
+            # choose file here and open:
+            h5f_url = settings.BASE_DIR + stock.stockdata.url
+            h5f = h5py.File(h5f_url,'r')
+            dates = np.ndarray.tolist(h5f['dates'][:])
+            data = np.ndarray.tolist(h5f['data'][:])
 
-        dates, data = self.access_database(dataquery)
-
-        time2 = time.time()
-        print(time2-time1)
-
+        #data = stockDatabase.stockdata_set.values_list(datatype, flat = True)
         # sort data with respect to dates:
         datasorted = [y for (x, y) in sorted(zip(dates, data))]
         datessorted = sorted(dates)
         time2 = time.time()
         print(time2-time1)
-
         # returns price at close of day
         return datessorted, datasorted
-    '''

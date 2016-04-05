@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 var names = [];
+var symbols = [];
 
 // main document ready function ----------------------------------------
 $(document).ready(function(){
@@ -38,6 +39,7 @@ $(document).ready(function(){
                // add to plotData and names and then plot:
                plotData.push(stockData);
                names.push(stockname);
+               symbols.push(stocksymbol);
                plotStock();
                },
         });
@@ -520,16 +522,16 @@ function createStockMethods(stocksymbol, stockname){
 
     //stockclass because . can lead to errors in JQuery!
     var stockclass = stocksymbol.replace('.', '-');
-    var html = '<div class = "btn-group div-' + stockclass + '">';
+    var html = '<div class = "btn-group div-' + stockname + '">';
     html += '<button type ="button" class="btn btn-default dropdown-toggle btn-sm btn-stock" data-toggle ="dropdown" aria-haspopup ="true" aria-expanded="false">';
     html += stockname + '<span> + </span>';
     html += '</button>';
     html += '<ul class = "dropdown-menu">';
-    html += '<li> <input type ="text" class ="form-control" placeholder = "Days" id = "' + stockclass + 'Days">';
+    html += '<li> <input type ="text" class ="form-control" placeholder = "Days" id = "' + stockname + 'Days">';
     html += '<a href class = "mvgAvg" id="'+stockclass+'"> - Days - Moving Average </a></li>';
     html += '<li><a href class = "expMvgAvg" id="' + stockclass + '"> - Days - Exp. Moving Average </a></li>';
     html += '<li role="separator" class="divider"></li>'
-    html += '<li><a href class = "delete" id ="' + stockclass + '">Delete</a></li>';
+    html += '<li><a href class = "delete" id ="' + stockname + '">Delete</a></li>';
     html += '</ul></div>';
     $('#box-top').append(html);
 
@@ -540,7 +542,7 @@ function createStockMethods(stocksymbol, stockname){
         var stockclass = e.target.id;
         var stocksymbol = stockclass.replace('-', '.'); //replace to get actual stocksymbol
         var method = 'mvgAvg';
-        var days = $('#'+stockclass+'Days').val();
+        var days = $('#'+stockname+'Days').val();
         $.ajax({
                url : './',
                type : "POST",
@@ -560,6 +562,7 @@ function createStockMethods(stocksymbol, stockname){
                }
                plotData.push(stockData);
                names.push(stockname + ' ' + days + ' days '+  method);
+               symbols.push(stocksymbol);
                plotStock();
                },
        });
@@ -572,7 +575,7 @@ function createStockMethods(stocksymbol, stockname){
         var stockclass = e.target.id;
         var stocksymbol = stockclass.replace('-', '.'); //replace to get actual stocksymbol
         var method = 'expmvgAvg';
-        var days = $('#'+stockclass+'Days').val();
+        var days = $('#'+stockname+'Days').val();
         $.ajax({
                url : './',
                type : "POST",
@@ -592,6 +595,7 @@ function createStockMethods(stocksymbol, stockname){
                }
                plotData.push(stockData);
                names.push(stockname + ' ' + days + ' days '+  method);
+               symbols.push(stocksymbol);
                plotStock();
                },
         });
@@ -601,17 +605,18 @@ function createStockMethods(stocksymbol, stockname){
     // stocksymbol
     $('.delete').on('click touchstart', function(e){
         e.preventDefault();
-        var stockclass = e.target.id;
-        var stocksymbol = stockclass.replace('-', '.');
+        var stockname = e.target.id;
+        //var stocksymbol = stockclass.replace('-', '.');
         // delete all names and plotData with stocksymbol:
         for (var i = names.length - 1; i >= 0; i--){
-            if(names[i].indexOf(stocksymbol) > -1){
+            if(names[i].indexOf(stockname) > -1){
                 names.splice(i, 1);
+                symbols.splice(i,1);
                 plotData.splice(i, 1);
             }
         }
         // remove button div:
-        $(".div-"+stockclass).remove();
+        $(".div-"+stockname).remove();
         plotStock();
     });
 }

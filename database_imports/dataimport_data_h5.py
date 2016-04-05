@@ -14,8 +14,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "codea.settings")
 from django.core.wsgi import get_wsgi_application
 from django.utils import timezone
 from django.conf import settings
+from django.core.files import File
 stockplot = get_wsgi_application()
-from stockplot.models import Stock, StockData
+from stockplot.models import Stock, StockDataFile
 from modules.FinApp.stockQuandl import StockQuandl
 today = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -23,10 +24,10 @@ today = datetime.datetime.now().strftime("%Y-%m-%d")
 token = getattr(settings, "QUANDL_TOKEN", 'NO')
 
 # Get available stocks from database:
-stock = Stock.objects.get(name__iexact = 'Fandom')
+stock = Stock.objects.get(name__iexact = 'Random')
 print(stock.name)
 base = datetime.datetime.today()
-nbEntries = 100000
+nbEntries = 10000000
 dates_datetime = [pytz.utc.localize(base - datetime.timedelta(seconds = x)) for x in range(0, nbEntries)]
 #timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
 #dates = [np.string_(date.isoformat()) for date in dates_datetime]
@@ -35,21 +36,24 @@ dates = [date.timestamp() for date in dates_datetime]
 
 open_price = np.array([random.random()*100 for _ in range(0, nbEntries)])
 
+#### UPDATE #### separate data into months and save into database...
+
 print("begin")
 with h5py.File('data.h5', 'w') as hf:
     hf.create_dataset('dates', data=dates)
     hf.create_dataset('data', data=open_price)
 print("end")
 
-'''print("begin")
-stocks = [
-    StockData(
-        symbol = stock.sourceSymbol,
-        date = date,
-        open_price = open_p,
-    ) for date, open_p in zip(dates, open_price)
-]
-print("end")
+stockdatafile = StockDataFile()
+stockdatafile.stock = stock
+stockdatafile.stockid = stock.id
+stockdatafile.fromDate = dates[0]
+stockdatafile.toDate = dates[len(dates)-1]
 
-StockData.objects.bulk_create(stocks)
-'''
+djangofile = File(open('data.h5', 'rb'))
+
+##### UPDATE ##### give a good name to each file...
+stockdatafile.stockdata.save(stock.name, djangofile)
+djangofile.close()
+
+stockdatafile.save()

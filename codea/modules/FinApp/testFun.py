@@ -10,16 +10,16 @@ import datetime
 
 #money = 1000
 #teststock = StockQuandl('FSE/AIR_X')
-teststock = StockDatabase('FSE/KCO_X')
+teststock = StockDatabase('FAN.DOM')
 today = datetime.datetime.now().strftime("%Y-%m-%d")
 
 # getStockHistory with type, start, end
 # datatype 'Open', 'Close', 'Low', 'High'
 step = 1
-dates, data = teststock.getStockHistory('close', '2000-01-01', today, step)
-#print(data)
-teststock.plotHistory(dates, data)
+dates, data = teststock.getStockHistoryFile('close', '2000-01-01', today, step)
+print(len(data))
+#teststock.plotHistory(dates, data)
 #plt.hold(True)
 #teststock.plotMovingAverage(dates, data, 50)
 #teststock.plotExpAverage(dates, data, 15)
-plt.show()
+#plt.show()

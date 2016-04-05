@@ -17,7 +17,7 @@ class Stock(models.Model):
         return self.name + ', ' + self.symbol + ', ' + self.stockExchange
 
 # model for saving data about stock, linked to Stock:
-@architect.install('partition', type='range', subtype='integer', constraint='1', column='stockid')
+@architect.install('partition', type='range', subtype='integer', constraint='100', column='stockid')
 # export DJANGO_SETTINGS_MODULE='codea.settings'
 # architect partition --module stockplot.models
 class StockData(models.Model):
@@ -50,7 +50,30 @@ class StockData(models.Model):
         # specific Date
 
     def __str__(self):
-        return str(self.stockid) + ', Date: ' + str(self.date)
+        return str(self.stock) + ', Date: ' + str(self.date)
+
+# model for saving files for stocks (timestamp, value):
+@architect.install('partition', type='range', subtype='integer', constraint='100', column='stockid')
+# export DJANGO_SETTINGS_MODULE='codea.settings'
+# architect partition --module stockplot.models
+class StockDataFile(models.Model):
+    stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
+    stockid = models.IntegerField(db_index = True)
+    fromDate = models.FloatField(db_index = True)
+    toDate = models.FloatField()
+    stockdata = models.FileField(upload_to='data/')
+
+    class Meta:
+        unique_together = ('stockid', 'fromDate',)
+        '''index_together = [
+            ['symbol', 'date'],
+        ]'''
+
+    def __str__(self):
+        return str(self.stock) + ', Date: ' + str(self.fromDate)
+
+
+
 
 # model for a depot:
 class Depot(models.Model):
