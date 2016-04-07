@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 
 var names = [];
-var symbols = [];
 
 // main document ready function ----------------------------------------
 $(document).ready(function(){
@@ -39,7 +38,6 @@ $(document).ready(function(){
                // add to plotData and names and then plot:
                plotData.push(stockData);
                names.push(stockname);
-               symbols.push(stocksymbol);
                plotStock();
                },
         });
@@ -129,7 +127,7 @@ function plotStock(){
         top: 20,
         right: 20,
         bottom: 20,
-        left: 50
+        left: 40
     };
     width = width - margin.left - margin.right;
     height = height - margin.top - margin.bottom;
@@ -262,7 +260,7 @@ function plotStock(){
 
     //------------------------------------------------------------------
     // append y-axis label----------------------------------------------
-    svg.append("text")
+    /*svg.append("text")
       .attr("text-anchor", "end")
       .attr("y", -margin.left)
       .attr("x", -height/2)
@@ -270,7 +268,7 @@ function plotStock(){
       .attr("transform", "rotate(-90)")
       .style("text-anchor", "middle")
       .style("fill", "#F3EFE0")
-      .text("Stock price ($)");
+      .text("Stock price ($)");*/
 
     //------------------------------------------------------------------
     // create tooltips--------------------------------------------------
@@ -304,30 +302,43 @@ function plotStock(){
         .data(plotData)
         .enter()
         .append("path")
-        .attr("id", "myPath")
+        //.attr("id", "myPath")
         .attr("class", "line")
         .attr("clip-path", "url(#clip)")
         .attr('stroke', function(d,i){
             return color(i);
         })
         .attr("d", line)
-        .on("mousemove", function (d, i) { // add mousemove and mouseout
+        .on('mousemove', function() {
+           tooltipmove();
+        })
+        .on("touchmove", function () { // add mousemove and mouseout
+            tooltipmove();
+		})
+        .on("mouseout", function () {
+            tooltipout();
+        })
+        .on("touchend", function () {
+            tooltipout();
+        });
+
+        function tooltipmove(){
             //functions for tooltips
             var distanceDiv = $('#visualisation').offset().top;
             tooldiv.transition()
-                .duration(100)
+                .duration(10)
                 .style("opacity", 0.9);
-           tooldiv.html(toolTipScale( d3.event.pageY-distanceDiv ).toFixed(2))
-            .style("left", (d3.event.pageX) + "px")
-            .style("top", (d3.event.pageY - 28) + "px");
-		})
-        .on("mouseout", function (d) {
+            var pad = parseInt($('body').css('padding-top'))+parseInt($('.tooltip').css('height'))/2;
+            tooldiv.style("left", (d3.event.pageX + 10) + "px")
+             .style("top", (d3.event.pageY - pad) + "px");
+            tooldiv.html(toolTipScale( d3.event.pageY-distanceDiv ).toFixed(2))
+        }
+
+        function tooltipout(){
             tooldiv.transition()
                 .duration(1000)
                 .style("opacity", 0);
-
-        });
-
+        }
 
     //------------------------------------------------------------------
     // append legend----------------------------------------------------
@@ -562,7 +573,6 @@ function createStockMethods(stocksymbol, stockname){
                }
                plotData.push(stockData);
                names.push(stockname + ' ' + days + ' days '+  method);
-               symbols.push(stocksymbol);
                plotStock();
                },
        });
@@ -595,7 +605,6 @@ function createStockMethods(stocksymbol, stockname){
                }
                plotData.push(stockData);
                names.push(stockname + ' ' + days + ' days '+  method);
-               symbols.push(stocksymbol);
                plotStock();
                },
         });
@@ -611,7 +620,6 @@ function createStockMethods(stocksymbol, stockname){
         for (var i = names.length - 1; i >= 0; i--){
             if(names[i].indexOf(stockname) > -1){
                 names.splice(i, 1);
-                symbols.splice(i,1);
                 plotData.splice(i, 1);
             }
         }

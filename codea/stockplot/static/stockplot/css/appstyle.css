@@ -129,6 +129,10 @@ path {
     shape-rendering: crispEdges;
 }
 
+.line:hover{
+    stroke-width: 4;
+}
+
 .grid .tick {
     stroke: rgba(50, 50, 50, 0.2);/*#F3EFE0;*/
 }
@@ -139,8 +143,8 @@ div.tooltip {
     width: 60px;
     height: 16px;
     line-height: 16px;
-    background: rgba(50, 50, 50, 0.8);
-    border: 1px solid rgba(1, 1, 1, 1);
-    border-radius: 5px;
+    background: rgba(1, 1, 1, 0.9);
+    border: 1px solid rgba(50, 50, 50, 1);
+    border-radius: 2px;
     font-weight: 600;
 }
