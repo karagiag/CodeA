@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.conf.urls import include
-from stockplot.views import StockAutocomplete
+from stockplot.views import StockAutocomplete, DepotAutocomplete
 
 from . import views
 
@@ -13,4 +13,9 @@ urlpatterns = [ url(r'^$', views.index, name = 'index'),
                     r'^stockapp/stock-autocomplete/$',
                     StockAutocomplete.as_view(),
                     name='stock-autocomplete',
+                ),
+                url(
+                    r'^depot/depot-autocomplete/$',
+                    DepotAutocomplete.as_view(),
+                    name='depot-autocomplete',
                 ),]

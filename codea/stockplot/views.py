@@ -13,8 +13,8 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
 # own django imports
-from .models import Stock
-from .forms import StockForm
+from .models import Stock, Depot
+from .forms import StockForm, DepotForm
 
 # own modules
 from modules.FinApp.stockDatabase import StockDatabase
@@ -101,11 +101,33 @@ class StockAutocomplete(autocomplete.Select2QuerySetView):
 # main view for depot
 #@login_required
 def depot(request):
+    if request.method == "POST":
+        # create depot:
+        if request.POST.get('depot_name') != '':
+            depot = Depot()
+            depot.user = request.user
+            depot.depotname = request.POST.get('depot_name')
+            depot.save()
     if request.user.is_authenticated():
-        i = 2
+        context = {
+            'depotform': DepotForm(),
+            'stockform': '',
+        }
     else:
-        i = 3
-    context = {
-        'form': StockForm(),
-    }
+        context = {
+            'depotform': '',
+            'stockform': '',
+        }
     return render(request, 'stockplot/depot.html', context)
+
+
+# autocomplete for depot selection:
+class DepotAutocomplete(autocomplete.Select2QuerySetView):
+    # uses dal for autocomplete!
+    def get_queryset(self):
+        depot = Depot.objects.all()
+        if self.q:
+            # query all depots where name or contains query "q":
+            depot = depot.filter(Q(depotname__icontains=self.q))
+        # then return depot object:
+        return depot

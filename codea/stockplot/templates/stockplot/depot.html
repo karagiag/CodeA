@@ -12,15 +12,14 @@
 {% block content %}
 
 <div class = "div-depot">
-    <div class = "container">
-    <form class = "form-inline" action = "" method="post" id ="depot-stockform">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <input type="text" class="form-control input-sm input-amount" name="amount"
-              placeholder="amount">
-            <button type="submit"
-                class ="btn btn-default btn-sm btn-buy">Buy</button>
-        </form>
+    <div class = "container div-top">
+    {% if depotform == '' %}
+        <h3> Please login to create or view a depot</h3>
+    {% else %}
+        {% csrf_token %}
+        {% crispy depotform %}
+        {% crispy stockform %}
+    {% endif %}
     </div>
 </div>
 
@@ -30,5 +29,6 @@
     {{ block.super }} {# includes previous imports #}
     {% load staticfiles %}
     <script src="{% static 'stockplot/js/depotscript.js' %}"></script>
-    {{ form.media }}
+    {{ depotform.media }}
+    {{ stockform.media }}
 {% endblock %}

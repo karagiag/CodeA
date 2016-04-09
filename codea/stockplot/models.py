@@ -78,10 +78,13 @@ class StockDataFile(models.Model):
 # model for a depot:
 class Depot(models.Model):
     user = models.ForeignKey(User)
-    depotname = models.CharField(max_length = 100)
+    depotname = models.CharField(max_length = 100, primary_key=True)
 
     class Meta:
         unique_together = ('user', 'depotname',)
+
+    def __str__(self):
+        return str(self.user) + ' ' + str(self.depotname)
 
 # model for a depot entry:
 class DepotContent(models.Model):

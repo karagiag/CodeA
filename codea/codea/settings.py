@@ -30,16 +30,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'stockplot.apps.StockplotConfig',
     'dal',
     'dal_select2',
+    'crispy_forms',
+    'stockplot.apps.StockplotConfig',
     'django.contrib.admin',
     'django.contrib.auth', # used for authentification and registration
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
 ]
 
 MIDDLEWARE_CLASSES = [
