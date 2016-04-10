@@ -12,20 +12,27 @@ from django.core import serializers
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
+from django_tables2   import RequestConfig
+
 # own django imports
-from .models import Stock, Depot
-from .forms import StockForm, DepotForm
+from .models import Stock, Depot, DepotContent
+from .forms import StockForm, DepotForm, BuyStockForm
+from .tables import DepotTable
 
 # own modules
 from modules.FinApp.stockDatabase import StockDatabase
 #from modules.FinApp.stockQuandl import StockQuandl
 #from stockplot.FinApp.stockYahoo import StockYahoo
 
+
+################################################################################
 # home page
 def index(request):
     context = {}
     return render(request, 'stockplot/index.html', context)
 
+
+################################################################################
 # main view for stockapp:
 def stockapp(request):
     stockData = []; # initialize stockdata
@@ -84,7 +91,7 @@ def stockapp(request):
             }
         return render(request, 'stockplot/stockplot.html', context)
 
-
+################################################################################
 # autocomplete for stock selection:
 class StockAutocomplete(autocomplete.Select2QuerySetView):
     # uses dal for autocomplete!
@@ -96,36 +103,88 @@ class StockAutocomplete(autocomplete.Select2QuerySetView):
                                  |Q(symbol__icontains=self.q))
         # then return stock object:
         return stock
+################################################################################
 
 
-# main view for depot
+# main view for depot ##########################################################
 #@login_required
 def depot(request):
-    if request.method == "POST":
-        # create depot:
-        if request.POST.get('depot_name') != '':
-            depot = Depot()
-            depot.user = request.user
-            depot.depotname = request.POST.get('depot_name')
-            depot.save()
+    ##### UPDATE ##### fix if structure here...#################################
     if request.user.is_authenticated():
+        if request.method == "POST":
+            # select depot and display contents:################################
+            if request.POST.get('select_depot') != None:
+                depotname= request.POST.get('select_depot')
+                request.session['depotname'] = depotname
+                depot = Depot.objects.get(depotname = depotname)
+
+            # create depot:#####################################################
+            elif request.POST.get('depot_name') != None:
+                depotname = request.POST.get('depot_name')
+                request.session['depotname'] = depotname
+                depot = Depot()
+                depot.user = request.user
+                depot.depotname = depotname
+                depot.save()
+
+            # buy stock: #######################################################
+            elif request.POST.get('select_stock') != None:
+                depotname = request.session['depotname']
+                depot = Depot.objects.get(depotname = depotname)
+                stockid= request.POST.get('select_stock')
+                depotcontent = DepotContent()
+                depotcontent.depotname = depot
+                depotcontent.stock = Stock.objects.get(id=stockid)
+                depotcontent.amount = request.POST.get('amount')
+                depotcontent.bought_at = 60
+                depotcontent.date = datetime.datetime.now()
+                depotcontent.save()
+
+            # render depot table and stockform: ################################
+            depotcontent = depot.depotcontent_set.all()
+            depotcontent = DepotTable(depotcontent)
+            RequestConfig(request).configure(depotcontent)
+            stockform = BuyStockForm()
+
+        else: # GET:
+            try: # to get depotname from session ###############################
+                depotname =  request.session['depotname']
+                depot = Depot.objects.get(depotname = depotname)
+                depotcontent = depot.depotcontent_set.all()
+                depotcontent = DepotTable(depotcontent)
+                RequestConfig(request).configure(depotcontent)
+                stockform =  BuyStockForm()
+
+            except KeyError: # no depot selected yet:###########################
+                depotname = ''
+                depotcontent = ''
+                stockform = ''
+
+        # context contains forms, table and names for html template ############
         context = {
             'depotform': DepotForm(),
-            'stockform': '',
+            'stockform': stockform,
+            'depotcontent': depotcontent,
+            'depotname': depotname,
         }
-    else:
+    else: # user is not logged in. Render nothing ##############################
         context = {
             'depotform': '',
             'stockform': '',
+            'depotcontent': '',
+            'depotname': '',
         }
     return render(request, 'stockplot/depot.html', context)
+################################################################################
 
 
-# autocomplete for depot selection:
+################################################################################
+# autocomplete for depot selection: ############################################
 class DepotAutocomplete(autocomplete.Select2QuerySetView):
     # uses dal for autocomplete!
     def get_queryset(self):
-        depot = Depot.objects.all()
+        # get only the depots created by the user:
+        depot = Depot.objects.filter(user = self.request.user)
         if self.q:
             # query all depots where name or contains query "q":
             depot = depot.filter(Q(depotname__icontains=self.q))

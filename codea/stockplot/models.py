@@ -94,5 +94,5 @@ class DepotContent(models.Model):
     bought_at = models.FloatField()
     date = models.DateTimeField()
 
-    class Meta:
-        unique_together = ('depotname', 'stock',)
+    def __str__(self):
+        return str(self.depotname) + ': ' + str(self.stock)

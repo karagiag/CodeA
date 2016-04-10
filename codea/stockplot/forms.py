@@ -63,7 +63,28 @@ class DepotForm(forms.ModelForm):
         model = Depot
         fields = ()
 
+# form for buying stock.
+class BuyStockForm(forms.ModelForm):
+    # form for selecting stock with autocomplete from database
+    select_stock = forms.ModelChoiceField(
+        queryset=Stock.objects.all(),
+        widget=autocomplete.ModelSelect2(url='/stockapp/stock-autocomplete')
+    )
+    amount = forms.IntegerField()
+    class Meta:
+        model = Stock
+        fields = ()
 
-#class DepotContentForm(forms.ModelForm):
-#           class Meta:
-#               model = DepotContent
+    def __init__(self, *args, **kwargs):
+        super(BuyStockForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-inline'
+        self.helper.field_template = 'bootstrap3/layout/inline_field.html'
+        self.helper.layout = Layout(
+            HTML('<div class="form-group"><label>Select Stock:</label></div>'),
+            'select_stock',
+            InlineField('amount', css_class = 'input-sm'),
+            FormActions(
+                Submit('Buy Stock', 'Buy', css_class = 'btn-plot btn-sm'),
+            )
+        )

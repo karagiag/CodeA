@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'crispy_forms',
+    'django_tables2',
     'stockplot.apps.StockplotConfig',
     'django.contrib.admin',
     'django.contrib.auth', # used for authentification and registration
@@ -128,3 +129,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # settings for django-crispy-forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+
+# settings for CACHE:
+CACHES = {
+    'default':{
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'stockapp_cachetable',
+    }
+}
+
+# Session settings:
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'

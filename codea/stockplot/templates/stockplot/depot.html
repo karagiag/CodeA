@@ -1,5 +1,6 @@
 {% extends "stockbase.html" %}
 {% load crispy_forms_tags %}
+{% load render_table from django_tables2 %}
 
 {% block title %} CodeA - Stockplot App {% endblock %}
 
@@ -7,6 +8,7 @@
     {{ block.super }} {# includes previous imports #}
     {% load staticfiles %}
     <link rel="stylesheet" href="{% static 'stockplot/css/depotstyle.css' %}"/>
+    <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -15,9 +17,14 @@
     <div class = "container div-top">
     {% if depotform == '' %}
         <h3> Please login to create or view a depot</h3>
+    {% elif depotcontent == '' %}
+        {% csrf_token %}
+        {% crispy depotform %}
     {% else %}
         {% csrf_token %}
         {% crispy depotform %}
+        <h2>{{ depotname }}:</h2>
+        {% render_table depotcontent %}
         {% crispy stockform %}
     {% endif %}
     </div>
