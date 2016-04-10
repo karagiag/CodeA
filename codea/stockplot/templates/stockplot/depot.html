@@ -23,9 +23,13 @@
     {% else %}
         {% csrf_token %}
         {% crispy depotform %}
-        <h2>{{ depotname }}:</h2>
-        {% render_table depotcontent %}
-        {% crispy stockform %}
+        <div class = "row">
+            <h2>{{ depotname }}:</h2>
+            {% render_table depotcontent %}
+        </div>
+        <div class = "row">
+            {% crispy stockform %}
+        </div>
     {% endif %}
     </div>
 </div>

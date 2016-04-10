@@ -14,6 +14,15 @@ class StockForm(forms.ModelForm):
         queryset=Stock.objects.all(),
         widget=autocomplete.ModelSelect2(url='/stockapp/stock-autocomplete')
     )
+    select_method = forms.ChoiceField(
+        choices = (
+            ("plot", "Plot"),
+            ("movingAverage", "Moving Average"),
+            ("exponentialAverage", "Exponential Moving Average"),
+        ),
+        label = "Select Plot Method",
+    )
+    days = forms.IntegerField()
 
     class Meta:
         model = Stock
@@ -26,11 +35,17 @@ class StockForm(forms.ModelForm):
         self.helper.field_template = 'bootstrap3/layout/inline_field.html'
         self.helper.layout = Layout(
             HTML('<div class="form-group"><label>Select Stock:</label></div>'),
-            'select_stock',
+            InlineField('select_stock', css_class = 'input-sm'),
+            HTML('<div class="form-group"><label>Select Method:</label></div>'),
+            InlineField('select_method', css_class = 'input-sm'),
+            InlineField('days', css_class = 'input-sm'),
             FormActions(
-                Submit('Select Stock', 'Plot', css_class = 'btn-plot btn-sm'),
-            )
+                Submit('Plot', 'Go', css_class = 'btn-plot btn-sm'),
+            ),
         )
+
+    def clean(self):
+        pass
 
 # form for selecting depot:
 class DepotForm(forms.ModelForm):

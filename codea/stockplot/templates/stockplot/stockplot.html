@@ -13,17 +13,20 @@
 
     <div class = "div-background bg-image">
     </div>
+    <div class = "div-background-static">
+    </div>
 
 	<div class = "div-plot" id ="plot">
 		<div class = "container">
             <form class = "form-inline" action = "" method="post" id ="stockform">
                 {% csrf_token %}
-                {% crispy form %}
+                {% crispy stockform %}
             </form>
 
 
-            <!-- Div for displaying available data -->
-            <div class = "databox" id="box-top"></div>
+            <!-- Div for displaying available data
+            <div class = "databox" id="box-top">
+            </div>-->
 
 
             <div class="btn-group timeframe-group" role="group" aria-label="...">
@@ -49,8 +52,8 @@
 
     <script>
         {% autoescape off %}
-        var stockData = {{stockData}};
-        var plotData = [];
+        var plotData = {{ plotData }};
+        var names = {{ names }};
         {% endautoescape %}
     </script>
 {% endblock %}
@@ -60,5 +63,5 @@
     {% load staticfiles %}
     <script src="{% static 'stockplot/js/d3.min.js' %}"></script>
     <script src="{% static 'stockplot/js/appscript.js' %}"></script>
-    {{ form.media }}
+    {{ stockform.media }}
 {% endblock %}

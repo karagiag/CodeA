@@ -6,3 +6,4 @@ class DepotTable(tables.Table):
         model = DepotContent
         attrs = {"class":"paleblue"}
         fields = {"stock", "amount", "bought_at", "date"}
+        sequence = ("stock", "amount", "bought_at", "date")

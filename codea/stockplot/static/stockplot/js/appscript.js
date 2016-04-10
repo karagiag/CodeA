@@ -2,8 +2,6 @@
 //-----------Javascript for stockplot app-------------------------------
 //----------------------------------------------------------------------
 
-var names = [];
-
 // main document ready function ----------------------------------------
 $(document).ready(function(){
     plotStock(); // when doc ready, plot
@@ -22,22 +20,14 @@ $(document).ready(function(){
                url : './',
                type : "POST",
                // send data to django view:'
-               data: $(this).serialize() + "&method=" + 'plot',
+               data: $(this).serialize(),
         // successfull return of json data from django view:
         success : function(json) {
                // get data from jsoN:
                var stocksymbol = json['stockSymbol'];
                var stockname = json['stockName'];
-               stockData = json['stockData'];
-               // adjust dates for d3.js:
-               for(var i = 0; i < stockData.length; i++){
-                   stockData[i].dates = stockData[i].dates*1000; //python timestamp in s, Javascript in ms
-               }
-               // create button with methods:
-               createStockMethods(stocksymbol, stockname);
-               // add to plotData and names and then plot:
-               plotData.push(stockData);
-               names.push(stockname);
+               plotData = json['plotData'];
+               names = json['names']
                plotStock();
                },
         });
@@ -75,7 +65,7 @@ function plotStock(){
     //lines = [];
 
     // calculate and set height for d3 plot. in #visualisation div:
-    height = $(window).height() * 0.6;
+    height = $(window).height() * 0.7;
     $(".plotbox").height(height);
     width = $(".plotbox").width();
     $("#visualisation").height(height);
@@ -520,116 +510,6 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
-
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
-
-
-// Generates button with different methods for stocks.
-// For now: only moving average!
-function createStockMethods(stocksymbol, stockname){
-
-    //stockclass because . can lead to errors in JQuery!
-    var stockclass = stocksymbol.replace('.', '-');
-    var html = '<div class = "btn-group div-' + stockname + '">';
-    html += '<button type ="button" class="btn btn-default dropdown-toggle btn-sm btn-stock" data-toggle ="dropdown" aria-haspopup ="true" aria-expanded="false">';
-    html += stockname + '<span> + </span>';
-    html += '</button>';
-    html += '<ul class = "dropdown-menu">';
-    html += '<li> <input type ="text" class ="form-control" placeholder = "Days" id = "' + stockname + 'Days">';
-    html += '<a href class = "mvgAvg" id="'+stockclass+'"> - Days - Moving Average </a></li>';
-    html += '<li><a href class = "expMvgAvg" id="' + stockclass + '"> - Days - Exp. Moving Average </a></li>';
-    html += '<li role="separator" class="divider"></li>'
-    html += '<li><a href class = "delete" id ="' + stockname + '">Delete</a></li>';
-    html += '</ul></div>';
-    $('#box-top').append(html);
-
-    // add event listener for moving average:
-    $('.mvgAvg').on('click touchstart', function(e){
-        e.preventDefault();
-        var csrftoken = getCookie('csrftoken'); //Prepare csrf token
-        var stockclass = e.target.id;
-        var stocksymbol = stockclass.replace('-', '.'); //replace to get actual stocksymbol
-        var method = 'mvgAvg';
-        var days = $('#'+stockname+'Days').val();
-        $.ajax({
-               url : './',
-               type : "POST",
-               // data to send to django view
-               data : { csrfmiddlewaretoken : csrftoken,
-                        select_stock: stocksymbol,
-                        method: method,
-                        days: days,
-               },
-        // in case of success do following with return json data:
-        success : function(json) {
-               // append plotData here
-               var stockname = json['stockName'];
-               stockData = json['stockData'];
-               for(var i = 0; i < stockData.length; i++){
-                   stockData[i].dates = stockData[i].dates*1000; // python timestamp in s, Javascript in ms
-               }
-               plotData.push(stockData);
-               names.push(stockname + ' ' + days + ' days '+  method);
-               plotStock();
-               },
-       });
-    });
-
-    // add event listener for moving average:
-    $('.expMvgAvg').on('click touchstart', function(e){
-        e.preventDefault();
-        var csrftoken = getCookie('csrftoken'); //Prepare csrf token
-        var stockclass = e.target.id;
-        var stocksymbol = stockclass.replace('-', '.'); //replace to get actual stocksymbol
-        var method = 'expmvgAvg';
-        var days = $('#'+stockname+'Days').val();
-        $.ajax({
-               url : './',
-               type : "POST",
-               // data to send to django view
-               data : { csrfmiddlewaretoken : csrftoken,
-                        select_stock: stocksymbol,
-                        method: method,
-                        days: days,
-               },
-        // in case of success do following with return json data:
-        success : function(json) {
-               // append plotData here
-               var stockname = json['stockName'];
-               stockData = json['stockData'];
-               for(var i = 0; i < stockData.length; i++){
-                   stockData[i].dates = stockData[i].dates*1000; // python timestamp in s, Javascript in ms
-               }
-               plotData.push(stockData);
-               names.push(stockname + ' ' + days + ' days '+  method);
-               plotStock();
-               },
-        });
-    });
-
-    // delete method for stock: deletes all plots with the selected
-    // stocksymbol
-    $('.delete').on('click touchstart', function(e){
-        e.preventDefault();
-        var stockname = e.target.id;
-        //var stocksymbol = stockclass.replace('-', '.');
-        // delete all names and plotData with stocksymbol:
-        for (var i = names.length - 1; i >= 0; i--){
-            if(names[i].indexOf(stockname) > -1){
-                names.splice(i, 1);
-                plotData.splice(i, 1);
-            }
-        }
-        // remove button div:
-        $(".div-"+stockname).remove();
-        plotStock();
-    });
-}
-
-
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------

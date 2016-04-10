@@ -21,8 +21,6 @@ from .tables import DepotTable
 
 # own modules
 from modules.FinApp.stockDatabase import StockDatabase
-#from modules.FinApp.stockQuandl import StockQuandl
-#from stockplot.FinApp.stockYahoo import StockYahoo
 
 
 ################################################################################
@@ -40,54 +38,68 @@ def stockapp(request):
     # in case of post data for stockplot has been requested:
     ##################### POST##################################################
     if request.method == "POST":
-        method = request.POST.get('method')
+        method = request.POST.get('select_method')
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         stockid= request.POST.get('select_stock') # stockid from html form
-        print(stockid)
-        if method == 'plot':
-            stockQuery = Stock.objects.get(id=stockid)
-        else:
-            stockQuery = Stock.objects.get(sourceSymbol = stockid)
+        stockQuery = Stock.objects.get(id=stockid)
+
         ##### stock datatype can be selected here.##############################
         ###  UPDATE  ###  IMPROVE THIS ############
         stockSymbol = stockQuery.sourceSymbol
         stockName = stockQuery.name
-        #symbolQuandl = stockQuery.sourceSymbol
-        #stock1 = StockQuandl(symbolQuandl)
-        #datatype = 'Close'
         stock1 = StockDatabase(stockSymbol)
         datatype = 'close'
         ########################################################################
 
         # get historical new Date close prices here:
         step = 1 # every step'th value is returned only
-        dates, data = stock1.getStockHistory(datatype, '1900-01-01', today, step)
+        datesource, data = stock1.getStockHistory(datatype, '1900-01-01', today, step)
+        dates = [date * 1000 for date in datesource]
 
         # for method plot just return dates, data. Else:
-        if method == 'mvgAvg': # moving average
-            days = int(request.POST.get('days')) # get days for moving average
+        if method == 'movingAverage': # moving average
+            days = int(request.POST.get('days'))
             data = stock1.movingAverage(dates, data, days)
-        elif method == 'expmvgAvg': # exponential moving average
+            stockName += str(days) + 'DaysMvgAvg'
+        elif method == 'exponentialAverage': # exponential moving average
             days = int(request.POST.get('days'))
             data = stock1.ExpAverage(dates, data, days)
+            stockName += str(days) + 'DaysExpMvgAvg'
 
         # put data into stockdata dict:
         for i in range(0, len(dates)-1):
             stockData.append({'dates': dates[i], 'data': data[i]})
 
-        return JsonResponse({'stockData': stockData,
+        try: # to get plotData from session ####################################
+            plotData =  request.session['plotData']
+            stocknames = request.session['stocknames']
+        except KeyError: # no plotData selected yet:############################
+            plotData = []
+            stocknames = []
+
+        plotData.append(stockData)
+        request.session['plotData'] = plotData
+        stocknames.append(stockName)
+        request.session['stocknames'] = stocknames
+
+        return JsonResponse({'plotData': plotData,
                              'stockSymbol': stockSymbol,
-                             'stockName': stockName,})
+                             'names': stocknames,})
 
     ######### NOT POST #########################################################
     # if method is not "plot", return an empty dict and render the
     # stockplot.html template
     else:
+        try:
+            del request.session['plotData']
+            del request.session['stocknames']
+        except:
+            pass
         stockData.append({'dates': [], 'data': []})
-        stockData = json.dumps(stockData)
         context = {
-            'stockData': stockData,
-            'form': StockForm(),
+            'plotData': json.dumps([stockData]),
+            'names': ['Plot'],
+            'stockform': StockForm(),
             }
         return render(request, 'stockplot/stockplot.html', context)
 
