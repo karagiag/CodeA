@@ -83,7 +83,6 @@ def stockapp(request):
         request.session['stocknames'] = stocknames
 
         return JsonResponse({'plotData': plotData,
-                             'stockSymbol': stockSymbol,
                              'names': stocknames,})
 
     ######### NOT POST #########################################################
@@ -91,12 +90,16 @@ def stockapp(request):
     # stockplot.html template
     else:
         # when first loading page or pressing clear button:
+        stockData.append({'dates': [], 'data': []})
         try:
             del request.session['plotData']
             del request.session['stocknames']
-        except:
+            if(request.GET['action'] == 'clear'):
+                return JsonResponse({'plotData': stockData,
+                                     'names': ['Plot'],})
+        except: # UPDATE #### Exception Handling...
             pass
-        stockData.append({'dates': [], 'data': []})
+
         context = {
             'plotData': json.dumps([stockData]),
             'names': ['Plot'],

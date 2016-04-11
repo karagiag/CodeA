@@ -24,8 +24,6 @@ $(document).ready(function(){
         // successfull return of json data from django view:
         success : function(json) {
                // get data from jsoN:
-               var stocksymbol = json['stockSymbol'];
-               var stockname = json['stockName'];
                plotData = json['plotData'];
                names = json['names']
                plotStock();
@@ -33,14 +31,13 @@ $(document).ready(function(){
         });
     });
 
-
-    /* clear plots:
     $('#clear').on('click touchstart', function () {
-        names = [];
-        plotData = [];
-        $('#box-top').html("");
-        plotStock();
-	});*/
+        $.get('/stockapp/', {action: 'clear'}, function(json){
+            plotData = json['plotData'];
+            names = json['names']
+            plotStock();
+        });
+	});
 
 
     // button group with .btn-timeframe's sets timeframe for plot:
