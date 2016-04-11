@@ -37,7 +37,7 @@ def stockapp(request):
 
     # in case of post data for stockplot has been requested:
     ##################### POST##################################################
-    if request.method == "POST":
+    if request.method == 'POST':
         method = request.POST.get('select_method')
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         stockid= request.POST.get('select_stock') # stockid from html form
@@ -90,6 +90,7 @@ def stockapp(request):
     # if method is not "plot", return an empty dict and render the
     # stockplot.html template
     else:
+        # when first loading page or pressing clear button:
         try:
             del request.session['plotData']
             del request.session['stocknames']
@@ -148,12 +149,12 @@ def depot(request):
                 depotcontent.depotname = depot
                 depotcontent.stock = Stock.objects.get(id=stockid)
                 depotcontent.amount = request.POST.get('amount')
-                depotcontent.bought_at = 60
+                depotcontent.bought_at = 60 # UPDATE
                 depotcontent.date = datetime.datetime.now()
                 depotcontent.save()
 
             # render depot table and stockform: ################################
-            depotcontent = depot.depotcontent_set.all()
+            depotcontent = depotAnalysis(depot)
             depotcontent = DepotTable(depotcontent)
             RequestConfig(request).configure(depotcontent)
             stockform = BuyStockForm()
@@ -162,7 +163,7 @@ def depot(request):
             try: # to get depotname from session ###############################
                 depotname =  request.session['depotname']
                 depot = Depot.objects.get(depotname = depotname)
-                depotcontent = depot.depotcontent_set.all()
+                depotcontent = depotAnalysis(depot)
                 depotcontent = DepotTable(depotcontent)
                 RequestConfig(request).configure(depotcontent)
                 stockform =  BuyStockForm()
@@ -202,3 +203,12 @@ class DepotAutocomplete(autocomplete.Select2QuerySetView):
             depot = depot.filter(Q(depotname__icontains=self.q))
         # then return depot object:
         return depot
+
+def depotAnalysis(depot):
+    depotcontent = list(depot.depotcontent_set.all())
+    for element in depotcontent:
+        element.bought_total = element.amount * element.bought_at
+        element.current = 40 # UPDATE
+        element.current_total = element.amount * element.current
+        element.change = element.current_total - element.bought_total
+    return depotcontent

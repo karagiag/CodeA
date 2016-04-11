@@ -12,10 +12,6 @@
 	color: #F3EFE0;*/
 }
 
-.div-top{
-    padding-top: 2%;
-}
-
 .btn-buy{
     vertical-align: bottom;
 }
@@ -27,4 +23,8 @@
 .form-inline > *{
     margin-bottom: 10px !important;
     margin-right: 10px !important;
+}
+
+.row{
+    padding-top: 2%;
 }

@@ -16,15 +16,23 @@
 <div class = "div-depot">
     <div class = "container div-top">
     {% if depotform == '' %}
-        <h3> Please login to create or view a depot</h3>
+        <div class = "row">
+            <h3> Please login to create or view a depot</h3>
+        </div>
     {% elif depotcontent == '' %}
         {% csrf_token %}
-        {% crispy depotform %}
+        <div class = "row">
+            {% crispy depotform %}
+        </div>
     {% else %}
         {% csrf_token %}
-        {% crispy depotform %}
         <div class = "row">
-            <h2>{{ depotname }}:</h2>
+            {% crispy depotform %}
+        </div>
+        <div class = "row">
+            <h2>Depot - {{ depotname }}:</h2>
+        </div>
+        <div class = "row">
             {% render_table depotcontent %}
         </div>
         <div class = "row">

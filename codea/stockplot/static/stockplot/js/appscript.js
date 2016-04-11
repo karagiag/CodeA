@@ -33,13 +33,14 @@ $(document).ready(function(){
         });
     });
 
-    // clear plots:
+
+    /* clear plots:
     $('#clear').on('click touchstart', function () {
         names = [];
         plotData = [];
         $('#box-top').html("");
         plotStock();
-	});
+	});*/
 
 
     // button group with .btn-timeframe's sets timeframe for plot:

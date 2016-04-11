@@ -45,7 +45,11 @@
                 <svg id="visualisation"></svg>
             </div>
 
-            <button class="btn btn-default btn-sm btn-clear" id="clear">Clear All</button>
+            <!-- Form for clearing the plot -->
+            <form method="GET" action = "" id="clearform">
+                {% csrf_token %}
+                <button name ="clearbutton" type ="submit" class="btn btn-default btn-sm btn-clear">Clear All</button>
+            </form>
 		</div>
 
 	</div>
