@@ -10,9 +10,11 @@
 {% endblock %}
 
 {% block content %}
-
     <div class = "div-background bg-image">
     </div>
+
+    <!-- Next div for static black background. Otherwise background moves in
+    mobile Safari...Better solution? -->
     <div class = "div-background-static">
     </div>
 
@@ -22,12 +24,6 @@
                 {% csrf_token %}
                 {% crispy stockform %}
             </form>
-
-
-            <!-- Div for displaying available data
-            <div class = "databox" id="box-top">
-            </div>-->
-
 
             <div class="btn-group timeframe-group" role="group" aria-label="...">
               <button type="button" class="btn btn-default btn-sm btn-timeframe" id ="1d">1d</button>
@@ -45,12 +41,6 @@
                 <svg id="visualisation"></svg>
             </div>
 
-            <!-- Form for clearing the plot -->
-            <!--<form method="GET" action = "" id="clearform">
-                {% csrf_token %}
-                <button name ="clearbutton" type ="submit" class="btn btn-default btn-sm btn-clear">Clear All</button>
-            </form>-->
-
             <button id = "clear" type ="button" class="btn btn-default btn-sm btn-clear">Clear All</button>
 		</div>
 
@@ -60,6 +50,7 @@
         {% autoescape off %}
         var plotData = {{ plotData }};
         var names = {{ names }};
+        plotStock();
         {% endautoescape %}
     </script>
 {% endblock %}

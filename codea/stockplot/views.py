@@ -85,27 +85,24 @@ def stockapp(request):
         return JsonResponse({'plotData': plotData,
                              'names': stocknames,})
 
-    ######### NOT POST #########################################################
-    # if method is not "plot", return an empty dict and render the
-    # stockplot.html template
+    ######### GET ##############################################################
     else:
         # when first loading page or pressing clear button:
         stockData.append({'dates': [], 'data': []})
-        try:
-            del request.session['plotData']
-            del request.session['stocknames']
-            if(request.GET['action'] == 'clear'):
-                return JsonResponse({'plotData': stockData,
-                                     'names': ['Plot'],})
-        except: # UPDATE #### Exception Handling...
-            pass
+        # clear session:
+        request.session.pop('plotData', None)
+        request.session.pop('stocknames', None)
 
-        context = {
-            'plotData': json.dumps([stockData]),
-            'names': ['Plot'],
-            'stockform': StockForm(),
-            }
-        return render(request, 'stockplot/stockplot.html', context)
+        if (request.GET.get('action') == 'clear'):
+            return JsonResponse({'plotData': stockData,
+                                 'names': ['Plot'],})
+        else:
+            context = {
+                'plotData': json.dumps([stockData]),
+                'names': ['Plot'],
+                'stockform': StockForm(),
+                }
+            return render(request, 'stockplot/stockplot.html', context)
 
 ################################################################################
 # autocomplete for stock selection:
