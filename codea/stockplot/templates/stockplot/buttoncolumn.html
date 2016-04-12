@@ -9,7 +9,9 @@
         <span class="caret"></span>
     </button>
     <ul class = "dropdown-menu" aria.labelledby ="dropdownMenu1">
-        <form method="post" action="" method="post" class ="sellform" stock ="{{ record.stock }}">
+
+        <!-- Form takes stock.id as variable to send it to backend! -->
+        <form method="post" action="" method="post" class ="sellform" stock ="{{ record.stock.id }}">
             {% csrf_token %}
             <div class = "form-group">
                 <div class="input-group">

@@ -125,10 +125,16 @@ def depot(request):
     ##### UPDATE ##### fix if structure here...#################################
     if request.user.is_authenticated():
         if request.method == "POST":
+
+            # sell selected amount of stock ####################################
             if (request.POST.get('stock') != None):
+                stockid = int(request.POST.get('stock')) # returns stock ID
+                stock = Stock.objects.get(id = stockid)
+                print(stock)
                 return JsonResponse({'text': 'sell',})
+
             # select depot and display contents:################################
-            if request.POST.get('select_depot') != None:
+            elif request.POST.get('select_depot') != None:
                 depotname= request.POST.get('select_depot')
                 request.session['depotname'] = depotname
                 depot = Depot.objects.get(depotname = depotname)
