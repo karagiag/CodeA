@@ -160,6 +160,8 @@ def depot(request):
             stockform = BuyStockForm()
 
         else: # GET:
+            if (request.GET.get('stock') != None):
+                return JsonResponse({'text': 'sell',})
             try: # to get depotname from session ###############################
                 depotname =  request.session['depotname']
                 depot = Depot.objects.get(depotname = depotname)

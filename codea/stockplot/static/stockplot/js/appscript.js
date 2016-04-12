@@ -32,7 +32,7 @@ $(document).ready(function(){
     });
 
     $('#clear').on('click touchstart', function () {
-        $.get('/stockapp/', {action: 'clear'}, function(json){
+        $.get('./', {action: 'clear'}, function(json){
             plotData = json['plotData'];
             names = json['names']
             plotStock();

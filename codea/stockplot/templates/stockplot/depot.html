@@ -48,6 +48,7 @@
     {{ block.super }} {# includes previous imports #}
     {% load staticfiles %}
     <script src="{% static 'stockplot/js/depotscript.js' %}"></script>
+    <script src="{% static 'stockplot/js/depotbuttonscript.js' %}"></script>
     {{ depotform.media }}
     {{ stockform.media }}
 {% endblock %}

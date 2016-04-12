@@ -11,10 +11,14 @@ class DepotTable(tables.Table):
     current = tables.Column()
     current_total = tables.Column()
     change = tables.Column()
+    buttonCol = tables.TemplateColumn(verbose_name='Sell',
+                                      template_name='stockplot/buttoncolumn.html',
+                                      orderable = False,)
+
     class Meta:
         model = DepotContent
         attrs = {"class":"paleblue"}
         fields = {"stock", "amount", "bought_at", "date"}
         sequence = ("stock", "date", "amount", "bought_at", "bought_total",
-                    "current", "current_total", "change")
+                    "current", "current_total", "change", "buttonCol")
         # change column headings
