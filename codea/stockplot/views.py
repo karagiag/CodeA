@@ -16,7 +16,7 @@ from django_tables2   import RequestConfig
 
 # own django imports
 from .models import Stock, Depot, DepotContent
-from .forms import StockForm, DepotForm, BuyStockForm
+from .forms import StockForm, DepotForm, BuyStockForm, SellStockForm
 from .tables import DepotTable
 
 # own modules
@@ -125,6 +125,8 @@ def depot(request):
     ##### UPDATE ##### fix if structure here...#################################
     if request.user.is_authenticated():
         if request.method == "POST":
+            if (request.POST.get('stock') != None):
+                return JsonResponse({'text': 'sell',})
             # select depot and display contents:################################
             if request.POST.get('select_depot') != None:
                 depotname= request.POST.get('select_depot')
@@ -160,8 +162,8 @@ def depot(request):
             stockform = BuyStockForm()
 
         else: # GET:
-            if (request.GET.get('stock') != None):
-                return JsonResponse({'text': 'sell',})
+            #if (request.GET.get('stock') != None):
+            #    return JsonResponse({'text': 'sell',})
             try: # to get depotname from session ###############################
                 depotname =  request.session['depotname']
                 depot = Depot.objects.get(depotname = depotname)
@@ -181,6 +183,7 @@ def depot(request):
             'stockform': stockform,
             'depotcontent': depotcontent,
             'depotname': depotname,
+            #'sellform': SellStockForm(),
         }
     else: # user is not logged in. Render nothing ##############################
         context = {
@@ -188,6 +191,7 @@ def depot(request):
             'stockform': '',
             'depotcontent': '',
             'depotname': '',
+            #'sellform': '',
         }
     return render(request, 'stockplot/depot.html', context)
 ################################################################################

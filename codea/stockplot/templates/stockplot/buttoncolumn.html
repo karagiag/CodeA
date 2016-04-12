@@ -1,2 +1,33 @@
-<button type ="button" stock = "{{ record.stock }}"
-        class="btn btn-default btn-sm btn-sell">Sell</button>
+{% load crispy_forms_tags %}
+<!--<button type ="button" stock = "{{ record.stock }}"
+        class="btn btn-default btn-sm btn-sell">Sell</button>-->
+
+<div class ="dropdown">
+    <button class = "btn btn-default btn-sm dropdown-toggle" type ="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Sell
+        <span class="caret"></span>
+    </button>
+    <ul class = "dropdown-menu" aria.labelledby ="dropdownMenu1">
+        <form method="post" action="" method="post" class ="sellform" stock ="{{ record.stock }}">
+            {% csrf_token %}
+            <div class = "form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="amount"
+                    placeholder="amount">
+                </div>
+            </div>
+            <div class = "form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="stock-market"
+                    placeholder="stock market">
+                </div>
+            </div>
+            <div class = "form-group">
+                <button class="btn btn-default btn-sm" type="submit">
+                    Sell
+                </button>
+            </div>
+        </form>
+    </ul>
+</div>
