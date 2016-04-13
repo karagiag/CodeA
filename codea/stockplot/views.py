@@ -16,7 +16,7 @@ from django_tables2   import RequestConfig
 
 # own django imports
 from .models import Stock, Depot, DepotContent
-from .forms import StockForm, DepotForm, BuyStockForm, SellStockForm
+from .forms import StockForm, DepotForm, BuyStockForm, SellStockForm, UserProfileForm
 from .tables import DepotTable
 
 # own modules
@@ -224,3 +224,9 @@ def depotAnalysis(depot):
         element.current_total = element.amount * element.current
         element.change = element.current_total - element.bought_total
     return depotcontent
+
+
+# profile page
+def profile(request):
+    context = {'form': UserProfileForm(),}
+    return render(request, 'stockplot/profile.html', context)

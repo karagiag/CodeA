@@ -5,6 +5,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Button, HTML
 from crispy_forms.bootstrap import FormActions
 from django import forms
+from django.contrib.auth.models import User
 from stockplot.models import Stock, Depot, DepotContent
 
 # form for selecting stock in stockplot.
@@ -132,3 +133,10 @@ class SellStockForm(forms.ModelForm):
                 Submit('Sell', 'Sell', css_class = 'btn-plot btn-sm'),
             ),
         )
+
+
+# form for user profile:
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name',]

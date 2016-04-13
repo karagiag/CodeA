@@ -2,14 +2,17 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 
-{% block title %} CodeA - Change password {% endblock %}
+{% block title %} CodeA - Profile {% endblock %}
+
+{% block loadcss %}
+    {{ block.super }} {# includes previous imports #}
+{% endblock %}
 
 {% block content %}
-
 <div class = "container">
     <div class='row'>
         <div class='col-sm-6 col-sm-offset-3'>
-            <h1>Change password</h1>
+            <h1>User Profile</h1>
             <form method="post" action=".">
               {% csrf_token %}
               {{ form|crispy }}
@@ -17,5 +20,14 @@
             </form>
         </div>
     </div>
+    <div class='row'>
+        <div class='col-sm-6 col-sm-offset-3'>
+            <h1>Depots</h1>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block loadjs %}
+    {{ block.super }} {# includes previous imports #}
 {% endblock %}

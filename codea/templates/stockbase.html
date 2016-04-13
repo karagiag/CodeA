@@ -63,7 +63,11 @@
                                 {% csrf_token %}
                                 <div class = "form-group">
                                     <div class="input-group input-group-logout">
-                                        <button type="submit" class="btn btn-danger">Logout</button>
+                                        <a href="/accounts/profile/" class="btn btn-default btn-sm">Profile</a>
+                                    </div>
+                                    <li role="separator" class="divider"></li>
+                                    <div class="input-group input-group-logout">
+                                        <button type="submit" class="btn btn-danger btn-sm">Logout</button>
                                     </div>
                                 </div>
                             </form>
@@ -74,7 +78,7 @@
                                         <div class="input-group input-group-login">
                                           <span class="input-group-addon form-green text-bold"
                                             id="basic-addon1">@</span>
-                                          <input type="text" class="form-control" name="username"
+                                          <input type="text" class="form-control input-sm" name="username"
                                             placeholder="username" aria-describedby="basic-addon1">
                                         </div>
                                     </div>
@@ -82,10 +86,10 @@
                                         <div class="input-group input-group-login">
                                           <span class="input-group-addon form-green"
                                             id="basic-addon2"><i class="fa fa-key"></i></span>
-                                          <input type="password" class="form-control" name="password"
+                                          <input type="password" class="form-control input-sm" name="password"
                                             placeholder="password" aria-describedby="basic-addon2">
                                           <span class="input-group-btn">
-                                            <button class="btn btn-default" type="submit">Login</button>
+                                            <button class="btn btn-default btn-sm" type="submit">Login</button>
                                           </span>
                                         </div>
                                     </div>
@@ -93,7 +97,7 @@
                                     <div class = "form-group">
                                         <div class="input-group input-group-login">
                                             <span id ="span-register">or</span>
-                                            <a href="/accounts/register/" class="btn btn-default">Register</a>
+                                            <a href="/accounts/register/" class="btn btn-default btn-sm">Register</a>
                                         </div>
                                     </div>
                                 </form>
