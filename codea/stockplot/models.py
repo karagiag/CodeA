@@ -86,6 +86,7 @@ class Depot(models.Model):
     def __str__(self):
         return str(self.user) + ' ' + str(self.depotname)
 
+
 # model for a depot entry:
 class DepotContent(models.Model):
     depotname = models.ForeignKey(Depot, on_delete = models.CASCADE)
@@ -96,3 +97,17 @@ class DepotContent(models.Model):
 
     def __str__(self):
         return str(self.depotname) + ': ' + str(self.stock)
+
+
+
+# model for logging transactions in a depot:
+#class TransactionLog(models.Model):
+#    depotname = models.ForeignKey(Depot, on_delete = models.CASCADE)
+#    transaction = models.CharField() # type: buy, sell, short,...
+#    stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
+#    amount = models.IntegerField()
+#    price = models.FloatField()
+#    date = models.DateTimeField()
+
+#    def __str__(self):
+#        return str(self.depotname) + ': ' + str(self.stock)

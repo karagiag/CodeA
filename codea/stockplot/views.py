@@ -1,7 +1,6 @@
 # general imports
-import datetime, json, sys, pytz
+import datetime, json, sys
 from dal import autocomplete
-import pandas as pd
 
 # django imports
 from django.shortcuts import *
@@ -10,7 +9,6 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.core import serializers
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 
 from django_tables2   import RequestConfig
 
@@ -24,10 +22,11 @@ from modules.FinApp.stockDatabase import StockDatabase
 
 
 ################################################################################
-# home page
+# home page, just render html.
 def index(request):
     context = {}
     return render(request, 'stockplot/index.html', context)
+################################################################################
 
 
 ################################################################################
@@ -38,30 +37,28 @@ def stockapp(request):
     # in case of post data for stockplot has been requested:
     ##################### POST##################################################
     if request.method == 'POST':
-        method = request.POST.get('select_method')
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         stockid= request.POST.get('select_stock') # stockid from html form
         stockQuery = Stock.objects.get(id=stockid)
 
         ##### stock datatype can be selected here.##############################
-        ###  UPDATE  ###  IMPROVE THIS ############
         stockSymbol = stockQuery.sourceSymbol
         stockName = stockQuery.name
         stock1 = StockDatabase(stockSymbol)
-        datatype = 'close'
+        datatype = 'close' # close, open, close_adj, etc.
         ########################################################################
 
         # get historical new Date close prices here:
         step = 1 # every step'th value is returned only
         datesource, data = stock1.getStockHistory(datatype, '1900-01-01', today, step)
-        dates = [date * 1000 for date in datesource]
+        dates = [date * 1000 for date in datesource] # python date to js
 
         # for method plot just return dates, data. Else:
-        if method == 'movingAverage': # moving average
+        if request.POST.get('select_method') == 'movingAverage': # moving average
             days = int(request.POST.get('days'))
             data = stock1.movingAverage(dates, data, days)
             stockName += str(days) + 'DaysMvgAvg'
-        elif method == 'exponentialAverage': # exponential moving average
+        elif request.POST.get('select_method') == 'exponentialAverage': # exponential moving average
             days = int(request.POST.get('days'))
             data = stock1.ExpAverage(dates, data, days)
             stockName += str(days) + 'DaysExpMvgAvg'
@@ -87,22 +84,24 @@ def stockapp(request):
 
     ######### GET ##############################################################
     else:
-        # when first loading page or pressing clear button:
         stockData.append({'dates': [], 'data': []})
         # clear session:
         request.session.pop('plotData', None)
         request.session.pop('stocknames', None)
 
-        if (request.GET.get('action') == 'clear'):
+        if (request.GET.get('action') == 'clear'): # clear button:
             return JsonResponse({'plotData': stockData,
                                  'names': ['Plot'],})
-        else:
+        else: # first loading of page
             context = {
                 'plotData': json.dumps([stockData]),
                 'names': ['Plot'],
                 'stockform': StockForm(),
                 }
             return render(request, 'stockplot/stockplot.html', context)
+################################################################################
+
+
 
 ################################################################################
 # autocomplete for stock selection:
@@ -119,8 +118,8 @@ class StockAutocomplete(autocomplete.Select2QuerySetView):
 ################################################################################
 
 
+################################################################################
 # main view for depot ##########################################################
-#@login_required
 def depot(request):
     ##### UPDATE ##### fix if structure here...#################################
     if request.user.is_authenticated():
@@ -130,7 +129,7 @@ def depot(request):
             if (request.POST.get('stock') != None):
                 stockid = int(request.POST.get('stock')) # returns stock ID
                 stock = Stock.objects.get(id = stockid)
-                print(stock)
+                # logTransaction()
                 return JsonResponse({'text': 'sell',})
 
             # select depot and display contents:################################
@@ -160,6 +159,7 @@ def depot(request):
                 depotcontent.bought_at = 60 # UPDATE
                 depotcontent.date = datetime.datetime.now()
                 depotcontent.save()
+                # logTransaction()
 
             # render depot table and stockform: ################################
             depotcontent = depotAnalysis(depot)
@@ -168,8 +168,6 @@ def depot(request):
             stockform = BuyStockForm()
 
         else: # GET:
-            #if (request.GET.get('stock') != None):
-            #    return JsonResponse({'text': 'sell',})
             try: # to get depotname from session ###############################
                 depotname =  request.session['depotname']
                 depot = Depot.objects.get(depotname = depotname)
@@ -189,7 +187,6 @@ def depot(request):
             'stockform': stockform,
             'depotcontent': depotcontent,
             'depotname': depotname,
-            #'sellform': SellStockForm(),
         }
     else: # user is not logged in. Render nothing ##############################
         context = {
@@ -197,7 +194,6 @@ def depot(request):
             'stockform': '',
             'depotcontent': '',
             'depotname': '',
-            #'sellform': '',
         }
     return render(request, 'stockplot/depot.html', context)
 ################################################################################
@@ -215,7 +211,11 @@ class DepotAutocomplete(autocomplete.Select2QuerySetView):
             depot = depot.filter(Q(depotname__icontains=self.q))
         # then return depot object:
         return depot
+################################################################################
 
+
+################################################################################
+# analyses contents of depot and calculates money stuff...
 def depotAnalysis(depot):
     depotcontent = list(depot.depotcontent_set.all())
     for element in depotcontent:
@@ -224,9 +224,12 @@ def depotAnalysis(depot):
         element.current_total = element.amount * element.current
         element.change = element.current_total - element.bought_total
     return depotcontent
+################################################################################
 
 
+################################################################################
 # profile page
 def profile(request):
     context = {'form': UserProfileForm(),}
     return render(request, 'stockplot/profile.html', context)
+################################################################################

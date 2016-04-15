@@ -31,6 +31,8 @@ $(document).ready(function(){
         });
     });
 
+
+    // clear button
     $('#clear').on('click touchstart', function () {
         $.get('./', {action: 'clear'}, function(json){
             plotData = json['plotData'];
