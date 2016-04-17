@@ -1,0 +1,27 @@
+{% extends "stockbase.html" %}
+
+{% block title %} CodeA {% endblock %}
+
+{% block loadcss %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+{% endblock %}
+
+{% block content %}
+
+<div class = "container">
+    <div class='row'>
+        <div class='col-sm-8 col-sm-offset-2'>
+            <h1>News</h1>
+            <p>Stock Ranking - Risk class</p>
+            <p>Rank | Stock | Industry | Company Score | Balance Sheet Score |
+                Analysis Score | News Score | Overall Score </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block loadjs %}
+    {{ block.super }} {# includes previous imports #}
+{% endblock %}

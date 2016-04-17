@@ -7,6 +7,7 @@ from . import views
 app_name = 'stockplot'
 
 urlpatterns = [ url(r'^$', views.index, name = 'index'),
+                url(r'^news/$', views.news, name = 'news'),
                 url(r'^stockapp/$', views.stockapp, name = 'stockapp'),
                 url(r'^depot/$', views.depot, name = 'depot'),
                 url(r'^accounts/profile/$', views.profile, name = 'profile'),

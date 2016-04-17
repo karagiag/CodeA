@@ -28,6 +28,13 @@ def index(request):
     return render(request, 'stockplot/index.html', context)
 ################################################################################
 
+################################################################################
+# news page, just render html.
+def news(request):
+    context = {}
+    return render(request, 'stockplot/news.html', context)
+################################################################################
+
 
 ################################################################################
 # main view for stockapp:

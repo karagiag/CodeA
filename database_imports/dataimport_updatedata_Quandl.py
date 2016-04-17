@@ -24,16 +24,17 @@ token = getattr(settings, "QUANDL_TOKEN", 'NO')
 n = 30;
 
 # Get available stocks from database:
-stocks = Stock.objects.all()
+stocks = Stock.objects.filter(source = 'Quandl')
 for stock in stocks:
-    stockid = stock.id
     print(stock.name)
+    stockid = stock.id
+    print(stockid)
     history = Quandl.get(stock.sourceSymbol, rows = n, authtoken= token)
     for index, row in history.iterrows():
         data = stock.stockdata_set.update_or_create(
             stock = stock,
             stockid = stockid,
-            date = index.timestamp(),,
+            date = index.timestamp(),
             open_price = float(row['Open']),
             high = float(row['High']),
             low = float(row['Low']),
