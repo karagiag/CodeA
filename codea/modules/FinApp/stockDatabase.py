@@ -32,8 +32,13 @@ from stockplot.models import Stock, StockData, StockDataFile
 
 class StockDatabase(StockObj):
     # get current stock price
-    def getStockPrice(self):
-        pass
+    def getStockPrice(self, datatype):
+        stockDatabase = Stock.objects.get(sourceSymbol=self.symbol) # get stock from database
+        stockid = stockDatabase.id
+        dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i LIMIT 1;" % (datatype, stockid)
+        dates, data = self.access_database(dataquery)
+        return dates[0], data[0]
+
 
     # get historical stock prices from Database
     def getStockHistoryAll(self, start, end):
@@ -46,7 +51,6 @@ class StockDatabase(StockObj):
     # get historical stock prices from Database
     def getStockHistory(self, datatype, start, end, step):
         stockDatabase = Stock.objects.get(sourceSymbol=self.symbol) # get stock from database
-        #stockname = stockDatabase.name
         stockid = stockDatabase.id
         # get data from Database:
 

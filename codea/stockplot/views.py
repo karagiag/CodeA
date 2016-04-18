@@ -163,7 +163,7 @@ def depot(request):
                 depotcontent.depotname = depot
                 depotcontent.stock = Stock.objects.get(id=stockid)
                 depotcontent.amount = request.POST.get('amount')
-                depotcontent.bought_at = 60 # UPDATE
+                depotcontent.bought_at = getStockPrice(stockid) # UPDATE
                 depotcontent.date = datetime.datetime.now()
                 depotcontent.save()
                 # logTransaction()
@@ -206,6 +206,7 @@ def depot(request):
 ################################################################################
 
 
+
 ################################################################################
 # autocomplete for depot selection: ############################################
 class DepotAutocomplete(autocomplete.Select2QuerySetView):
@@ -226,11 +227,24 @@ class DepotAutocomplete(autocomplete.Select2QuerySetView):
 def depotAnalysis(depot):
     depotcontent = list(depot.depotcontent_set.all())
     for element in depotcontent:
+        stockid = element.stock.id
         element.bought_total = element.amount * element.bought_at
-        element.current = 40 # UPDATE
+        element.current = getStockPrice(stockid) # UPDATE
         element.current_total = element.amount * element.current
         element.change = element.current_total - element.bought_total
     return depotcontent
+################################################################################
+
+
+################################################################################
+# gets last stock price from database:
+def getStockPrice(stockid):
+    stockQuery = Stock.objects.get(id=stockid)
+    stockSymbol = stockQuery.sourceSymbol
+    stock1 = StockDatabase(stockSymbol)
+    datatype = 'close' # close, open, close_adj, etc.
+    date, data = stock1.getStockPrice(datatype)
+    return data
 ################################################################################
 
 

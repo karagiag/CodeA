@@ -3,6 +3,7 @@ import architect # for partitioning
 from django.db import models
 from django.contrib.auth.models import User
 
+################################################################################
 # model for saving basic information about a stock:
 class Stock(models.Model):
     id = models.AutoField(primary_key=True)
@@ -16,6 +17,28 @@ class Stock(models.Model):
     def __str__(self):
         return self.name + ', ' + self.symbol + ', ' + self.stockExchange
 
+
+
+################################################################################
+# model for stock scoring:
+class StockScore(models.Model):
+    stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
+    riskClass = models.IntegerField(null=True, blank=True, default=0)
+    industry = models.CharField(max_length = 100)
+    companyScore = models.IntegerField(null=True, blank=True, default=0)
+    balanceScore = models.IntegerField(null=True, blank=True, default=0)
+    analysisScore = models.IntegerField(null=True, blank=True, default=0)
+    newsScore = models.IntegerField(null=True, blank=True, default=0)
+
+    def __str__(self):
+        return self.stock + ', ' + self.riskClass
+
+    class Meta:
+        unique_together = ('stock', 'riskClass',) # only one entry per symbol per
+
+
+
+################################################################################
 # model for saving data about stock, linked to Stock:
 @architect.install('partition', type='range', subtype='integer', constraint='100', column='stockid')
 # export DJANGO_SETTINGS_MODULE='codea.settings'
@@ -52,6 +75,9 @@ class StockData(models.Model):
     def __str__(self):
         return str(self.stock) + ', Date: ' + str(self.date)
 
+
+
+################################################################################
 # model for saving files for stocks (timestamp, value):
 @architect.install('partition', type='range', subtype='integer', constraint='100', column='stockid')
 # export DJANGO_SETTINGS_MODULE='codea.settings'
@@ -74,7 +100,7 @@ class StockDataFile(models.Model):
 
 
 
-
+################################################################################
 # model for a depot:
 class Depot(models.Model):
     user = models.ForeignKey(User)
@@ -87,6 +113,8 @@ class Depot(models.Model):
         return str(self.user) + ' ' + str(self.depotname)
 
 
+
+################################################################################
 # model for a depot entry:
 class DepotContent(models.Model):
     depotname = models.ForeignKey(Depot, on_delete = models.CASCADE)
