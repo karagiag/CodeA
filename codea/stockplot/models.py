@@ -105,6 +105,8 @@ class StockDataFile(models.Model):
 class Depot(models.Model):
     user = models.ForeignKey(User)
     depotname = models.CharField(max_length = 100, primary_key=True)
+    value = models.IntegerField()
+    available = models.FloatField()
 
     class Meta:
         unique_together = ('user', 'depotname',)

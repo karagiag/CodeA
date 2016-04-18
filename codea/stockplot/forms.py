@@ -56,6 +56,7 @@ class DepotForm(forms.ModelForm):
         widget=autocomplete.ModelSelect2(url='/depot/depot-autocomplete')
     )
     depot_name = forms.CharField(max_length = 100, help_text='Depot name')
+    depot_value = forms.IntegerField(help_text='Money')
 
     def __init__(self, *args, **kwargs):
         super(DepotForm, self).__init__(*args, **kwargs)
@@ -70,6 +71,7 @@ class DepotForm(forms.ModelForm):
             ),
             HTML('<div class="form-group"><label>or create depot:</label></div>'),
             InlineField('depot_name', css_class ='input-sm'),
+            InlineField('depot_value', css_class = 'input-sm'),
             FormActions(
                 Submit('Create Depot', '+', css_class = 'btn-default btn-sm')
             ),
@@ -80,7 +82,7 @@ class DepotForm(forms.ModelForm):
         fields = ()
 
 # form for buying stock.
-class BuyStockForm(forms.ModelForm):
+'''class BuyStockForm(forms.ModelForm):
     # form for selecting stock with autocomplete from database
     select_stock = forms.ModelChoiceField(
         queryset=Stock.objects.all(),
@@ -103,8 +105,31 @@ class BuyStockForm(forms.ModelForm):
             FormActions(
                 Submit('Buy Stock', 'Buy', css_class = 'btn-plot btn-sm'),
             )
-        )
+        )'''
 
+class BuyStockForm(forms.ModelForm):
+    # form for selecting stock with autocomplete from database
+    select_stock = forms.ModelChoiceField(
+        queryset=Stock.objects.all(),
+        widget=autocomplete.ModelSelect2(url='/stockapp/stock-autocomplete')
+    )
+    amount = forms.IntegerField()
+    fees = forms.IntegerField()
+    class Meta:
+        model = Stock
+        fields = ()
+
+    def __init__(self, *args, **kwargs):
+        super(BuyStockForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'select_stock',
+            'amount',
+            'fees',
+            #FormActions(
+            #    Submit('Buy Stock', 'Buy', css_class = 'btn-plot btn-sm'),
+            #)
+        )
 
 # form for selling stock in depot.
 class SellStockForm(forms.ModelForm):

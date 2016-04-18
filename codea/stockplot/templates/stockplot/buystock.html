@@ -1,0 +1,30 @@
+{% extends "stockbase.html" %}
+{% load i18n %}
+
+{% load crispy_forms_tags %}
+
+{% block title %} CodeA - Stockplot App {% endblock %}
+
+{% block loadcss %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+{% endblock %}
+
+{% block content %}
+
+<div class = "container">
+    <div class='row'>
+        <div class='col-sm-6 col-sm-offset-3'>
+            <h1>Buy Stock</h1>
+            {% crispy form %}
+            <input class='btn btn-block btn-primary' type="submit" value="{% trans 'Submit' %}" />
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block loadjs %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+{% endblock %}

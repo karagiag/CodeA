@@ -33,14 +33,19 @@
         </div>
         <div class = "row">
             <h2>Depot - {{ depotname }}:</h2>
-            <p>Total start: 100000 Current total: 200000 Change: -----</p>
+            <p><span class = "text-bold">Value start: </span>{{ depotvalue }} </p>
+            <p><span class = "text-bold">Current value: </span>{{ total }} </p>
+            <p><span class = "text-bold">Change: </span> {{ change }}</p>
+            <p><span class = "text-bold">Available: </span> {{ available }}</p>
         </div>
         <div class = "row">
             <p> Render table differently for mobile: </p>
             {% render_table depotcontent "django_tables2/bootstrap.html" %}
         </div>
         <div class = "row">
-            {% crispy stockform %}
+            <div class='col-sm-4'</div>
+                <a href = 'buystock' class='btn btn-block btn-primary'> Buy Stock </a>
+            </div>
         </div>
     {% endif %}
     </div>

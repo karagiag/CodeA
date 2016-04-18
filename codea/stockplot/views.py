@@ -146,12 +146,13 @@ def depot(request):
                 depot = Depot.objects.get(depotname = depotname)
 
             # create depot:#####################################################
-            elif request.POST.get('depot_name') != None:
+            elif request.POST.get('depot_name') != '':
                 depotname = request.POST.get('depot_name')
                 request.session['depotname'] = depotname
                 depot = Depot()
                 depot.user = request.user
                 depot.depotname = depotname
+                depot.value = request.POST.get('depot_value')
                 depot.save()
 
             # buy stock: #######################################################
@@ -163,30 +164,47 @@ def depot(request):
                 depotcontent.depotname = depot
                 depotcontent.stock = Stock.objects.get(id=stockid)
                 depotcontent.amount = request.POST.get('amount')
-                depotcontent.bought_at = getStockPrice(stockid) # UPDATE
+                depotcontent.bought_at = getStockPrice(stockid)
                 depotcontent.date = datetime.datetime.now()
                 depotcontent.save()
+                # change available money in depot:
+                depot.available = depot.available - float(depotcontent.amount) * depotcontent.bought_at
+                depot.save()
                 # logTransaction()
+            else:
+                # error
+                context = {
+                    'depotform': DepotForm(),
+                    'depotcontent': '',
+                }
+                return render(request, 'stockplot/depot.html', context)
 
             # render depot table and stockform: ################################
-            depotcontent = depotAnalysis(depot)
+            stockform = BuyStockForm()
+            depotcontent, spent, total = depotAnalysis(depot)
             depotcontent = DepotTable(depotcontent)
             RequestConfig(request).configure(depotcontent)
-            stockform = BuyStockForm()
+            depotvalue = depot.value
+            available = depot.available
 
         else: # GET:
             try: # to get depotname from session ###############################
                 depotname =  request.session['depotname']
                 depot = Depot.objects.get(depotname = depotname)
-                depotcontent = depotAnalysis(depot)
+                depotcontent, spent, total = depotAnalysis(depot)
                 depotcontent = DepotTable(depotcontent)
+                depotvalue = depot.value
+                available = depot.available
                 RequestConfig(request).configure(depotcontent)
                 stockform =  BuyStockForm()
 
             except KeyError: # no depot selected yet:###########################
-                depotname = ''
-                depotcontent = ''
                 stockform = ''
+                depotcontent = ''
+                depotname = ''
+                depotvalue = 0
+                available = 0
+                total = 0
 
         # context contains forms, table and names for html template ############
         context = {
@@ -194,13 +212,14 @@ def depot(request):
             'stockform': stockform,
             'depotcontent': depotcontent,
             'depotname': depotname,
+            'depotvalue': depotvalue,
+            'available': available,
+            'total': total+available,
+            'change': round(total+available-depotvalue,2),
         }
     else: # user is not logged in. Render nothing ##############################
         context = {
             'depotform': '',
-            'stockform': '',
-            'depotcontent': '',
-            'depotname': '',
         }
     return render(request, 'stockplot/depot.html', context)
 ################################################################################
@@ -226,13 +245,17 @@ class DepotAutocomplete(autocomplete.Select2QuerySetView):
 # analyses contents of depot and calculates money stuff...
 def depotAnalysis(depot):
     depotcontent = list(depot.depotcontent_set.all())
+    spent = 0 # money spent on stocks
+    total = 0 # total value of stocks
     for element in depotcontent:
         stockid = element.stock.id
-        element.bought_total = element.amount * element.bought_at
-        element.current = getStockPrice(stockid) # UPDATE
-        element.current_total = element.amount * element.current
+        element.bought_total = round(element.amount * element.bought_at,2)
+        spent += element.bought_total
+        element.current = getStockPrice(stockid)
+        element.current_total = round(element.amount * element.current, 2)
+        total += element.current_total
         element.change = element.current_total - element.bought_total
-    return depotcontent
+    return depotcontent, spent, total
 ################################################################################
 
 
@@ -245,6 +268,15 @@ def getStockPrice(stockid):
     datatype = 'close' # close, open, close_adj, etc.
     date, data = stock1.getStockPrice(datatype)
     return data
+################################################################################
+
+
+
+################################################################################
+# page for buying stock
+def buystock(request):
+    context = {'form': BuyStockForm(),}
+    return render(request, 'stockplot/buystock.html', context)
 ################################################################################
 
 
