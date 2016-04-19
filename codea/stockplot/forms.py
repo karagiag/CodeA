@@ -1,5 +1,5 @@
 from dal import autocomplete
-from crispy_forms.bootstrap import InlineField
+from crispy_forms.bootstrap import InlineField, Field
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Button, HTML
@@ -82,31 +82,6 @@ class DepotForm(forms.ModelForm):
         fields = ()
 
 # form for buying stock.
-'''class BuyStockForm(forms.ModelForm):
-    # form for selecting stock with autocomplete from database
-    select_stock = forms.ModelChoiceField(
-        queryset=Stock.objects.all(),
-        widget=autocomplete.ModelSelect2(url='/stockapp/stock-autocomplete')
-    )
-    amount = forms.IntegerField()
-    class Meta:
-        model = Stock
-        fields = ()
-
-    def __init__(self, *args, **kwargs):
-        super(BuyStockForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = 'form-inline'
-        self.helper.field_template = 'bootstrap3/layout/inline_field.html'
-        self.helper.layout = Layout(
-            HTML('<div class="form-group"><label>Select Stock:</label></div>'),
-            'select_stock',
-            InlineField('amount', css_class = 'input-sm'),
-            FormActions(
-                Submit('Buy Stock', 'Buy', css_class = 'btn-plot btn-sm'),
-            )
-        )'''
-
 class BuyStockForm(forms.ModelForm):
     # form for selecting stock with autocomplete from database
     select_stock = forms.ModelChoiceField(
@@ -114,7 +89,7 @@ class BuyStockForm(forms.ModelForm):
         widget=autocomplete.ModelSelect2(url='/stockapp/stock-autocomplete')
     )
     amount = forms.IntegerField()
-    fees = forms.IntegerField()
+    fees = forms.FloatField(label = "Assumed fee for broker")
     class Meta:
         model = Stock
         fields = ()
@@ -124,12 +99,13 @@ class BuyStockForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'select_stock',
-            'amount',
-            'fees',
-            #FormActions(
-            #    Submit('Buy Stock', 'Buy', css_class = 'btn-plot btn-sm'),
-            #)
+            Field('amount', css_class="input-sm"),
+            Field('fees', css_class="input-sm"),
+            FormActions(
+                Submit('Buy Stock', 'Buy', css_class = 'btn btn-block btn-primary'),
+            ),
         )
+
 
 # form for selling stock in depot.
 class SellStockForm(forms.ModelForm):
@@ -151,7 +127,7 @@ class SellStockForm(forms.ModelForm):
         #self.helper.field_template = 'bootstrap3/layout/inline_field.html'
         self.helper.layout = Layout(
             #HTML('<div class="form-group"><label>Select Stock:</label></div>'),
-            'amount',
+            Field('amount', css_class="input-sm"),
             #HTML('<div class="form-group"><label>Select Method:</label></div>'),
             'select_stockmarket',
             FormActions(

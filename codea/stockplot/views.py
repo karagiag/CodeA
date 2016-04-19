@@ -155,22 +155,6 @@ def depot(request):
                 depot.value = request.POST.get('depot_value')
                 depot.save()
 
-            # buy stock: #######################################################
-            elif request.POST.get('select_stock') != None:
-                depotname = request.session['depotname']
-                depot = Depot.objects.get(depotname = depotname)
-                stockid= request.POST.get('select_stock')
-                depotcontent = DepotContent()
-                depotcontent.depotname = depot
-                depotcontent.stock = Stock.objects.get(id=stockid)
-                depotcontent.amount = request.POST.get('amount')
-                depotcontent.bought_at = getStockPrice(stockid)
-                depotcontent.date = datetime.datetime.now()
-                depotcontent.save()
-                # change available money in depot:
-                depot.available = depot.available - float(depotcontent.amount) * depotcontent.bought_at
-                depot.save()
-                # logTransaction()
             else:
                 # error
                 context = {
@@ -275,6 +259,24 @@ def getStockPrice(stockid):
 ################################################################################
 # page for buying stock
 def buystock(request):
+    if request.method == "POST":
+        depotname =  request.session['depotname']
+        depot1 = Depot.objects.get(depotname = depotname)
+        stockid= request.POST.get('select_stock')
+        depotcontent = DepotContent()
+        depotcontent.depotname = depot1
+        depotcontent.stock = Stock.objects.get(id=stockid)
+        depotcontent.amount = request.POST.get('amount')
+        depotcontent.bought_at = getStockPrice(stockid)
+        depotcontent.date = datetime.datetime.now()
+        depotcontent.save()
+        # change available money in depot:
+        fee = request.POST.get('fees')
+        depot1.available = depot1.available - float(depotcontent.amount) * depotcontent.bought_at - float(fee)
+        depot1.save()
+        # log
+        return HttpResponseRedirect('/depot/')
+
     context = {'form': BuyStockForm(),}
     return render(request, 'stockplot/buystock.html', context)
 ################################################################################

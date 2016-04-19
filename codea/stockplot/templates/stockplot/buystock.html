@@ -16,8 +16,8 @@
     <div class='row'>
         <div class='col-sm-6 col-sm-offset-3'>
             <h1>Buy Stock</h1>
+            {% csrf_token %}
             {% crispy form %}
-            <input class='btn btn-block btn-primary' type="submit" value="{% trans 'Submit' %}" />
         </div>
     </div>
 </div>
@@ -27,4 +27,5 @@
 {% block loadjs %}
     {{ block.super }} {# includes previous imports #}
     {% load staticfiles %}
+    {{ form.media }}
 {% endblock %}
