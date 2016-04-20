@@ -19,6 +19,7 @@ from .tables import DepotTable
 
 # own modules
 from modules.FinApp.stockDatabase import StockDatabase
+import modules.FinApp.stockDepot as stockDepot
 
 
 ################################################################################
@@ -165,7 +166,7 @@ def depot(request):
 
             # render depot table and stockform: ################################
             stockform = BuyStockForm()
-            depotcontent, spent, total = depotAnalysis(depot)
+            depotcontent, spent, total = stockDepot.depotAnalysis(depot)
             depotcontent = DepotTable(depotcontent)
             RequestConfig(request).configure(depotcontent)
             depotvalue = depot.value
@@ -175,7 +176,7 @@ def depot(request):
             try: # to get depotname from session ###############################
                 depotname =  request.session['depotname']
                 depot = Depot.objects.get(depotname = depotname)
-                depotcontent, spent, total = depotAnalysis(depot)
+                depotcontent, spent, total = stockDepot.depotAnalysis(depot)
                 depotcontent = DepotTable(depotcontent)
                 depotvalue = depot.value
                 available = depot.available
@@ -198,7 +199,7 @@ def depot(request):
             'depotname': depotname,
             'depotvalue': depotvalue,
             'available': available,
-            'total': total+available,
+            'total': round(total+available, 2),
             'change': round(total+available-depotvalue,2),
         }
     else: # user is not logged in. Render nothing ##############################
@@ -225,61 +226,25 @@ class DepotAutocomplete(autocomplete.Select2QuerySetView):
 ################################################################################
 
 
-################################################################################
-# analyses contents of depot and calculates money stuff...
-def depotAnalysis(depot):
-    depotcontent = list(depot.depotcontent_set.all())
-    spent = 0 # money spent on stocks
-    total = 0 # total value of stocks
-    for element in depotcontent:
-        stockid = element.stock.id
-        element.bought_total = round(element.amount * element.bought_at,2)
-        spent += element.bought_total
-        element.current = getStockPrice(stockid)
-        element.current_total = round(element.amount * element.current, 2)
-        total += element.current_total
-        element.change = element.current_total - element.bought_total
-    return depotcontent, spent, total
-################################################################################
-
-
-################################################################################
-# gets last stock price from database:
-def getStockPrice(stockid):
-    stockQuery = Stock.objects.get(id=stockid)
-    stockSymbol = stockQuery.sourceSymbol
-    stock1 = StockDatabase(stockSymbol)
-    datatype = 'close' # close, open, close_adj, etc.
-    date, data = stock1.getStockPrice(datatype)
-    return data
-################################################################################
-
-
 
 ################################################################################
 # page for buying stock
 def buystock(request):
     if request.method == "POST":
         depotname =  request.session['depotname']
-        depot1 = Depot.objects.get(depotname = depotname)
+        depot = Depot.objects.get(depotname = depotname)
         stockid= request.POST.get('select_stock')
-        depotcontent = DepotContent()
-        depotcontent.depotname = depot1
-        depotcontent.stock = Stock.objects.get(id=stockid)
-        depotcontent.amount = request.POST.get('amount')
-        depotcontent.bought_at = getStockPrice(stockid)
-        depotcontent.date = datetime.datetime.now()
-        depotcontent.save()
-        # change available money in depot:
+        amount = request.POST.get('amount')
+        datatype = 'close'
         fee = request.POST.get('fees')
-        depot1.available = depot1.available - float(depotcontent.amount) * depotcontent.bought_at - float(fee)
-        depot1.save()
+        stockDepot.buyStock(depot, stockid, amount, datatype, fee)
         # log
         return HttpResponseRedirect('/depot/')
 
     context = {'form': BuyStockForm(),}
     return render(request, 'stockplot/buystock.html', context)
 ################################################################################
+
 
 
 ################################################################################
