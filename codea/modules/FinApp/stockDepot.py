@@ -62,14 +62,51 @@ def getStockPrice(stockid, datatype):
 
 ################################################################################
 def buyStock(depot, stockid, amount, datatype, fee):
-    depotcontent = DepotContent()
-    depotcontent.depotname = depot
-    depotcontent.stock = Stock.objects.get(id=stockid)
-    depotcontent.amount = amount
-    depotcontent.bought_at = getStockPrice(stockid, datatype)
-    depotcontent.date = datetime.datetime.now()
-    depotcontent.save()
+    stock = Stock.objects.get(id=stockid)
+    depotcontent = depot.depotcontent_set.filter(stock = stock)
+    print(depotcontent)
+    price = getStockPrice(stockid,datatype)
+    # check if enough money in depot:
+    if (depot.available < float(amount) * price) + fee:
+        amount = int((depot.available-fee) / price)
+    # if stock already there:
+    if (amount > 0):
+        if not depotcontent:
+            depotcontent = DepotContent()
+            depotcontent.depotname = depot
+            depotcontent.stock = Stock.objects.get(id=stockid)
+            bought_at = price
+        else:
+            depotcontent = depotcontent[0]
+            amount_pre = float(depotcontent.amount)
+            bought_at = (amount_pre*depotcontent.bought_at+float(amount)*price)/(amount_pre+amount)
+            amount = depotcontent.amount+amount
+
+        depotcontent.bought_at = bought_at
+        depotcontent.amount = amount
+        depotcontent.date = datetime.datetime.now()
+        depotcontent.save()
+        # change available money in depot:
+        depot.available = round(depot.available - float(amount) * price - fee,2)
+        depot.save()
+################################################################################
+
+
+################################################################################
+def sellStock(depot, stockid, amount, datatype, fee):
+    stock = Stock.objects.get(id=stockid)
+    depotcontent = depot.depotcontent_set.filter(stock = stock)
+    depotcontent = depotcontent[0]
+    price = getStockPrice(stockid, datatype)
+    if (depotcontent.amount > amount):
+        depotcontent.amount = depotcontent.amount - amount
+        sold = float(amount) * price
+        depotcontent.save()
+    else:
+        sold = float(depotcontent.amount) * price
+        depotcontent.delete()
+
     # change available money in depot:
-    depot.available = depot.available - float(depotcontent.amount) * depotcontent.bought_at - float(fee)
+    depot.available = round(depot.available + sold - float(fee),2)
     depot.save()
 ################################################################################

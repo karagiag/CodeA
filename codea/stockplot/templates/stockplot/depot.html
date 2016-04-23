@@ -39,13 +39,13 @@
             <p><span class = "text-bold">Available: </span> {{ available }}</p>
         </div>
         <div class = "row">
-            <p> Render table differently for mobile: </p>
-            {% render_table depotcontent "django_tables2/bootstrap.html" %}
-        </div>
-        <div class = "row">
             <div class='col-sm-4'</div>
                 <a href = 'buystock' class='btn btn-block btn-primary'> Buy Stock </a>
             </div>
+        </div>
+        <div class = "row">
+            <p> Render table differently for mobile: </p>
+            {% render_table depotcontent "django_tables2/bootstrap.html" %}
         </div>
     {% endif %}
     </div>

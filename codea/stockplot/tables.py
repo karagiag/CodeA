@@ -6,7 +6,7 @@ class DepotTable(tables.Table):
     stock = tables.Column(verbose_name="Stock")
     date = tables.Column(verbose_name="Date bought")
     amount = tables.Column(verbose_name="Amount")
-    bought_at = tables.Column(verbose_name="Buy price")
+    bought_at = tables.Column(verbose_name="Buy price (average)")
     bought_total = tables.Column()
     current = tables.Column()
     current_total = tables.Column()

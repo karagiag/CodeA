@@ -1,0 +1,31 @@
+{% extends "stockbase.html" %}
+{% load i18n %}
+
+{% load crispy_forms_tags %}
+
+{% block title %} CodeA - Sell Stock {% endblock %}
+
+{% block loadcss %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+{% endblock %}
+
+{% block content %}
+
+<div class = "container">
+    <div class='row'>
+        <div class='col-sm-6 col-sm-offset-3'>
+            <h1>Sell Stock</h1>
+            {% csrf_token %}
+            {% crispy form %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block loadjs %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+    {{ form.media }}
+{% endblock %}

@@ -11,6 +11,7 @@ urlpatterns = [ url(r'^$', views.index, name = 'index'),
                 url(r'^stockapp/$', views.stockapp, name = 'stockapp'),
                 url(r'^depot/$', views.depot, name = 'depot'),
                 url(r'^depot/buystock/$', views.buystock, name = 'buystock'),
+                url(r'^depot/sellstock/$', views.sellstock, name = 'sellstock'),
                 url(r'^accounts/profile/$', views.profile, name = 'profile'),
                 url(
                     r'^stockapp/stock-autocomplete/$',

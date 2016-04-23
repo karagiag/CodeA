@@ -111,25 +111,14 @@ class BuyStockForm(forms.ModelForm):
 class SellStockForm(forms.ModelForm):
     # form for selecting stock with autocomplete from database
     amount = forms.IntegerField()
-    select_stockmarket = forms.ChoiceField(
-        choices = (
-            ("FRA", "Frankfurt"),
-            ("LON", "London"),
-            ("NYC", "New York"),
-        ),
-        label = "Select Stock Market",
-    )
+    fees = forms.FloatField(label = "Assumed fee for broker")
 
     def __init__(self, *args, **kwargs):
-        #super(SellStockForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        #self.helper.form_class = 'form-inline'
-        #self.helper.field_template = 'bootstrap3/layout/inline_field.html'
         self.helper.layout = Layout(
-            #HTML('<div class="form-group"><label>Select Stock:</label></div>'),
             Field('amount', css_class="input-sm"),
-            #HTML('<div class="form-group"><label>Select Method:</label></div>'),
-            'select_stockmarket',
+            Field('fees', css_class="input-sm"),
+            #'select_stockmarket',
             FormActions(
                 Submit('Sell', 'Sell', css_class = 'btn-plot btn-sm'),
             ),

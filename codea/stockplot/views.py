@@ -135,10 +135,15 @@ def depot(request):
 
             # sell selected amount of stock ####################################
             if (request.POST.get('stock') != None):
+                print("here")
                 stockid = int(request.POST.get('stock')) # returns stock ID
-                stock = Stock.objects.get(id = stockid)
+                depotname =  request.session['depotname']
+                depot = Depot.objects.get(depotname = depotname)
+                amount = int(request.POST.get('amount'))
+                fee = float(request.POST.get('fee'))
+                datatype = 'close'
+                stockDepot.sellStock(depot, stockid, amount, datatype, fee)
                 # logTransaction()
-                return JsonResponse({'text': 'sell',})
 
             # select depot and display contents:################################
             elif request.POST.get('select_depot') != None:
@@ -147,13 +152,14 @@ def depot(request):
                 depot = Depot.objects.get(depotname = depotname)
 
             # create depot:#####################################################
-            elif request.POST.get('depot_name') != '':
+            elif request.POST.get('depot_name') != '' and request.POST.get('depot_name') != None:
                 depotname = request.POST.get('depot_name')
                 request.session['depotname'] = depotname
                 depot = Depot()
                 depot.user = request.user
                 depot.depotname = depotname
-                depot.value = request.POST.get('depot_value')
+                depot.value = int(request.POST.get('depot_value'))
+                depot.available = float(request.POST.get('depot_value'))
                 depot.save()
 
             else:
@@ -183,7 +189,7 @@ def depot(request):
                 RequestConfig(request).configure(depotcontent)
                 stockform =  BuyStockForm()
 
-            except KeyError: # no depot selected yet:###########################
+            except: # no depot selected yet:###########################
                 stockform = ''
                 depotcontent = ''
                 depotname = ''
@@ -234,15 +240,34 @@ def buystock(request):
         depotname =  request.session['depotname']
         depot = Depot.objects.get(depotname = depotname)
         stockid= request.POST.get('select_stock')
-        amount = request.POST.get('amount')
+        amount = int(request.POST.get('amount'))
         datatype = 'close'
-        fee = request.POST.get('fees')
+        fee = float(request.POST.get('fees'))
         stockDepot.buyStock(depot, stockid, amount, datatype, fee)
         # log
         return HttpResponseRedirect('/depot/')
 
     context = {'form': BuyStockForm(),}
     return render(request, 'stockplot/buystock.html', context)
+################################################################################
+
+
+################################################################################
+# page for selling stock
+def sellstock(request):
+    if request.method == "POST":
+        depotname =  request.session['depotname']
+        depot = Depot.objects.get(depotname = depotname)
+        #stockid= request.POST.get('select_stock')
+        amount = request.POST.get('amount')
+        datatype = 'close'
+        fee = request.POST.get('fees')
+        stockDepot.sellStock(depot, stockid, amount, datatype, fee)
+        # log
+        return HttpResponseRedirect('/depot/')
+
+    context = {'form': SellStockForm(),}
+    return render(request, 'stockplot/sellstock.html', context)
 ################################################################################
 
 
