@@ -15,7 +15,7 @@ from django_tables2   import RequestConfig
 # own django imports
 from .models import Stock, Depot, DepotContent
 from .forms import StockForm, DepotForm, BuyStockForm, SellStockForm, UserProfileForm
-from .tables import DepotTable
+from .tables import DepotTable, DepotContentTable
 
 # own modules
 from modules.FinApp.stockDatabase import StockDatabase
@@ -249,22 +249,20 @@ def buystock(request):
 
 ################################################################################
 # page for selling stock
-def sellstock(request):
-    if request.method == "POST":
+def depotlog(request):
+    try: # to get depotname from session ###############################
         depotname =  request.session['depotname']
         depot = Depot.objects.get(depotname = depotname)
-        #stockid= request.POST.get('select_stock')
-        amount = request.POST.get('amount')
-        datatype = 'close'
-        fee = request.POST.get('fees')
-        stockDepot.sellStock(depot, stockid, amount, datatype, fee)
-        # log
-        return HttpResponseRedirect('/depot/')
-
-    context = {'form': SellStockForm(),}
-    return render(request, 'stockplot/sellstock.html', context)
+        depotcontent = depot.depotcontent_set.all()
+        depotlog = DepotContentTable(depotcontent)
+        RequestConfig(request).configure(depotlog)
+        context = {'depotname': depotname,
+                   'depotlog': depotlog,}
+    except:
+        context = {'depotname': '',
+                   'depotlog': '',}
+    return render(request, 'stockplot/depotlog.html', context)
 ################################################################################
-
 
 
 ################################################################################

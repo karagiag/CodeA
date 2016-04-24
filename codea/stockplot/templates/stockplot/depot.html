@@ -3,7 +3,7 @@
 {% load django_tables2 %}
 {% include "django_tables2/bootstrap.html" %}
 
-{% block title %} CodeA - Stockplot App {% endblock %}
+{% block title %} CodeA - Depot {% endblock %}
 
 {% block loadcss %}
     {{ block.super }} {# includes previous imports #}
@@ -46,6 +46,11 @@
         <div class = "row">
             <p> Render table differently for mobile: </p>
             {% render_table depotcontent "django_tables2/bootstrap.html" %}
+        </div>
+        <div class = "row">
+            <div class='col-sm-4'</div>
+                <a href = 'log' class='btn btn-block btn-primary'> View Depot Log </a>
+            </div>
         </div>
     {% endif %}
     </div>

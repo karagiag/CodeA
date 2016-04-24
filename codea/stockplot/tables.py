@@ -21,3 +21,19 @@ class DepotTable(tables.Table):
         sequence = ("stock", "amount", "bought_total",
                     "current", "current_total", "change", "fee", "buttonCol")
         # change column headings
+
+
+class DepotContentTable(tables.Table):
+    # add data from model + custom data
+    stock = tables.Column(verbose_name="Stock")
+    amount = tables.Column(verbose_name="Amount")
+    price = tables.Column(verbose_name="Price")
+    date = tables.Column(verbose_name="Date")
+    fee = tables.Column(verbose_name="Fee")
+
+    class Meta:
+        model = DepotContent
+        attrs = {"class":"paleblue"}
+        fields = {"stock", "amount", "price", "date", "fee"}
+        sequence = ("date", "stock", "amount", "price", "fee")
+        # change column headings

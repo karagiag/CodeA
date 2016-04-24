@@ -1,0 +1,38 @@
+{% extends "stockbase.html" %}
+{% load crispy_forms_tags %}
+{% load django_tables2 %}
+{% include "django_tables2/bootstrap.html" %}
+
+{% block title %} CodeA - Depot Log {% endblock %}
+
+{% block loadcss %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'stockplot/css/depotstyle.css' %}"/>
+    <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+    <link rel="stylesheet" href="{% static 'django_tables2/bootstrap.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<div class = "div-depot">
+    <div class = "container div-top">
+        {% if depotname == '' %}
+            <h2>No depot selected</h2>
+        {% else %}
+        <div class = "row">
+            <h2>Log for depot: {{ depotname }}</h2>
+        </div>
+        <div class = "row">
+            {% render_table depotlog "django_tables2/bootstrap.html" %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block loadjs %}
+    {{ block.super }} {# includes previous imports #}
+    {% load staticfiles %}
+{% endblock %}
