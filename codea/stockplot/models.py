@@ -122,8 +122,9 @@ class DepotContent(models.Model):
     depotname = models.ForeignKey(Depot, on_delete = models.CASCADE)
     stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
     amount = models.IntegerField()
-    bought_at = models.FloatField()
+    price = models.FloatField()
     date = models.DateTimeField()
+    fee = models.FloatField()
 
     def __str__(self):
         return str(self.depotname) + ': ' + str(self.stock)

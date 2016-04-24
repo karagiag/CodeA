@@ -31,21 +31,56 @@ stockplot = get_wsgi_application() # load application
 from stockplot.models import Stock, Depot, DepotContent
 
 
+
+
+
+################################################################################
+# start a depot for user with given value:
+def createDepot(user, depotname, value):
+    depot = Depot()
+    depot.user = user
+    depot.depotname = depotname
+    depot.value = int(value)
+    depot.available = float(value)
+    depot.save()
+################################################################################
+
+
 ################################################################################
 # analyses contents of depot and calculates money stuff...
 def depotAnalysis(depot):
     depotcontent = list(depot.depotcontent_set.all())
-    spent = 0 # money spent on stocks
+    depotcontent_total = [] # list for output
     total = 0 # total value of stocks
-    for element in depotcontent:
-        stockid = element.stock.id
-        element.bought_total = round(element.amount * element.bought_at, 2)
-        spent += element.bought_total
-        element.current = getStockPrice(stockid, 'close')
-        element.current_total = round(element.amount * element.current, 2)
-        total += element.current_total
-        element.change = element.current_total - element.bought_total
-    return depotcontent, spent, total
+
+    for content in depotcontent: # go through each depotcontent element
+        found = False
+        if depotcontent_total != []: # look if already in list, then add
+            for content_total in depotcontent_total:
+                if content_total.stock == content.stock:
+                    content_total.amount += content.amount
+                    content_total.bought_total += round(content.amount * content.price, 2)
+                    content_total.fee += round(content.fee,2)
+                    found = True
+                    break
+        if not found: # else add to list
+            content.bought_total = round(content.amount * content.price, 2)
+            content.fee = round(content.fee, 2)
+            depotcontent_total.append(content)
+
+    if depotcontent_total != []:
+        for content_total in depotcontent_total: # go through list and do analysis
+            stockid = content_total.stock.id
+            content_total.current = getStockPrice(stockid, 'close')
+            content_total.current_total  = round(content_total.amount * content_total.current, 2)
+            content_total.change = round(content_total.current_total - content_total.bought_total,2)
+            total += content_total.current_total
+
+    depotvalue = depot.value
+    available = depot.available
+    balance = round(total+available, 2)
+    change = round(total+available-depotvalue,2)
+    return depotcontent_total, balance, depotvalue, available, change
 ################################################################################
 
 
@@ -63,28 +98,19 @@ def getStockPrice(stockid, datatype):
 ################################################################################
 def buyStock(depot, stockid, amount, datatype, fee):
     stock = Stock.objects.get(id=stockid)
-    depotcontent = depot.depotcontent_set.filter(stock = stock)
-    print(depotcontent)
     price = getStockPrice(stockid,datatype)
     # check if enough money in depot:
-    if (depot.available < float(amount) * price) + fee:
+    if (depot.available < float(amount) * price + fee):
         amount = int((depot.available-fee) / price)
     # if stock already there:
     if (amount > 0):
-        if not depotcontent:
-            depotcontent = DepotContent()
-            depotcontent.depotname = depot
-            depotcontent.stock = Stock.objects.get(id=stockid)
-            bought_at = price
-        else:
-            depotcontent = depotcontent[0]
-            amount_pre = float(depotcontent.amount)
-            bought_at = (amount_pre*depotcontent.bought_at+float(amount)*price)/(amount_pre+amount)
-            amount = depotcontent.amount+amount
-
-        depotcontent.bought_at = bought_at
-        depotcontent.amount = amount
+        depotcontent = DepotContent()
+        depotcontent.depotname = depot
+        depotcontent.stock = Stock.objects.get(id=stockid)
+        depotcontent.price = price
+        depotcontent.amount = abs(amount)
         depotcontent.date = datetime.datetime.now()
+        depotcontent.fee = fee
         depotcontent.save()
         # change available money in depot:
         depot.available = round(depot.available - float(amount) * price - fee,2)
@@ -95,18 +121,27 @@ def buyStock(depot, stockid, amount, datatype, fee):
 ################################################################################
 def sellStock(depot, stockid, amount, datatype, fee):
     stock = Stock.objects.get(id=stockid)
-    depotcontent = depot.depotcontent_set.filter(stock = stock)
-    depotcontent = depotcontent[0]
     price = getStockPrice(stockid, datatype)
-    if (depotcontent.amount > amount):
-        depotcontent.amount = depotcontent.amount - amount
-        sold = float(amount) * price
-        depotcontent.save()
-    else:
-        sold = float(depotcontent.amount) * price
-        depotcontent.delete()
+
+    depotcontent, total, depotvalue, available, change = depotAnalysis(depot)
+    # check how many stocks are available:
+    for content in depotcontent:
+        if content.stock == stock:
+            max_amount = content.amount
+            break
+    if (amount > max_amount):
+        amount = max_amount
+
+    depotcontent = DepotContent()
+    depotcontent.depotname = depot
+    depotcontent.stock = Stock.objects.get(id=stockid)
+    depotcontent.price = price
+    depotcontent.amount = -abs(amount)
+    depotcontent.date = datetime.datetime.now()
+    depotcontent.fee = fee
+    depotcontent.save()
 
     # change available money in depot:
-    depot.available = round(depot.available + sold - float(fee),2)
+    depot.available = round(depot.available + price * float(amount) - float(fee),2)
     depot.save()
 ################################################################################

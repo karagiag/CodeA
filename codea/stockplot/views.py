@@ -155,12 +155,10 @@ def depot(request):
             elif request.POST.get('depot_name') != '' and request.POST.get('depot_name') != None:
                 depotname = request.POST.get('depot_name')
                 request.session['depotname'] = depotname
-                depot = Depot()
-                depot.user = request.user
-                depot.depotname = depotname
-                depot.value = int(request.POST.get('depot_value'))
-                depot.available = float(request.POST.get('depot_value'))
-                depot.save()
+                user = request.user
+                value = request.POST.get('depot_value')
+                stockDepot.createDepot(user, depotname, value)
+                depot = Depot.objects.get(depotname = depotname)
 
             else:
                 # error
@@ -172,20 +170,16 @@ def depot(request):
 
             # render depot table and stockform: ################################
             stockform = BuyStockForm()
-            depotcontent, spent, total = stockDepot.depotAnalysis(depot)
+            depotcontent, total, depotvalue, available, change = stockDepot.depotAnalysis(depot)
             depotcontent = DepotTable(depotcontent)
             RequestConfig(request).configure(depotcontent)
-            depotvalue = depot.value
-            available = depot.available
 
         else: # GET:
             try: # to get depotname from session ###############################
                 depotname =  request.session['depotname']
                 depot = Depot.objects.get(depotname = depotname)
-                depotcontent, spent, total = stockDepot.depotAnalysis(depot)
+                depotcontent, total, depotvalue, available, change = stockDepot.depotAnalysis(depot)
                 depotcontent = DepotTable(depotcontent)
-                depotvalue = depot.value
-                available = depot.available
                 RequestConfig(request).configure(depotcontent)
                 stockform =  BuyStockForm()
 
@@ -196,6 +190,7 @@ def depot(request):
                 depotvalue = 0
                 available = 0
                 total = 0
+                change = 0
 
         # context contains forms, table and names for html template ############
         context = {
@@ -205,8 +200,8 @@ def depot(request):
             'depotname': depotname,
             'depotvalue': depotvalue,
             'available': available,
-            'total': round(total+available, 2),
-            'change': round(total+available-depotvalue,2),
+            'total': total,
+            'change': change,
         }
     else: # user is not logged in. Render nothing ##############################
         context = {
