@@ -21,7 +21,7 @@ today = datetime.datetime.now().strftime("%Y-%m-%d")
 token = getattr(settings, "QUANDL_TOKEN", 'NO')
 
 # last n-days of stockdata:
-n = 30;
+n = 200;
 
 # Get available stocks from database:
 stocks = Stock.objects.filter(source = 'Quandl')

@@ -20,6 +20,9 @@ class StockForm(forms.ModelForm):
             ("plot", "Plot"),
             ("movingAverage", "Moving Average"),
             ("exponentialAverage", "Exponential Moving Average"),
+            ("macd", "MACD"),
+            ("ppo", "PPO"),
+            ('bollinger', 'Bollinger Band'),
         ),
         label = "Select Plot Method",
     )

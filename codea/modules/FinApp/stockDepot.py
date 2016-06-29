@@ -67,6 +67,7 @@ def depotAnalysis(depot):
             content.bought_total = round(content.amount * content.price, 2)
             content.fee = round(content.fee, 2)
             depotcontent_total.append(content)
+            print(content.bought_total)
 
     if depotcontent_total != []:
         for content_total in depotcontent_total: # go through list and do analysis

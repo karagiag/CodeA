@@ -70,7 +70,7 @@ class StockDatabase(StockObj):
         # returns price at close of day
         return datessorted, datasorted
 
-
+    # executes query in database:
     def access_database(self, querytext):
         cursor = connection.cursor()
         cursor.execute(querytext)

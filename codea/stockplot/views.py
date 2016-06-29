@@ -40,9 +40,8 @@ def news(request):
 ################################################################################
 # main view for stockapp:
 def stockapp(request):
-    stockData = []; # initialize stockdata
-
     # in case of post data for stockplot has been requested:
+    stockData = []
     ##################### POST##################################################
     if request.method == 'POST':
         today = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -51,29 +50,55 @@ def stockapp(request):
 
         ##### stock datatype can be selected here.##############################
         stockSymbol = stockQuery.sourceSymbol
-        stockName = stockQuery.name
+        stockName = [stockQuery.name]
         stock1 = StockDatabase(stockSymbol)
         datatype = 'close' # close, open, close_adj, etc.
         ########################################################################
 
         # get historical new Date close prices here:
         step = 1 # every step'th value is returned only
-        datesource, data = stock1.getStockHistory(datatype, '1900-01-01', today, step)
+        data = [[]]
+        datesource, data[0] = stock1.getStockHistory(datatype, '1900-01-01', today, step)
         dates = [date * 1000 for date in datesource] # python date to js
 
         # for method plot just return dates, data. Else:
         if request.POST.get('select_method') == 'movingAverage': # moving average
             days = int(request.POST.get('days'))
-            data = stock1.movingAverage(dates, data, days)
-            stockName += str(days) + 'DaysMvgAvg'
+            data[0] = stock1.movingAverage(dates, data[0], days)
+            stockName[0] += str(days) + 'DaysMvgAvg'
         elif request.POST.get('select_method') == 'exponentialAverage': # exponential moving average
             days = int(request.POST.get('days'))
-            data = stock1.ExpAverage(dates, data, days)
-            stockName += str(days) + 'DaysExpMvgAvg'
+            data[0] = stock1.ExpAverage(dates, data[0], days)
+            stockName[0] += str(days) + 'DaysExpMvgAvg'
+        elif request.POST.get('select_method') == 'macd': # moving average convergence Divergence
+            data[0] = stock1.MACD(dates, data[0])
+            stockName[0] += 'MACD'
+            print (request.POST.get('days'))
+            if request.POST.get('days') != '':
+                days = int(request.POST.get('days'))
+                data[0] = stock1.ExpAverage(dates, data[0], days)
+                stockName[0] += str(days) + 'DaysExpMvgAvg'
+        elif request.POST.get('select_method') == 'ppo': # percentage price Oscillator
+            data[0] = stock1.PPO(dates, data[0])
+            stockName[0] += 'PPO'
+            if request.POST.get('days') != '':
+                days = int(request.POST.get('days'))
+                data[0] = stock1.ExpAverage(dates, data[0], days)
+                stockName[0] += str(days) + 'DaysExpMvgAvg'
+        elif request.POST.get('select_method') == 'bollinger': # Bollinger Band
+            data[0], average, high = stock1.Bollinger(dates, data[0])
+            data.append(average)
+            data.append(high)
+            stockName[0] += 'Bollinger Band'
+            stockName.append(stockName[0] + 'Bollinger Band')
+            stockName.append(stockName[0] + 'Bollinger Band')
 
         # put data into stockdata dict:
-        for i in range(0, len(dates)-1):
-            stockData.append({'dates': dates[i], 'data': data[i]})
+        # create empty stockdata list:
+        stockData = [[] for x in range(len(data))]
+        for i in range(0, len(data)):
+            for j in range(0, len(dates)-1):
+                stockData[i].append({'dates': dates[j], 'data': data[i][j]})
 
         try: # to get plotData from session ####################################
             plotData =  request.session['plotData']
@@ -82,9 +107,11 @@ def stockapp(request):
             plotData = []
             stocknames = []
 
-        plotData.append(stockData)
+        for data in stockData:
+            plotData.append(data)
         request.session['plotData'] = plotData
-        stocknames.append(stockName)
+        for name in stockName:
+            stocknames.append(name)
         request.session['stocknames'] = stocknames
 
         return JsonResponse({'plotData': plotData,

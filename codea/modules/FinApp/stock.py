@@ -3,6 +3,7 @@
 #general imports
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import numpy as np
 import datetime as datetime
 
 # base class for a stock object
@@ -20,7 +21,7 @@ class StockObj(object):
         pass
 
     # get historical stock prices only with type info, e.g. 'Open', 'Close'
-    def getStockHistory(self, datatype, start, end):
+    def getStockHistory(self, datatype, start, end, step):
         pass
 
     # plot function for historical prices:
@@ -72,3 +73,23 @@ class StockObj(object):
         average = self.ExpAverage(dates, data, days)
         plotname = 'Exponential Moving Average ' + str(days) + ' days'
         self.plotStock(dates, average, plotname)
+
+
+    # calculates MACD: Moving Average Convergence Divergence
+    def MACD(self, dates, data):
+        ema26 = self.ExpAverage(dates, data, 26)
+        ema12 = self.ExpAverage(dates, data, 12)
+        MACD = [x-y for (x, y) in zip(ema12, ema26)]
+        return MACD
+
+    # calculates PPO: Percentage Price Oscillator
+    def PPO(self, dates, data):
+        ema26 = self.ExpAverage(dates, data, 26)
+        ema9 = self.ExpAverage(dates, data, 12)
+        PPO = [(x-y)*100/y if y != 0 else 0 for (x, y) in zip(ema9, ema26)]
+        return PPO
+
+    def Bollinger(self, dates, data):
+        average = np.array(self.movingAverage(dates, data, 20)) # get 20 day moving average
+        standardDev = np.array(self.movingAverage(dates, data, 20)) # get 20 day standard deviation
+        return list(average - 2 * standardDev), list(average), list(average + 2 * standardDev)
