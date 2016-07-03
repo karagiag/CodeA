@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 # own modules
-from .stockDatabase import StockDatabase
+from stockDatabase import StockDatabase
 
 # Django imports
 from django.core.wsgi import get_wsgi_application
@@ -43,6 +43,7 @@ def createDepot(user, depotname, value):
     depot.value = int(value)
     depot.available = float(value)
     depot.save()
+    return depot
 ################################################################################
 
 

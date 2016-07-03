@@ -3,7 +3,6 @@
 from stockDatabase import StockDatabase
 #from stockQuandl import StockQuandl
 #from stockYahoo import StockYahoo
-import stockMath
 import matplotlib.pyplot as plt
 import datetime
 #import matplotlib.dates as mdates

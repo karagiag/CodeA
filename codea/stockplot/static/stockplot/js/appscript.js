@@ -534,6 +534,9 @@ function gettimeframe(){
                 case '1m':
                     fromtime = d3.time.month.offset(curtime, -1);
                     break;
+                case '6m':
+                    fromtime = d3.time.month.offset(curtime, -6);
+                    break;
                 case '1y':
                     fromtime = d3.time.year.offset(curtime, -1);
                     break;
@@ -542,9 +545,6 @@ function gettimeframe(){
                     break;
                 case '5y':
                     fromtime = d3.time.year.offset(curtime, -5);
-                    break;
-                case '10y':
-                    fromtime = d3.time.year.offset(curtime, -10);
                     break;
                 case 'max':
                     fromtime = 'max';

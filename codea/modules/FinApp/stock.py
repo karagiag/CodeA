@@ -89,7 +89,12 @@ class StockObj(object):
         PPO = [(x-y)*100/y if y != 0 else 0 for (x, y) in zip(ema9, ema26)]
         return PPO
 
-    def Bollinger(self, dates, data):
-        average = np.array(self.movingAverage(dates, data, 20)) # get 20 day moving average
-        standardDev = np.array(self.movingAverage(dates, data, 20)) # get 20 day standard deviation
-        return list(average - 2 * standardDev), list(average), list(average + 2 * standardDev)
+    def Bollinger(self, dates, data, days, factor):
+        average = np.array(self.movingAverage(dates, data, days)) # get days moving average
+        low = [0] * len(data)
+        high = [0] * len(data)
+        for i in range(days + 1, len(data)-1):
+            standardDev = np.std(data[i-days:i]) # get days standard deviation
+            low[i] = average[i] - factor * standardDev
+            high[i] = average[i] + factor * standardDev
+        return list(low), list(average), list(high)

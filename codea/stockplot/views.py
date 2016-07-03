@@ -86,7 +86,10 @@ def stockapp(request):
                 data[0] = stock1.ExpAverage(dates, data[0], days)
                 stockName[0] += str(days) + 'DaysExpMvgAvg'
         elif request.POST.get('select_method') == 'bollinger': # Bollinger Band
-            data[0], average, high = stock1.Bollinger(dates, data[0])
+            days = 20
+            factor = 2
+            data[0], average, high = stock1.Bollinger(dates, data[0], days,
+                                                      factor)
             data.append(average)
             data.append(high)
             stockName[0] += 'Bollinger Band'
@@ -184,8 +187,7 @@ def depot(request):
                 request.session['depotname'] = depotname
                 user = request.user
                 value = request.POST.get('depot_value')
-                stockDepot.createDepot(user, depotname, value)
-                depot = Depot.objects.get(depotname = depotname)
+                depot = stockDepot.createDepot(user, depotname, value)
 
             else:
                 # error

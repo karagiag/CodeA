@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 # own modules
-from .stock import StockObj
+from stock import StockObj
 
 # Django imports
 from django.core.wsgi import get_wsgi_application
