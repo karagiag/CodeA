@@ -7,7 +7,10 @@ import pandas as pd
 import numpy as np
 
 # own modules
-from stockDatabase import StockDatabase
+try:
+    from .stockDatabase import StockDatabase
+except Exception: #ImportError
+    from stockDatabase import StockDatabase
 
 # Django imports
 from django.core.wsgi import get_wsgi_application

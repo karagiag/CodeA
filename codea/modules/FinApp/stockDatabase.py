@@ -7,7 +7,10 @@ import pandas as pd
 import numpy as np
 
 # own modules
-from stock import StockObj
+try:
+    from .stock import StockObj
+except Exception: #ImportError
+    from stock import StockObj
 
 # Django imports
 from django.core.wsgi import get_wsgi_application
