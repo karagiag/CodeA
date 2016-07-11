@@ -21,7 +21,7 @@ today = datetime.datetime.now().strftime("%Y-%m-%d")
 token = getattr(settings, "QUANDL_TOKEN", 'NO')
 
 # last n-days of stockdata:
-n = 200;
+n = 100;
 
 # Get available stocks from database:
 stocks = Stock.objects.filter(source = 'Quandl')
@@ -35,13 +35,15 @@ for stock in stocks:
             stock = stock,
             stockid = stockid,
             date = index.timestamp(),
-            open_price = float(row['Open']),
-            high = float(row['High']),
-            low = float(row['Low']),
-            close = float(row['Close']),
-            change = float(row['Change']),
-            traded_volume = float(row['Traded Volume']),
-            turnover = float(row['Turnover']),
-            last_price_of_the_day = float(row['Last Price of the Day']),
-            daily_traded_units = float(row['Daily Traded Units']),
-            daily_turnover = float(row['Daily Turnover']))
+            defaults = {'open_price' : float(row['Open']),
+                'high' : float(row['High']),
+                'low' : float(row['Low']),
+                'close' : float(row['Close']),
+                'change' : float(row['Change']),
+                'traded_volume' : float(row['Traded Volume']),
+                'turnover' : float(row['Turnover']),
+                'last_price_of_the_day' : float(row['Last Price of the Day']),
+                'daily_traded_units' : float(row['Daily Traded Units']),
+                'daily_turnover' : float(row['Daily Turnover']),
+            }
+        )

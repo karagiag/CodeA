@@ -31,13 +31,26 @@ stockplot = get_wsgi_application() # load application
 from stockplot.models import Stock, StockData, StockDataFile
 
 class StockDatabase(StockObj):
-    # get current stock price
+    # get last available stock price
     def getStockPrice(self, datatype):
         stockDatabase = Stock.objects.get(sourceSymbol=self.symbol) # get stock from database
         stockid = stockDatabase.id
-        dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i LIMIT 1;" % (datatype, stockid)
+        dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i ORDER BY date DESC LIMIT 1;" % (datatype, stockid)
+        #dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i AND date = %f LIMIT 1;" % (datatype, stockid, date)
         dates, data = self.access_database(dataquery)
         return dates[0], data[0]
+
+
+    # get stock price for specific date
+    def getStockPriceDate(self, datatype, date):
+        stockDatabase = Stock.objects.get(sourceSymbol=self.symbol) # get stock from database
+        stockid = stockDatabase.id
+        dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i AND date = %f LIMIT 1;" % (datatype, stockid, date)
+        dates, data = self.access_database(dataquery)
+        if len(dates) == 0:
+            return 0, 0
+        else:
+            return dates[0], data[0]
 
 
     # get historical stock prices from Database
@@ -50,14 +63,40 @@ class StockDatabase(StockObj):
 
     # get historical stock prices from Database
     def getStockHistory(self, datatype, start, end, step):
+        # start and end not implemented yet !!!
+
+        stockDatabase = Stock.objects.get(sourceSymbol=self.symbol) # get stock from database
+        stockid = stockDatabase.id
+        # get data from Database:
+        if (step == 1):
+            dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i;" % (datatype, stockid)
+        else:
+            dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i AND MOD(id,%i) = 0;" % (datatype, stockid, step)
+        dates, data = self.access_database(dataquery)
+
+        # alternative:
+        #dates = stockDatabase.stockdata_set.values_list('date', flat = True)
+        #data = stockDatabase.stockdata_set.values_list(datatype, flat = True)
+        # sort data with respect to dates:
+        datasorted = [y for (x, y) in sorted(zip(dates, data))]
+        datessorted = sorted(dates)
+
+        # returns price at close of day
+        return datessorted, datasorted
+
+
+    # get historical stock prices from Database
+    def getStockHistoryDate(self, datatype, start, end, step):
+        # start and end not implemented yet !!!
+
         stockDatabase = Stock.objects.get(sourceSymbol=self.symbol) # get stock from database
         stockid = stockDatabase.id
         # get data from Database:
 
         if (step == 1):
-            dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i;" % (datatype, stockid)
+            dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i AND date > %f AND date < %f;" % (datatype, stockid, start, end)
         else:
-            dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i AND MOD(id,%i) = 0;" % (datatype, stockid, step)
+            dataquery = "SELECT date, %s FROM stockplot_stockdata WHERE stockid = %i AND date > %f AND date < %f AND MOD(id,%i) = 0;" % (datatype, stockid, start, end, step)
         dates, data = self.access_database(dataquery)
 
         # alternative:
