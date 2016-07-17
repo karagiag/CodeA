@@ -144,3 +144,53 @@ class StockDatabase(StockObj):
         print(time2-time1)
         # returns price at close of day
         return datessorted, datasorted
+
+    # calculates Money Flow Index
+    def MFI(self, start, end):
+        # calculate typical price for each day
+        high = self.getStockHistoryDate('high', start, end, 1)[1] #[1] for data, [0] would be dates
+        low = self.getStockHistoryDate('low', start, end, 1)[1]
+        close = self.getStockHistoryDate('close', start, end, 1)[1]
+
+        # typical is average of high, low and close. Unless low or high are not
+        # available. Then just take the close price
+        typical = [(x + y + z) / 3 if y == y and z == z else z for (x, y, z) in zip(high, low, close)]
+        # get traded volume for each day
+        volume = self.getStockHistoryDate('traded_volume', start, end, 1)[1]
+
+        # replace nan's by mean volume
+        meanVolume = np.nanmean(volume)
+        for i in range(0, len(volume)):
+            if volume[i] != volume[i]:
+                volume[i] = meanVolume
+
+        # calculate positive and negative money flow
+        pos_MF = [0]
+        neg_MF = [0]
+        for i in range(1, len(typical)):
+            if typical[i] >= typical[i-1]:
+                pos_MF.append(typical[i] * volume[i])
+                neg_MF.append(0)
+            else:
+                pos_MF.append(0)
+                neg_MF.append(typical[i] * volume[i])
+
+        # calculate 14 day Money Flow Ratio
+        MFR14 = [0]*len(typical)
+        pos_MF14 = [0]*len(typical)
+        neg_MF14 = [0]*len(typical)
+        if (14 > len(typical)):
+            print ("Error. Too many days!")
+        else:
+            for i in range(14, len(typical)):
+                pos_MF14[i] = sum(pos_MF[i-14:i])
+                neg_MF14[i] = sum(neg_MF[i-14:i])
+                if neg_MF14[i] > 0:
+                    MFR14[i] = pos_MF14[i]/neg_MF14[i]
+                else:
+                    MFR14[i] = pos_MF14[i]/1
+
+        # caluclate Money Flow Index:
+        MFI = [100-(100/(1+MFR)) for MFR in MFR14]
+
+        return typical, volume, pos_MF, neg_MF, pos_MF14, neg_MF14, MFR14, MFI

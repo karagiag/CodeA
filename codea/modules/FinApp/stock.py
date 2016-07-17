@@ -89,6 +89,7 @@ class StockObj(object):
         PPO = [(x-y)*100/y if y != 0 else 0 for (x, y) in zip(ema9, ema26)]
         return PPO
 
+    # calculates Bollinger Band
     def Bollinger(self, dates, data, days, factor):
         average = np.array(self.movingAverage(dates, data, days)) # get days moving average
         low = [0] * len(data)
