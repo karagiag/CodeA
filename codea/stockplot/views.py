@@ -94,7 +94,8 @@ def stockapp(request):
             data.append(high)
             stockName[0] += 'Bollinger Band'
             stockName.append(stockName[0] + 'Bollinger Band')
-            stockName.append(stockName[0] + 'Bollinger Band')
+            stockName.append(stockName[0] + 'Bollinger Band High')
+            stockName[0] += ' Low'
 
         # put data into stockdata dict:
         # create empty stockdata list:

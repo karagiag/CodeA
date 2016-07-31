@@ -20,6 +20,7 @@ today = datetime.datetime.now().strftime("%Y-%m-%d")
 
 # get Quandl token from settings
 token = getattr(settings, "QUANDL_TOKEN", 'NO')
+print(token)
 
 # Get available stocks from database:
 stocks = Stock.objects.filter(source = 'Quandl')
@@ -46,7 +47,10 @@ for stock in stocks:
         ) for index, row in history.iterrows()
     ]
     print('Objects done')
-    StockData.objects.bulk_create(stockdata)
+    try:
+        StockData.objects.bulk_create(stockdata)
+    except:
+        print('Already there')
     print('Done')
 
 ############ UPDATE ##### way too slow #########################################
