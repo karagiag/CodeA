@@ -12,10 +12,12 @@ from stockplot.models import Stock, Depot, DepotContent
 class StockForm(forms.ModelForm):
     # form for selecting stock with autocomplete from database
     select_stock = forms.ModelChoiceField(
+        required = True,
         queryset=Stock.objects.all(),
         widget=autocomplete.ModelSelect2(url='/stockapp/stock-autocomplete')
     )
     select_method = forms.ChoiceField(
+        required = True,
         choices = (
             ("plot", "Plot"),
             ("movingAverage", "Moving Average"),
@@ -26,7 +28,7 @@ class StockForm(forms.ModelForm):
         ),
         label = "Select Plot Method",
     )
-    days = forms.IntegerField()
+    days = forms.IntegerField(required = False)
 
     class Meta:
         model = Stock
@@ -55,11 +57,13 @@ class StockForm(forms.ModelForm):
 class DepotForm(forms.ModelForm):
     # form for selecting depot with autocomplete from database
     select_depot = forms.ModelChoiceField(
+        required = False,
         queryset=Depot.objects.all(),
         widget=autocomplete.ModelSelect2(url='/depot/depot-autocomplete')
     )
-    depot_name = forms.CharField(max_length = 100, help_text='Depot name')
-    depot_value = forms.IntegerField(help_text='Money')
+    depot_name = forms.CharField(max_length = 100, help_text='Depot name',
+                required = False)
+    depot_value = forms.IntegerField(help_text='Money', required = False,)
 
     def __init__(self, *args, **kwargs):
         super(DepotForm, self).__init__(*args, **kwargs)
@@ -88,11 +92,12 @@ class DepotForm(forms.ModelForm):
 class BuyStockForm(forms.ModelForm):
     # form for selecting stock with autocomplete from database
     select_stock = forms.ModelChoiceField(
+        required = True,
         queryset=Stock.objects.all(),
         widget=autocomplete.ModelSelect2(url='/stockapp/stock-autocomplete')
     )
-    amount = forms.IntegerField()
-    fees = forms.FloatField(label = "Assumed fee for broker")
+    amount = forms.IntegerField(required = True,)
+    fees = forms.FloatField(label = "Assumed fee for broker", required = True)
     class Meta:
         model = Stock
         fields = ()
@@ -113,8 +118,8 @@ class BuyStockForm(forms.ModelForm):
 # form for selling stock in depot.
 class SellStockForm(forms.ModelForm):
     # form for selecting stock with autocomplete from database
-    amount = forms.IntegerField()
-    fees = forms.FloatField(label = "Assumed fee for broker")
+    amount = forms.IntegerField(required = True)
+    fees = forms.FloatField(required = True, label = "Assumed fee for broker")
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()

@@ -1,6 +1,6 @@
 # Python script for filling database from csv file
 
-import datetime, sys, os, Quandl, random, pytz
+import datetime, sys, os, quandl, random, pytz
 
 # Full path to django project directory
 djangoproject_home="/home/oliver/Repositories/CodeA/codea/"

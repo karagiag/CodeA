@@ -1,6 +1,6 @@
 # Python script for filling database from csv file
 
-import datetime, sys, os, Quandl
+import datetime, sys, os, quandl
 
 # Full path to django project directory
 djangoproject_home="/home/oliver/Repositories/CodeA/codea/"
@@ -24,26 +24,32 @@ print(token)
 
 # Get available stocks from database:
 stocks = Stock.objects.filter(source = 'Quandl')
+
+def convertfloat(data):
+    if data is None:
+        return None
+    return float(data)
+
 for stock in stocks:
     print(stock.name)
     stockid = stock.id
     print(stockid)
-    history = Quandl.get(stock.sourceSymbol, trim_start='1900-01-01', trim_end=today, authtoken= token)
+    history = quandl.get(stock.sourceSymbol, trim_start='1900-01-01', trim_end=today, authtoken= token)
     stockdata = [
         StockData(
             stock = stock,
             stockid = stockid,
             date = index.timestamp(),
-            open_price = float(row['Open']),
-            high = float(row['High']),
-            low = float(row['Low']),
-            close = float(row['Close']),
-            change = float(row['Change']),
-            traded_volume = float(row['Traded Volume']),
-            turnover = float(row['Turnover']),
-            last_price_of_the_day = float(row['Last Price of the Day']),
-            daily_traded_units = float(row['Daily Traded Units']),
-            daily_turnover = float(row['Daily Turnover']),
+            open_price = convertfloat(row['Open']),
+            high = convertfloat(row['High']),
+            low = convertfloat(row['Low']),
+            close = convertfloat(row['Close']),
+            change = convertfloat(row['Change']),
+            traded_volume = convertfloat(row['Traded Volume']),
+            turnover = convertfloat(row['Turnover']),
+            last_price_of_the_day = convertfloat(row['Last Price of the Day']),
+            daily_traded_units = convertfloat(row['Daily Traded Units']),
+            daily_turnover = convertfloat(row['Daily Turnover']),
         ) for index, row in history.iterrows()
     ]
     print('Objects done')
