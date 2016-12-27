@@ -1,9 +1,9 @@
 ﻿import time, csv #, company
 
-def analyze(ticker, today):
+def analyze(compyNumber, today):
 
     ## INPUTS
-    lookfor_ticker = ticker
+    #lookfor_ticker = ticker
     #today = str("2014-08-03")
     today = time.strptime(today, "%Y-%m-%d")
 
@@ -12,25 +12,16 @@ def analyze(ticker, today):
     filename_company = "Companies.csv"
     file_company = path + filename_company
 
-    def company_search (lookfor_ticker,file_company):
-        print('Looking for Compynumber %s')
-        headers = None
-        content = {}
-        reader=csv.reader(open(file_company), delimiter=';')
-        for row in reader:
-            if reader.line_num == 1:
-                headers = row[0:] # Header für Dictionary Keys
-            else:
-                content[row[8]] = dict(zip(headers, row[0:])) # Einträge den Keys zuordnen
-        Compnumber =  (content[lookfor_ticker]["compnumber"]) # Compnumber für gesuchten Ticker
-        filename = Compnumber + ".csv"
+    def company_search ():
+        #print('Looking for Compynumber %s')
+        filename = str(compyNumber) + ".csv"
         file = path + filename
         return file
 
 
     ## Einlesen der Fundamentaldaten
     try:
-        file_fundamental = company_search(lookfor_ticker, file_company)
+        file_fundamental = company_search()
         reader = csv.reader(open(file_fundamental))
     except:
         print('Ticker not Found')
@@ -58,7 +49,7 @@ def analyze(ticker, today):
 
     ## Dictionary anlegen fuer alle Kennzahlen des aktuellen Bewertungszeitraums
     report_date = reporting_date(today) # YYY-MM-DD
-    print('\nReporting Period: ' + report_date)
+    #print('\nReporting Period: ' + report_date)
 
     headers = None
     content = {}

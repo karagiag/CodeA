@@ -13,6 +13,8 @@ class Stock(models.Model):
     source = models.CharField(max_length=100)
     sourceName = models.CharField(max_length=100)
     sourceSymbol = models.CharField(max_length=20)
+    fundamentalsSymbol = models.CharField(max_length=20)
+    fundamentalsCompNumber = models.IntegerField(null=True, blank=True, default=0)
 
     def __str__(self):
         return self.name + ', ' + self.symbol + ', ' + self.stockExchange

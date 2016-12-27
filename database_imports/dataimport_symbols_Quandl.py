@@ -19,6 +19,8 @@ stockplot = get_wsgi_application()
 
 from stockplot.models import Stock
 
+Stock.objects.all().delete()
+
 dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
 for row in dataReader:
     #if row[0] != 'ZIPCODE': # Ignore the header row, import everything else
@@ -29,6 +31,8 @@ for row in dataReader:
     stock.source = 'Quandl'
     stock.sourceName = row[3]
     stock.sourceSymbol = row[4]
+    stock.fundamentalsSymbol = row[5]
+    stock.fundamentalsCompNumber = row[6]
     print("Saving " + stock.name)
     stock.save()
 

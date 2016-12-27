@@ -24,6 +24,7 @@ print(token)
 
 # Get available stocks from database:
 stocks = Stock.objects.filter(source = 'Quandl')
+StockData.objects.all().delete()
 
 def convertfloat(data):
     if data is None:
