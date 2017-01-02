@@ -41,11 +41,11 @@ class StockObj(object):
 
     # calculates "days"-moving average for stock from start to end
     def movingAverage(self, dates, data, days):
-        average = [0] * len(data)
+        average = [float('NaN')] * len(data)
         if (days > len(data)):
             print ("Error. Too many days!")
         else:
-            for i in range(days,len(data)-1):
+            for i in range(days,len(data)):
                 average[i] = sum(data[i-days:i])/days
         return average
 
@@ -55,16 +55,16 @@ class StockObj(object):
         plotname = 'Moving Average ' + str(days) + ' days'
         self.plotStock(dates, average, plotname)
 
-    # calculates "days"-exponential moving average for stock from star to end
+    # calculates "days"-exponential moving average for stock from start to end
     def ExpAverage(self, dates, data, days):
-        average = [0] * len(data)
+        average = [float('NaN')] * len(data)
         if (days > len(data)):
             print ("Error. Too many days!")
         else:
             # first average is regular average:
             average[days] = sum(data[0:days])/days
             alpha = 2.0/(1+days) # smoothing factor
-            for i in range(days + 1, len(data)-1):
+            for i in range(days + 1, len(data)):
                 average[i] = data[i] * alpha + average[i-1] * (1-alpha)
         return average
 
@@ -92,9 +92,9 @@ class StockObj(object):
     # calculates Bollinger Band
     def Bollinger(self, dates, data, days, factor):
         average = np.array(self.movingAverage(dates, data, days)) # get days moving average
-        low = [0] * len(data)
-        high = [0] * len(data)
-        for i in range(days + 1, len(data)-1):
+        low = [float('NaN')] * len(data)
+        high = [float('NaN')] * len(data)
+        for i in range(days, len(data)):
             standardDev = np.std(data[i-days:i]) # get days standard deviation
             low[i] = average[i] - factor * standardDev
             high[i] = average[i] + factor * standardDev

@@ -65,36 +65,37 @@ def stockapp(request):
         if request.POST.get('select_method') == 'movingAverage': # moving average
             days = int(request.POST.get('days'))
             data[0] = stock1.movingAverage(dates, data[0], days)
+            dates = dates[days:len(dates)] # cut off NaN's
+            data[0] = data[0][days:len(data[0])] #cut off NaN's
             stockName[0] += str(days) + 'DaysMvgAvg'
         elif request.POST.get('select_method') == 'exponentialAverage': # exponential moving average
             days = int(request.POST.get('days'))
             data[0] = stock1.ExpAverage(dates, data[0], days)
+            dates = dates[days:len(dates)] # cut off NaN's
+            data[0] = data[0][days:len(data[0])] #cut off NaN's
             stockName[0] += str(days) + 'DaysExpMvgAvg'
-        elif request.POST.get('select_method') == 'macd': # moving average convergence Divergence
+        elif request.POST.get('select_method') == 'macd': # moving average convergence divergence
             data[0] = stock1.MACD(dates, data[0])
+            dates = dates[26:len(dates)]
+            data[0] = data[0][26:len(data[0])] # 26 -> length of NaN's in MACD
             stockName[0] += 'MACD'
-            print (request.POST.get('days'))
-            if request.POST.get('days') != '':
-                days = int(request.POST.get('days'))
-                data[0] = stock1.ExpAverage(dates, data[0], days)
-                stockName[0] += str(days) + 'DaysExpMvgAvg'
-        elif request.POST.get('select_method') == 'ppo': # percentage price Oscillator
+        elif request.POST.get('select_method') == 'ppo': # percentage price oscillator
             data[0] = stock1.PPO(dates, data[0])
+            dates = dates[26:len(dates)]
+            data[0] = data[0][26:len(data[0])] # 26 -> length of NaN's in PPO
             stockName[0] += 'PPO'
-            if request.POST.get('days') != '':
-                days = int(request.POST.get('days'))
-                data[0] = stock1.ExpAverage(dates, data[0], days)
-                stockName[0] += str(days) + 'DaysExpMvgAvg'
         elif request.POST.get('select_method') == 'bollinger': # Bollinger Band
             days = 20
             factor = 2
-            data[0], average, high = stock1.Bollinger(dates, data[0], days,
+            low, average, high = stock1.Bollinger(dates, data[0], days,
                                                       factor)
-            data.append(average)
-            data.append(high)
+            dates = dates[days:len(dates)] # cut off NaN's
+            data[0] = low[days:len(low)] # cut off NaN's
+            data.append(average[days:len(average)])
+            data.append(high[days:len(high)])
             stockName[0] += 'Bollinger Band'
-            stockName.append(stockName[0] + 'Bollinger Band')
-            stockName.append(stockName[0] + 'Bollinger Band High')
+            stockName.append(stockName[0] + ' Average')
+            stockName.append(stockName[0] + ' High')
             stockName[0] += ' Low'
 
         # put data into stockdata dict:

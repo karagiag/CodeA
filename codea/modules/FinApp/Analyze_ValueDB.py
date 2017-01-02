@@ -12,35 +12,54 @@ def fundamentals(compyNumber, today, price):
 
     #ticker = 'TSLA'
     #today = str("2013-10-03")
-    # Import Fundamentals of the corrent date
+    # Import Fundamentals of the current date
     Fundamentals = Fundamentals_Value.analyze(compyNumber, today)
 
     # Market Capitalization
-    shares = float(Fundamentals['Shares Outstanding'])  # Shares Outstanding
-    #yahoo = Share(ticker)
-    #price = float(yahoo.get_historical(today, today)[0]['Close'])   # Price per Share
+    try:
+        shares = float(Fundamentals['Shares Outstanding'])  # Shares Outstanding
+        capitalization = shares * price # Market Capitalization
+    except:
+        shares = float('NaN')
+        capitalization = float('NaN')
 
-    capitalization = shares * price # Market Capitalization
-    #print ('\nReturn Market Capitalization for Reporting Date: $' + str(capitalization/1000000000) + 'Mrd')
+    ## Share Price KPIs
 
-    # Share Price KPI
-    #KCF = price / float(Fundamentals['Free Cash Flow Per Share'])   # Kurs-Cash-Flow-Verhältnis (KCV oder KCF)
-    #print('\nKurs-Cash-Flow-Verhältnis: ' + str(KCF))
+    # price / cash flow ratio, Kurs Cashflow Verhätlnis (KCF)
+    try:
+        PCF = price / float(Fundamentals['Free Cash Flow Per Share'])
+    except:
+        PCF = float('NaN')
 
-    #KRF = price / float(Fundamentals['Total Revenue'])  # Kurs-Umsatz-Verhältnis (KUV oder KRF)
-    #print('\nKurs-Umsatz-Verhältnis: ' + str(KRF))
+    # ~price sales ratio, Kurs Umsatz Verhätlnis (KRF / KUV)
+    try:
+        PSR = price / float(Fundamentals['Total Revenue'])
+    except:
+        PSR = float('NaN')
 
-    #PB = price / float(Fundamentals['Total Assets Per Share'])  # Kurs-Buchwert-Verhältnis (KBV; engl. P/B ratio oder P/BV)
-    #print('\nKurs-Buchwert-Verhältnis:: ' + str(PB))
+    # P/B ratio, Kurs Buchwert Verhältnis
+    try:
+        PB = price / float(Fundamentals['Total Assets Per Share'])
+    except:
+        PB = float('NaN')
 
-    #EPSD = float(Fundamentals['EPS - Net Income - Diluted'])
-    #print('\nEPS: ' + str(EPSD))
+    # EPS (Earnings Per Share)- Net Income - Diluted
+    try:
+        EPSD = float(Fundamentals['EPS - Net Income - Diluted'])
+    except:
+        EPSD = float('NaN')
 
-    #Quick = float(Fundamentals['Quick Ratio'])
-    #print('\nQuick Ratio: ' + str(Quick))
+    # Quick Ratio (indicator of company's short term liquidity)
+    try:
+        quick = float(Fundamentals['Quick Ratio'])
+    except:
+        quick = float('NaN')
 
-    #Current = float(Fundamentals['Current Ratio'])
-    #print('\nCurrent Ratio: ' + str(Current))
+    # Current ratio (a liquidity ratio measuring a company's ability to pay short-term and long-term obligations)
+    try:
+        current = float(Fundamentals['Current Ratio'])
+    except:
+        current = float('NaN')
 
     #sector = Sector.SectorIndustry(ticker)
 
@@ -48,4 +67,4 @@ def fundamentals(compyNumber, today, price):
     #print('\nSector: '+ sector[0] +'  Industry: '+ sector[1])
 
     #return Fundamentals
-    return Fundamentals
+    return PCF, PSR, PB, EPSD, quick, current
