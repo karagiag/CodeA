@@ -66,12 +66,13 @@ def depotAnalysis(depot):
 
     for content in depotcontent: # go through each depotcontent element
         found = False
-        if depotcontent_total != []: # look if already in list, then add
+        if depotcontent_total != []: # look if not already in list, then add
             for content_total in depotcontent_total:
                 if content_total.stock == content.stock:
                     content_total.amount += content.amount
                     content_total.bought_total += round(content.amount * content.price, 2)
                     content_total.fee += round(content.fee,2)
+                    content_total.maxSinceBought = content.maxSinceBought # update with most recent
                     found = True
                     break
         if not found: # else add to list
@@ -136,6 +137,7 @@ def buyStockBase(depot, stockid, amount, datatype, fee, price):
         depotcontent.depotname = depot
         depotcontent.stock = Stock.objects.get(id=stockid)
         depotcontent.price = price
+        depotcontent.maxSinceBought = price
         depotcontent.amount = abs(amount)
         localtz = pytz.timezone('Europe/Berlin')
         depotcontent.date = localtz.localize(datetime.datetime.now())
@@ -170,6 +172,7 @@ def sellStockBase(depot, stockid, amount, datatype, fee, price):
     depotcontent.depotname = depot
     depotcontent.stock = Stock.objects.get(id=stockid)
     depotcontent.price = price
+    depotcontent.maxSinceBought = price
     depotcontent.amount = -abs(amount)
     localtz = pytz.timezone('Europe/Berlin')
     depotcontent.date = localtz.localize(datetime.datetime.now())
@@ -181,7 +184,18 @@ def sellStockBase(depot, stockid, amount, datatype, fee, price):
     depot.save()
 ################################################################################
 
-
+# changes the maximum price of the stock since it was bought (for all entries of this stock)
+# -> not good -> CHANGE
+def changeStockMax(depot, stockid, maxprice):
+    stock = Stock.objects.get(id=stockid)
+    #depotcontent, total, depotvalue, available, change = depotAnalysis(depot)
+    depotcontent = depot.depotcontent_set.all()
+    #depotcontent = depot.objects.all()
+    for content in depotcontent:
+        if content.stock == stock:
+            depotcontent2 = DepotContent.objects.get(id = content.id)
+            depotcontent2.maxSinceBought = maxprice
+            depotcontent2.save()
 
 
 ### following methods duplicated...IMPROVE UPDATE
@@ -194,12 +208,13 @@ def depotAnalysisDate(depot, date):
 
     for content in depotcontent: # go through each depotcontent element
         found = False
-        if depotcontent_total != []: # look if already in list, then add
+        if depotcontent_total != []: # look if not already in list, then add
             for content_total in depotcontent_total:
                 if content_total.stock == content.stock:
                     content_total.amount += content.amount
                     content_total.bought_total += round(content.amount * content.price, 2)
                     content_total.fee += round(content.fee,2)
+                    content_total.maxSinceBought = content.maxSinceBought # update with most recent
                     found = True
                     break
         if not found: # else add to list

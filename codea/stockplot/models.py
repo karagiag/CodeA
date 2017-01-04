@@ -125,6 +125,7 @@ class DepotContent(models.Model):
     stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
     amount = models.IntegerField()
     price = models.FloatField()
+    maxSinceBought = models.FloatField()
     date = models.DateTimeField()
     fee = models.FloatField()
 
