@@ -101,6 +101,34 @@ class StockDataFile(models.Model):
         return str(self.stock) + ', Date: ' + str(self.fromDate)
 
 
+################################################################################
+# model for saving fundamentals about stock, linked to Stock:
+@architect.install('partition', type='range', subtype='integer', constraint='100', column='stockid')
+# export DJANGO_SETTINGS_MODULE='codea.settings'
+# architect partition --module stockplot.models
+class StockFundamentals(models.Model):
+    stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
+    stockid = models.IntegerField(db_index = True)
+    date = models.FloatField(db_index = True)
+    shares = models.FloatField(null=True, blank=True, default=None)
+    capitalization = models.FloatField(null=True, blank=True, default=None)
+    PCF = models.FloatField(null=True, blank=True, default=None)
+    PSR = models.FloatField(null=True, blank=True, default=None)
+    PB = models.FloatField(null=True, blank=True, default=None)
+    EPSD = models.FloatField(null=True, blank=True, default=None)
+    quick  = models.FloatField(null=True, blank=True, default=None)
+    current = models.FloatField(null=True, blank=True, default=None)
+
+    class Meta:
+        unique_together = ('stockid', 'date',) # only one entry per symbol per
+        '''index_together = [
+            ['symbol', 'date'],
+        ]'''
+        # specific Date
+
+    def __str__(self):
+        return str(self.stock) + ', Date: ' + str(self.date)
+
 
 ################################################################################
 # model for a depot:
@@ -131,17 +159,3 @@ class DepotContent(models.Model):
 
     def __str__(self):
         return str(self.depotname) + ': ' + str(self.stock)
-
-
-
-# model for logging transactions in a depot:
-#class TransactionLog(models.Model):
-#    depotname = models.ForeignKey(Depot, on_delete = models.CASCADE)
-#    transaction = models.CharField() # type: buy, sell, short,...
-#    stock = models.ForeignKey(Stock, on_delete = models.CASCADE)
-#    amount = models.IntegerField()
-#    price = models.FloatField()
-#    date = models.DateTimeField()
-
-#    def __str__(self):
-#        return str(self.depotname) + ': ' + str(self.stock)

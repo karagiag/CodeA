@@ -8,7 +8,13 @@ def fundamentals(compyNumber, today, price):
     # Header
     #from yahoo_finance import Share
     from pprint import pprint
-    import time, Fundamentals_Value, Sector
+    import time
+    try:
+        import Fundamentals_Value
+        import Sector
+    except:
+        from modules.FinApp import Fundamentals_Value
+        from modules.FinApp import Sector
 
     #ticker = 'TSLA'
     #today = str("2013-10-03")
@@ -67,4 +73,4 @@ def fundamentals(compyNumber, today, price):
     #print('\nSector: '+ sector[0] +'  Industry: '+ sector[1])
 
     #return Fundamentals
-    return PCF, PSR, PB, EPSD, quick, current
+    return shares, capitalization, PCF, PSR, PB, EPSD, quick, current
