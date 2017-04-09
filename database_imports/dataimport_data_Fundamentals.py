@@ -52,6 +52,9 @@ for stock in stocks:
         stockfundamentals.EPSD = EPSD
         stockfundamentals.quick = quick
         stockfundamentals.current = current
-        stockfundamentals.save()
+        try:
+            stockfundamentals.save()
+        except:
+            print('Already there')
     print('Stock done')
 print('Done')
